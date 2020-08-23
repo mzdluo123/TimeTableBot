@@ -5,6 +5,10 @@ import com.zaxxer.hikari.HikariDataSource
 import io.github.mzdluo123.timetablebot.bots.BotsManager
 import io.github.mzdluo123.timetablebot.bots.listeners.BaseListeners
 import io.github.mzdluo123.timetablebot.config.AppConfig
+import io.github.mzdluo123.timetablebot.db.Class
+import io.github.mzdluo123.timetablebot.db.ClassCourse
+import io.github.mzdluo123.timetablebot.db.Course
+import io.github.mzdluo123.timetablebot.db.User
 import io.github.mzdluo123.timetablebot.utils.logger
 import io.github.mzdluo123.timetablebot.utils.timeToStr
 import io.github.mzdluo123.timetablebot.utils.yaml
@@ -13,6 +17,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.joinAll
 import net.mamoe.mirai.event.registerEvents
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.transactions.transaction
 import java.io.File
 
 private val mainLogger = logger()
@@ -38,7 +44,7 @@ suspend fun main(args: Array<String>) {
         mainLogger.info("shutting down...")
         appJob.cancel()
     })
-    
+
     mainLogger.info("TimeTableBot ${BuildConfig.VERSION} build ${timeToStr(BuildConfig.BUILD_UNIXTIME)} loading.... ")
 
     mainLogger.info("loading config.")
@@ -62,17 +68,18 @@ suspend fun main(args: Array<String>) {
     mainLogger.info("connecting database")
 
     val dbConfig = HikariConfig().apply {
-        jdbcUrl         = config.dbUrl
+        jdbcUrl = config.dbUrl
         driverClassName = "com.mysql.cj.jdbc.Driver"
-        username        = config.dbUser
-        password        = config.dbPwd
+        username = config.dbUser
+        password = config.dbPwd
         maximumPoolSize = 5
     }
     val dataSource = HikariDataSource(dbConfig)
     Database.connect(dataSource)
-
+    transaction {
+        SchemaUtils.create(User, Class, ClassCourse, Course)
+    }
     mainLogger.info("database connected")
-
     BaseListeners.listeners.forEach {
         BotsManager.registerEvents(it)
     }

@@ -14,7 +14,9 @@ mainClassName = 'io.github.mzdluo123.timetablebot.MainKt'
 repositories {
     mavenCentral()
     jcenter()
-
+//    maven {
+//        url "https://libraries.minecraft.net"
+//    }
 }
 buildConfig{
     appName = project.name
@@ -58,9 +60,13 @@ dependencies {
     compile "org.jetbrains.exposed:exposed-core:0.24.1"
     compile"org.jetbrains.exposed:exposed-dao:0.24.1"
     compile"org.jetbrains.exposed:exposed-jdbc:0.24.1"
+    compile"org.jetbrains.exposed:exposed-jodatime:0.24.1"
 
     implementation "mysql:mysql-connector-java:8.0.19"
     implementation "com.zaxxer:HikariCP:3.4.2"
+
+
+//    compile 'com.mojang:brigadier:1.0.17'
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
