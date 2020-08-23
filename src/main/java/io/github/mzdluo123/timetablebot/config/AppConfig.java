@@ -4,5 +4,7 @@ import java.util.List;
 
 public class AppConfig {
     public List<Account> botAccounts;
+    public String dbUrl;
+    public String dbPwd;
 }
 

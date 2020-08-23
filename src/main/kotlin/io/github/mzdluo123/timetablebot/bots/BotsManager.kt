@@ -8,16 +8,12 @@
 
 package io.github.mzdluo123.timetablebot.bots
 
+import io.github.mzdluo123.timetablebot.appJob
 import io.github.mzdluo123.timetablebot.config.Account
 import io.github.mzdluo123.timetablebot.utils.globalExceptionHandler
 import io.github.mzdluo123.timetablebot.utils.logger
 import kotlinx.coroutines.*
 import net.mamoe.mirai.Bot
-import net.mamoe.mirai.alsoLogin
-import net.mamoe.mirai.event.events.BotOfflineEvent
-import net.mamoe.mirai.event.registerEvents
-import net.mamoe.mirai.event.subscribeAlways
-import net.mamoe.mirai.event.subscribeFriendMessages
 import net.mamoe.mirai.utils.internal.logging.Log4jLogger
 import org.apache.logging.log4j.LogManager
 import java.io.File
@@ -27,7 +23,7 @@ object BotsManager : CoroutineScope {
     val jobs = Job()
 
     override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Default + jobs
+        get() = Dispatchers.Default + SupervisorJob(appJob) + jobs
 
     private val logger = logger()
 
@@ -41,17 +37,18 @@ object BotsManager : CoroutineScope {
             deviceInfoFolder.mkdir()
         }
         launch(globalExceptionHandler) {
+            logger.info("try login ${bots.size} bot(s)....")
             bots.forEach {
                 logger.info("try login ${it.id}....")
-                val botLogger = Log4jLogger(LogManager.getLogger("BOT-${it.id}"))
+
                 val bot = Bot(it.id, it.pwd) {
                     fileBasedDeviceInfo(File(deviceInfoFolder, "${it.id}.json").absolutePath)
                     inheritCoroutineContext()
                     botLoggerSupplier = { _ ->
-                        botLogger
+                        Log4jLogger(LogManager.getLogger("BOT-${it.id}"))
                     }
                     networkLoggerSupplier = { _ ->
-                        botLogger
+                        Log4jLogger(LogManager.getLogger("NETWORK"))
                     }
                 }
 //                bot.subscribeAlways<BotOfflineEvent> {
@@ -59,8 +56,8 @@ object BotsManager : CoroutineScope {
 //                    bot.cancel()
 //                }
                 bot.login()
-
             }
+            logger.info("login finish")
 
         }
     }

@@ -1,18 +1,23 @@
 package io.github.mzdluo123.timetablebot
 
+import io.github.mzdluo123.timetablebot.bots.BotFriendMsgListener
 import io.github.mzdluo123.timetablebot.bots.BotsManager
 import io.github.mzdluo123.timetablebot.config.AppConfig
 import io.github.mzdluo123.timetablebot.utils.logger
 import io.github.mzdluo123.timetablebot.utils.timeToStr
 import io.github.mzdluo123.timetablebot.utils.yaml
 import io.io.github.mzdluo123.timetablebot.BuildConfig
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.joinAll
+import net.mamoe.mirai.event.registerEvents
 import java.io.File
 
 private val mainLogger = logger()
 
 lateinit var config: AppConfig
     private set
+
+internal val appJob = Job()
 
 suspend fun main(args: Array<String>) {
     println(
@@ -26,8 +31,10 @@ suspend fun main(args: Array<String>) {
         \|__|  \|__|\|__|     \|__|\|_______|   \|__|  \|__|\|__|\|_______|\|_______|\|_______|\|_______|\|_______|    \|__|
     """.trimIndent()
     )
-
-
+    Runtime.getRuntime().addShutdownHook(Thread {
+        mainLogger.info("shutting down...")
+        appJob.cancel()
+    })
     mainLogger.info("TimeTableBot ${BuildConfig.VERSION} build ${timeToStr(BuildConfig.BUILD_UNIXTIME)} loading.... ")
 
     mainLogger.info("loading config.")
@@ -45,8 +52,8 @@ suspend fun main(args: Array<String>) {
         config = yaml.load(it)
     }
     mainLogger.info("config loaded")
-
+    BotsManager.registerEvents(BotFriendMsgListener())
+    mainLogger.info("event listener registered")
     BotsManager.loginBots(config.botAccounts)
-
     joinAll(BotsManager.jobs)
 }

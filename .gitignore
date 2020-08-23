@@ -1,4 +1,7 @@
 .idea
 .gradle
 build
+logs
+devices
+
 config.yml
