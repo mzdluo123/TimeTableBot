@@ -1,0 +1,19 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.jetbrains.kotlin.jvm' version '1.4.0'
+}
+
+group 'io.io.github.mzdluo123'
+version '1.0-SNAPSHOT'
+
+mainClassName = 'io.github.mzdluo123.timetablebot.MainKt'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib"
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
