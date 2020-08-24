@@ -37,7 +37,7 @@ class CmdTree(val cmd: String, val description: String="") : HashMap<String, Cmd
         if (this.containsKey(instance.cmd)) {
             return
         }
-
+        instance.cmdProcessor = cmdProcessor
         val tree = CmdTree(instance.cmd, instance.description)
         this[instance.cmd] = tree
         val alias = instance.alias

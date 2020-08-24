@@ -75,7 +75,6 @@ class CommandProcessor<S : MessageEvent>(
             }
             is CmdTree -> {
                 source.reply("命令不存在\n$endPoint")
-
             }
         }
 
