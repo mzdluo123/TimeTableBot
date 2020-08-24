@@ -11,6 +11,6 @@ annotation class CmdMapping(val subCmd: String, val des: String ="暂无描述")
 annotation class SubCmd()
 
 
-@Target(AnnotationTarget.FIELD)
+@Target(AnnotationTarget.VALUE_PARAMETER)
 annotation class ParamDescription(val des: String)
 

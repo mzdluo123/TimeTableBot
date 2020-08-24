@@ -5,7 +5,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlin.coroutines.CoroutineContext
 
-abstract class BaseCmdController(val cmd:String,val alias:List<String>? = null) : CoroutineScope {
+abstract class BaseCmdController(val cmd: String, val alias: List<String>? = null, val description: String = "") :
+    CoroutineScope {
     private val job = Job()
     override val coroutineContext: CoroutineContext
         get() = BotsManager.coroutineContext + job

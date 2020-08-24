@@ -7,13 +7,12 @@ import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.isSubclassOf
 
 
-
 interface CmdNode {}
 
 class CmdEndPoint(val obj: BaseCmdController, val endPoint: KCallable<*>, val description: String, val depth: Int) :
     CmdNode
 
-class CmdTree(val cmd: String) : HashMap<String, CmdNode>(), CmdNode {
+class CmdTree(val cmd: String, val description: String="") : HashMap<String, CmdNode>(), CmdNode {
 
     fun findNode(cmd: List<String>): CmdNode? {
         var node: CmdNode = this[cmd[0]] ?: return null
@@ -38,7 +37,8 @@ class CmdTree(val cmd: String) : HashMap<String, CmdNode>(), CmdNode {
         if (this.containsKey(instance.cmd)) {
             return
         }
-        val tree = CmdTree(instance.cmd)
+
+        val tree = CmdTree(instance.cmd, instance.description)
         this[instance.cmd] = tree
         val alias = instance.alias
         alias?.forEach {
@@ -55,7 +55,7 @@ class CmdTree(val cmd: String) : HashMap<String, CmdNode>(), CmdNode {
 
             if (mapping != null) {
                 if (!tree.containsKey(mapping.subCmd)) {
-                    tree[mapping.subCmd] = CmdEndPoint(instance, kCallable, mapping.des, depth+1)
+                    tree[mapping.subCmd] = CmdEndPoint(instance, kCallable, mapping.des, depth + 1)
                 }
             }
 
@@ -63,7 +63,7 @@ class CmdTree(val cmd: String) : HashMap<String, CmdNode>(), CmdNode {
                 val subclass = kCallable.returnType.javaClass.kotlin
                 if (BaseCmdController::class.isSubclassOf(subclass)) {
                     val sub = subclass.createInstance() as BaseCmdController
-                    val newTree = CmdTree(sub.cmd)
+                    val newTree = CmdTree(sub.cmd, sub.description)
                     newTree.buildCmdTree(subclass, cmdProcessor, depth + 1)
                     tree[sub.cmd] = newTree
                 }
@@ -76,8 +76,9 @@ class CmdTree(val cmd: String) : HashMap<String, CmdNode>(), CmdNode {
     override fun toString(): String {
         return buildString {
             append("命令：$cmd\n")
+            append("描述：$description\n")
             append("子命令如下：\n")
-            for (i in keys){
+            for (i in keys) {
                 append("$i\n")
             }
         }

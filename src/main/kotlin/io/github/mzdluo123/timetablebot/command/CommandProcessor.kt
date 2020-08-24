@@ -3,6 +3,8 @@ package io.github.mzdluo123.timetablebot.command
 import kotlinx.coroutines.CompletableDeferred
 import net.mamoe.mirai.message.MessageEvent
 import kotlin.reflect.KClass
+import kotlin.reflect.KFunction
+import kotlin.reflect.full.callSuspend
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.isSupertypeOf
 import kotlin.reflect.full.starProjectedType
@@ -69,11 +71,10 @@ class CommandProcessor<S : MessageEvent>(
                     argList.add(null)
 
                 }
-                endPoint.endPoint.call(args = argList.toTypedArray())
-
+                (endPoint.endPoint as KFunction<*>).callSuspend(args = argList.toTypedArray())
             }
             is CmdTree -> {
-                source.reply("命令不存在 $endPoint")
+                source.reply("命令不存在\n$endPoint")
 
             }
         }
