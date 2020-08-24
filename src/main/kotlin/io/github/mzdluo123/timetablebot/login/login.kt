@@ -1,39 +1,76 @@
 package io.github.mzdluo123.timetablebot.login
 
 import com.alibaba.fastjson.JSON
+import com.alibaba.fastjson.JSONObject
+import com.google.gson.Gson
 import com.google.gson.JsonParser
+import com.google.gson.reflect.TypeToken
 import io.ktor.util.encodeBase64
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonArray
 import okhttp3.*
 import java.io.IOException
-val public_key_url = "http://222.31.49.139/jwglxt/xtgl/login_getPublicKey.html"
-val index_url = "http://222.31.49.139/jwglxt/xtgl/login_slogin.html"
-val test_url = "http://222.31.49.139/jwglxt/xtgl/index_cxBczjsygnmk.html"
-fun login(csrfToken:String){
-    /*
-    * csrftoken后发一个post过去
-    * */
+import java.math.BigInteger
+import java.security.KeyFactory
+import java.security.spec.RSAPublicKeySpec
+import java.util.*
+import java.util.regex.Pattern
+import javax.crypto.Cipher
 
-}
-fun main() {
-
-    val name=1907040334
-    val password="meimima123"
-    val request=Request.Builder()
-    val session=request.get().url(index_url).build()
+fun login() {
+    val passwd = ""
+    val name = ""
     val client=OkHttpClient()
-    client.newCall(session).enqueue(object :Callback{
-        override fun onFailure(call: Call?, e: IOException?) {
-            TODO("Not yet implemented")
-        }
-        override fun onResponse(call: Call?, response: Response?) {
-            if (response?.isSuccessful!!){
-                val htmlIndex=response.body().string()
-                val re="name=\"csrftoken\" value=\"(.*?)\"".toRegex()
-                val csrf_token=re.find(htmlIndex)?.value//获取到登录界面的token
-            }
-        }
-    })
-    val public_key_dict=request.get().url(public_key_url).build().body().toString()
+    //获取token
+
+    //获取token
+    val reqToken =
+        Request.Builder().get().url("http://222.31.49.139/jwglxt/xtgl/login_slogin.html").build()
+    val resToken = client.newCall(reqToken).execute()
+    val index_html = resToken.body().string()
+    val pattern = "name=\"csrftoken\" value=\"(.*?)\""
+    val pat = Pattern.compile(pattern)
+    val mat = pat.matcher(index_html)
+    mat.find()
+    val cstf_token = mat.group(1)
+
+    //获取public_key
+
+    //获取public_key
+    val reqKey = Request.Builder().get()
+        .url("http://222.31.49.139/jwglxt/xtgl/login_getPublicKey.html")
+        .build()
+    val resKey = client.newCall(reqKey).execute()
+    val key = resKey.body().string()
+    val jsonKey: JSONObject = JSONObject.parseObject(key)
+    val bigIntMod = BigInteger(1, Base64.getDecoder().decode(jsonKey.getString("modulus")))
+    val bigIntExp = BigInteger(1, Base64.getDecoder().decode(jsonKey.getString("exponent")))
+    val keySpec = RSAPublicKeySpec(bigIntMod, bigIntExp)
+    val rsa = KeyFactory.getInstance("RSA")
+    val publicKey = rsa.generatePublic(keySpec)
+
+    //加密密码
+
+    //加密密码
+    val cipher = Cipher.getInstance("RSA")
+    cipher.init(Cipher.ENCRYPT_MODE, publicKey)
+    val bytesPasswd = cipher.doFinal(passwd.toByteArray(charset("UTF-8")))
+    val bytesPasswdToBase64 = Base64.getEncoder().encode(bytesPasswd)
+    val mm = String(bytesPasswdToBase64)
+
+    //登录
+
+    //登录
+    val formBody: RequestBody = FormBody.Builder()
+        .add("csrftoken", cstf_token)
+        .add("yhm", name)
+        .add("mm", mm)
+        .build()
+    val reqLogin = Request.Builder().post(formBody)
+        .url("http://222.31.49.139/jwglxt/xtgl/login_slogin.html")
+        .build()
+    val resLogin = client.newCall(reqLogin).execute()
+    println(resLogin.body().string())
+    val session=resLogin
+
 }
