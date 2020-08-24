@@ -15,13 +15,15 @@ import java.security.spec.RSAPublicKeySpec
 import java.util.*
 import java.util.regex.Pattern
 import javax.crypto.Cipher
+import kotlin.collections.ArrayList
+
 class FaildLogin : Exception {
     constructor() {}
     constructor(message: String) : super(message)
 }
 suspend fun login(user:String,pwd:String) {
-
-    val reqToken = Request.Builder().get().url("${AppConfig.getInstance().baseUrl}/jwglxt/xtgl/login_slogin.html").build()
+    val url="${AppConfig.getInstance().baseUrl}/jwglxt/xtgl/login_slogin.html"
+    val reqToken = Request.Builder().get().url(url).build()
     val resToken = withContext(Dispatchers.IO){ Dependencies.okhttp.newCall(reqToken).execute()}
     val index_html = resToken.body().string()
     val pattern = "name=\"csrftoken\" value=\"(.*?)\""
@@ -73,16 +75,17 @@ suspend fun login(user:String,pwd:String) {
     val reqGrade = Request.Builder().post(formBody)
         .url("${AppConfig.getInstance().baseUrl}/jwglxt/xtgl/index_initMenu.html")
         .build()
-    val patterns=
-            ("<input type=\"text\" class=\"form-control\" name=\"yhm\" id=\"yhm\" value=\"\" placeholder=" +
-                    "\"用户名\" onblur=\"\" autocomplete=\"off\">")
-    //简单匹配是否被打回login页
-    try {
-        reqGrade.body().toString().find { it.equals(patterns) }
-        throw FaildLogin("登陆失败！")
-    }catch (e:NoSuchElementException){
-
+    val html= withContext(Dispatchers.IO){Dependencies.okhttp.newCall(reqGrade).execute()}.body().string()
+    val errors= listOf("用户名或密码不正确，请重新输入！","用户名不能为空！")
+    for (i in errors) {
+        val error =i.toRegex()
+        if (error.find(html)!=null) throw FaildLogin(i)
     }
+    //匹配是否被莫名其妙打回login页
+    val patterns=
+           "<input id=\"send_error\" type=\"hidden\" value=\"loginView.sendsms.error \"/>".toRegex()
+    if (patterns.find(html)!=null) throw FaildLogin("因未知原因导致登陆失败！")
+    val bool=patterns.find(html)
     resToken.close()
     resLogin.close()
     resKey.close()
