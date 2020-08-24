@@ -6,13 +6,13 @@ import net.mamoe.mirai.message.MessageEvent
 import net.mamoe.mirai.message.data.PlainText
 import kotlin.coroutines.CoroutineContext
 
-class CmdParam<S : MessageEvent>(val description: String = "暂无描述") :
+class CmdParam<S : MessageEvent>(val msg: String?,val description: String) :
     CoroutineScope {
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + SupervisorJob(BotsManager.jobs) + waitingJob
 
     val waitingJob = Job()
-    suspend inline fun <reified T> BaseCmdController.getValue(source: S, msg: String?): T {
+    suspend inline fun <reified T> BaseCmdController.getValue(source: S): T {
         var cmd:String? = msg
         if (cmd == null) {
             val requestSession = CompletableDeferred<String>(waitingJob)

@@ -5,4 +5,12 @@ package io.github.mzdluo123.timetablebot.command
 
 
 @Target(AnnotationTarget.FUNCTION)
-annotation class CmdMapping(val subCmd: String)
+annotation class CmdMapping(val subCmd: String, val des: String ="暂无描述")
+
+@Target(AnnotationTarget.FUNCTION)
+annotation class SubCmd()
+
+
+@Target(AnnotationTarget.FIELD)
+annotation class ParamDescription(val des: String)
+
