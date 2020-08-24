@@ -9,10 +9,8 @@ import io.github.mzdluo123.timetablebot.db.Class
 import io.github.mzdluo123.timetablebot.db.ClassCourse
 import io.github.mzdluo123.timetablebot.db.Course
 import io.github.mzdluo123.timetablebot.db.User
-import io.github.mzdluo123.timetablebot.schoolservice.login
 import io.github.mzdluo123.timetablebot.utils.logger
 import io.github.mzdluo123.timetablebot.utils.timeToStr
-
 import io.io.github.mzdluo123.timetablebot.BuildConfig
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.joinAll
@@ -59,7 +57,6 @@ suspend fun main(args: Array<String>) {
     AppConfig.loadConfig(configFile)
     mainLogger.info("config loaded")
 
-    login()
     mainLogger.info("connecting database")
 
     val dbConfig = HikariConfig().apply {

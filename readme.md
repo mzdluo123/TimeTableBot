@@ -13,6 +13,7 @@
 dbUrl: "jdbc:mysql://xxxxx"
 dbUser: "xxx"
 dbPwd: "xxx"
+baseUrl: "xxxxx"
 botAccounts:
   - id: xxx
     pwd: "xxxx"  # 账号可添加多个

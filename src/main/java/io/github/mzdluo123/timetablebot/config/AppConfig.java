@@ -16,12 +16,17 @@ public class AppConfig {
     public String dbUser;
     public String dbPwd;
     public String baseUrl;
+    public List<Long> admin;
 
     private AppConfig() {
     }
 
     public static AppConfig getInstance() {
         return INSTANCE;
+    }
+
+    public boolean isAdmin(Long user){
+        return admin.contains(user);
     }
 
     public static void loadConfig(File file) throws IOException {

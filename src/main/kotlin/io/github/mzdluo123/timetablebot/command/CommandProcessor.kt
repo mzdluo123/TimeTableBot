@@ -1,7 +1,11 @@
 package io.github.mzdluo123.timetablebot.command
 
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import net.mamoe.mirai.message.MessageEvent
+import net.mamoe.mirai.message.data.PlainText
+import java.io.File
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.callSuspend
@@ -75,6 +79,10 @@ class CommandProcessor<S : MessageEvent>(
             }
             is CmdTree -> {
                 source.reply("命令不存在\n$endPoint")
+            }
+            else -> {
+                val msg = withContext(Dispatchers.IO){ File("default.txt").readText()}
+                source.reply(PlainText(msg))
             }
         }
 
