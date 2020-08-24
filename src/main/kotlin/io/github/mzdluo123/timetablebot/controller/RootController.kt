@@ -7,7 +7,7 @@ import io.github.mzdluo123.timetablebot.command.CommandProcessor
 import kotlinx.coroutines.launch
 import net.mamoe.mirai.message.FriendMessageEvent
 
-class RootController : BaseCmdController("help") {
+class RootController : BaseCmdController("*") {
 
     @CmdMapping("help", des = "help")
     fun help(

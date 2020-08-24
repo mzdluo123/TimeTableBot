@@ -55,7 +55,7 @@ class CmdTree(val cmd: String) : HashMap<String, CmdNode>(), CmdNode {
 
             if (mapping != null) {
                 if (!tree.containsKey(mapping.subCmd)) {
-                    tree[mapping.subCmd] = CmdEndPoint(instance, kCallable, mapping.des, depth)
+                    tree[mapping.subCmd] = CmdEndPoint(instance, kCallable, mapping.des, depth+1)
                 }
             }
 

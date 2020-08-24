@@ -56,9 +56,10 @@ class CommandProcessor<S : MessageEvent>(
                     }
                     if (CmdParam::class.starProjectedType.isSupertypeOf(type)) {
                         val desc = it.findAnnotation<ParamDescription>()
-                        if (argIndex >= params.size) {
+                        if (argIndex >= newParams.size) {
                             argList.add(CmdParam<S>(null, description = desc?.des ?: "暂无描述"))
                             argIndex++
+                            return@forEach
                         }
                         argList.add(CmdParam<S>(newParams[argIndex], description = desc?.des ?: "暂无描述"))
                         argIndex++

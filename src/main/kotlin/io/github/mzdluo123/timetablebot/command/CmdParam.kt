@@ -9,7 +9,7 @@ import kotlin.coroutines.CoroutineContext
 class CmdParam<S : MessageEvent>(val msg: String?,val description: String) :
     CoroutineScope {
     override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main + SupervisorJob(BotsManager.jobs) + waitingJob
+        get() = Dispatchers.Default + SupervisorJob(BotsManager.jobs) + waitingJob
 
     val waitingJob = Job()
     suspend inline fun <reified T> getValue(source: S,cmdProcessor: CommandProcessor<*>): T {
