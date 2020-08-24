@@ -15,7 +15,10 @@ import java.security.spec.RSAPublicKeySpec
 import java.util.*
 import java.util.regex.Pattern
 import javax.crypto.Cipher
-
+class FaildLogin : Exception {
+    constructor() {}
+    constructor(message: String) : super(message)
+}
 suspend fun login(user:String,pwd:String) {
 
     val reqToken = Request.Builder().get().url("${AppConfig.getInstance().baseUrl}/jwglxt/xtgl/login_slogin.html").build()
@@ -66,19 +69,23 @@ suspend fun login(user:String,pwd:String) {
     // todo 登录成功检查，未成功抛出异常
 
 //    //获取成绩
-//    //获取个人信息主页，供测试用
-//    val reqGrade = Request.Builder().post(formBody)
-//        .url("${AppConfig.getInstance().baseUrl}/jwglxt/xtgl/index_initMenu.html")
-//        .build()
-//    val resGrade = Dependencies.okhttp.newCall(reqGrade).execute()
-//
-//    println(resGrade.body().string())
-//
-//    //关闭
+//    //供测试是否登录成功用
+    val reqGrade = Request.Builder().post(formBody)
+        .url("${AppConfig.getInstance().baseUrl}/jwglxt/xtgl/index_initMenu.html")
+        .build()
+    val patterns=
+            ("<input type=\"text\" class=\"form-control\" name=\"yhm\" id=\"yhm\" value=\"\" placeholder=" +
+                    "\"用户名\" onblur=\"\" autocomplete=\"off\">")
+    //简单匹配是否被打回login页
+    try {
+        reqGrade.body().toString().find { it.equals(patterns) }
+        throw FaildLogin("登陆失败！")
+    }catch (e:NoSuchElementException){
+
+    }
     resToken.close()
     resLogin.close()
     resKey.close()
- //   resGrade.close()
 
 
 }
