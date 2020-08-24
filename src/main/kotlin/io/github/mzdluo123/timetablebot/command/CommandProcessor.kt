@@ -4,21 +4,25 @@ import kotlinx.coroutines.CompletableDeferred
 import net.mamoe.mirai.message.MessageEvent
 import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.full.isSupertypeOf
+import kotlin.reflect.full.starProjectedType
 
 class CommandProcessor<S : MessageEvent>(
-    val rootController: KClass<BaseCmdController>,
+    val controllers: List<KClass<*>>,
     private val prefix: String = "",
     private val delimiter: String = " "
 ) {
     private val sessionMap = hashMapOf<Long, CompletableDeferred<String>>()
-    private val cmdTree = CmdTree()
+    private val cmdTree = CmdTree("*")
 
     init {
-        cmdTree.buildCmdTree(rootController, this)
+        controllers.forEach {
+            cmdTree.buildCmdTree(it, this)
+        }
     }
 
 
-    fun process(source: S) {
+    suspend fun process(source: S) {
         val msg = source.message.contentToString()
         val sender = source.sender.id
         if (sender in sessionMap) {
@@ -30,23 +34,47 @@ class CommandProcessor<S : MessageEvent>(
         }
 
         val params = msg.split(delimiter)
-        val endPoint = cmdTree.findEndPoint(params)
-        if (endPoint != null) {
-            val argList = mutableListOf<Any?>()
-            val newParams = params.subList(endPoint.depth, endPoint.depth + endPoint.endPoint.parameters.size)
-            var argIndex = 0
-            endPoint.endPoint.parameters.forEach {
-                when (it.type) {
-                    is MessageEvent -> argList.add(source)
-                    is CmdParam<*> -> {
+        when (val endPoint = cmdTree.findNode(params)) {
+            is CmdEndPoint -> {
+                val argList = mutableListOf<Any?>()
+                val newParams = params.subList(endPoint.depth, params.size)
+                var argIndex = 0
+                endPoint.endPoint.parameters.forEach {
+                    val type = it.type
+                    if (BaseCmdController::class.starProjectedType.isSupertypeOf(type)) {
+                        argList.add(endPoint.obj)
+                        return@forEach
+                    }
+
+                    if (MessageEvent::class.starProjectedType.isSupertypeOf(type)) {
+                        argList.add(source)
+                        return@forEach
+                    }
+                    if (CommandProcessor::class.starProjectedType.isSupertypeOf(type)) {
+                        argList.add(this)
+                        return@forEach
+                    }
+                    if (CmdParam::class.starProjectedType.isSupertypeOf(type)) {
                         val desc = it.findAnnotation<ParamDescription>()
+                        if (argIndex >= params.size) {
+                            argList.add(CmdParam<S>(null, description = desc?.des ?: "暂无描述"))
+                            argIndex++
+                        }
                         argList.add(CmdParam<S>(newParams[argIndex], description = desc?.des ?: "暂无描述"))
                         argIndex++
+                        return@forEach
                     }
-                    else -> argList.add(null)
+
+                    argList.add(null)
+
                 }
+                endPoint.endPoint.call(args = argList.toTypedArray())
+
             }
-            endPoint.endPoint.call(argList)
+            is CmdTree -> {
+                source.reply("命令不存在 $endPoint")
+
+            }
         }
 
 

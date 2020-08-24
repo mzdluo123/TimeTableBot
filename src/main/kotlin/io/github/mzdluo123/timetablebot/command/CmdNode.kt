@@ -6,41 +6,41 @@ import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.isSubclassOf
 
+
+
 interface CmdNode {}
 
 class CmdEndPoint(val obj: BaseCmdController, val endPoint: KCallable<*>, val description: String, val depth: Int) :
     CmdNode
 
-class CmdChildNode(val cmd: String, val next: CmdTree) : CmdNode
+class CmdTree(val cmd: String) : HashMap<String, CmdNode>(), CmdNode {
 
-class CmdTree : HashMap<String, CmdNode>(), CmdNode {
-
-    fun findEndPoint(cmd: List<String>): CmdEndPoint? {
+    fun findNode(cmd: List<String>): CmdNode? {
         var node: CmdNode = this[cmd[0]] ?: return null
         for (i in 1 until cmd.size) {
-            if (node is CmdChildNode) {
-                node = node.next[cmd[i]] ?: return null
+            if (node is CmdTree) {
+                node = node[cmd[i]] ?: node["*"] ?: return node
                 continue
             }
             if (node is CmdEndPoint) {
                 return node
             }
         }
-        return null
+        return node
     }
 
     fun buildCmdTree(cls: KClass<*>, cmdProcessor: CommandProcessor<*>, depth: Int = 1) {
         if (!cls.isSubclassOf(BaseCmdController::class)) {
             return
         }
-        val tree = CmdTree()
         val instance = cls.createInstance() as BaseCmdController
-        instance.cmdProcessor = cmdProcessor
-        if (this.containsKey(instance.cmd())) {
+
+        if (this.containsKey(instance.cmd)) {
             return
         }
-        this[instance.cmd()] = tree
-        val alias = instance.alias()
+        val tree = CmdTree(instance.cmd)
+        this[instance.cmd] = tree
+        val alias = instance.alias
         alias?.forEach {
             if (this.containsKey(it)) {
                 throw IllegalArgumentException("alias 冲突: $it")
@@ -63,13 +63,23 @@ class CmdTree : HashMap<String, CmdNode>(), CmdNode {
                 val subclass = kCallable.returnType.javaClass.kotlin
                 if (BaseCmdController::class.isSubclassOf(subclass)) {
                     val sub = subclass.createInstance() as BaseCmdController
-                    val newTree = CmdTree()
+                    val newTree = CmdTree(sub.cmd)
                     newTree.buildCmdTree(subclass, cmdProcessor, depth + 1)
-                    tree[sub.cmd()] = CmdChildNode(sub.cmd(), newTree)
+                    tree[sub.cmd] = newTree
                 }
 
             }
         }
 
+    }
+
+    override fun toString(): String {
+        return buildString {
+            append("命令：$cmd\n")
+            append("子命令如下：\n")
+            for (i in keys){
+                append("$i\n")
+            }
+        }
     }
 }
