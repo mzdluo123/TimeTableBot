@@ -6,18 +6,18 @@ import net.mamoe.mirai.message.MessageEvent
 import net.mamoe.mirai.message.data.PlainText
 import kotlin.coroutines.CoroutineContext
 
-class CmdParam<S : MessageEvent>(val description: String = "暂无描述") :
+class CmdParam<S : MessageEvent>(val msg: String?,val description: String) :
     CoroutineScope {
     override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main + SupervisorJob(BotsManager.jobs) + waitingJob
+        get() = Dispatchers.Default + SupervisorJob(BotsManager.jobs) + waitingJob
 
     val waitingJob = Job()
-    suspend inline fun <reified T> BaseCmdController.getValue(source: S, msg: String?): T {
+    suspend inline fun <reified T> getValue(source: S,cmdProcessor: CommandProcessor<*>): T {
         var cmd:String? = msg
         if (cmd == null) {
             val requestSession = CompletableDeferred<String>(waitingJob)
-            this.cmdProcessor.addUnCompleteSession(source.sender.id,requestSession)
-            timeout(this.cmdProcessor, source.sender.id)
+            cmdProcessor.addUnCompleteSession(source.sender.id,requestSession)
+            timeout(cmdProcessor, source.sender.id)
             source.reply(
                 PlainText(
                     """缺少参数： $description
