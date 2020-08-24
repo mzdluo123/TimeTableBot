@@ -1,27 +1,32 @@
 package io.github.mzdluo123.timetablebot.login
 
-import com.alibaba.fastjson.JSON
 import com.alibaba.fastjson.JSONObject
 import com.google.gson.Gson
-import com.google.gson.JsonParser
-import com.google.gson.reflect.TypeToken
-import io.ktor.util.encodeBase64
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.jsonArray
 import okhttp3.*
-import java.io.IOException
 import java.math.BigInteger
 import java.security.KeyFactory
 import java.security.spec.RSAPublicKeySpec
 import java.util.*
 import java.util.regex.Pattern
 import javax.crypto.Cipher
-
-fun login() {
+fun login(): String {
     val passwd = ""
     val name = ""
-    val client=OkHttpClient()
-    //获取token
+    val cookieStore =
+        HashMap<String, List<Cookie>>()
+    //自动管理cookies
+    val client = OkHttpClient.Builder().cookieJar(object : CookieJar {
+        override fun saveFromResponse(httpUrl: HttpUrl, list: List<Cookie>) {
+            if (httpUrl.host() == "222.31.49.139") {
+                cookieStore.put(httpUrl.host(), list)
+            }
+        }
+
+        override fun loadForRequest(httpUrl: HttpUrl): List<Cookie> {
+            val cookies: List<Cookie>? = cookieStore.get(httpUrl.host())
+            return cookies ?: ArrayList()
+        }
+    }).build()
 
     //获取token
     val reqToken =
@@ -66,11 +71,26 @@ fun login() {
         .add("yhm", name)
         .add("mm", mm)
         .build()
-    val reqLogin = Request.Builder().post(formBody)
+    val cookie=cookieStore["222.31.49.139"].toString()
+    val reqLogin = Request.Builder().post(formBody).addHeader("cookie", cookie)
         .url("http://222.31.49.139/jwglxt/xtgl/login_slogin.html")
         .build()
     val resLogin = client.newCall(reqLogin).execute()
-    println(resLogin.body().string())
-    val session=resLogin
+    //获取成绩
+
+    //获取个人信息主页，供测试用
+    val reqGrade = Request.Builder().post(formBody)
+        .url("http://222.31.49.139/jwglxt/xtgl/index_initMenu.html")
+        .build()
+    val resGrade = client.newCall(reqGrade).execute()
+    println(cookieStore)
+    println(resGrade.body().string())
+
+    //关闭
+    resToken.close()
+    resLogin.close()
+    resKey.close()
+    resGrade.close()
+    return cookie
 
 }
