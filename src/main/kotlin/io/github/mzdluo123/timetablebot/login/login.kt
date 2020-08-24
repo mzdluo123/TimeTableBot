@@ -1,7 +1,7 @@
 package io.github.mzdluo123.timetablebot.login
 
-import com.alibaba.fastjson.JSONObject
-import com.google.gson.Gson
+
+import com.google.gson.JsonParser
 import okhttp3.*
 import java.math.BigInteger
 import java.security.KeyFactory
@@ -9,6 +9,7 @@ import java.security.spec.RSAPublicKeySpec
 import java.util.*
 import java.util.regex.Pattern
 import javax.crypto.Cipher
+
 fun login(): String {
     val passwd = ""
     val name = ""
@@ -47,9 +48,9 @@ fun login(): String {
         .build()
     val resKey = client.newCall(reqKey).execute()
     val key = resKey.body().string()
-    val jsonKey: JSONObject = JSONObject.parseObject(key)
-    val bigIntMod = BigInteger(1, Base64.getDecoder().decode(jsonKey.getString("modulus")))
-    val bigIntExp = BigInteger(1, Base64.getDecoder().decode(jsonKey.getString("exponent")))
+    val jsonKey = JsonParser().parse(key)
+    val bigIntMod = BigInteger(1, Base64.getDecoder().decode(jsonKey.asJsonObject["modulus"].asString))
+    val bigIntExp = BigInteger(1, Base64.getDecoder().decode(jsonKey.asJsonObject["exponent"].asString))
     val keySpec = RSAPublicKeySpec(bigIntMod, bigIntExp)
     val rsa = KeyFactory.getInstance("RSA")
     val publicKey = rsa.generatePublic(keySpec)
@@ -71,7 +72,7 @@ fun login(): String {
         .add("yhm", name)
         .add("mm", mm)
         .build()
-    val cookie=cookieStore["222.31.49.139"].toString()
+    val cookie = cookieStore["222.31.49.139"].toString()
     val reqLogin = Request.Builder().post(formBody).addHeader("cookie", cookie)
         .url("http://222.31.49.139/jwglxt/xtgl/login_slogin.html")
         .build()
