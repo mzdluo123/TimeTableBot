@@ -2,7 +2,10 @@ package io.github.mzdluo123.timetablebot.login
 
 
 import com.google.gson.JsonParser
-import okhttp3.*
+import io.github.mzdluo123.timetablebot.utils.Dependencies
+import okhttp3.FormBody
+import okhttp3.Request
+import okhttp3.RequestBody
 import java.math.BigInteger
 import java.security.KeyFactory
 import java.security.spec.RSAPublicKeySpec
@@ -13,26 +16,12 @@ import javax.crypto.Cipher
 fun login(): String {
     val passwd = ""
     val name = ""
-    val cookieStore =
-        HashMap<String, List<Cookie>>()
-    //自动管理cookies
-    val client = OkHttpClient.Builder().cookieJar(object : CookieJar {
-        override fun saveFromResponse(httpUrl: HttpUrl, list: List<Cookie>) {
-            if (httpUrl.host() == "222.31.49.139") {
-                cookieStore.put(httpUrl.host(), list)
-            }
-        }
 
-        override fun loadForRequest(httpUrl: HttpUrl): List<Cookie> {
-            val cookies: List<Cookie>? = cookieStore.get(httpUrl.host())
-            return cookies ?: ArrayList()
-        }
-    }).build()
+    //自动管理cookies
 
     //获取token
-    val reqToken =
-        Request.Builder().get().url("http://222.31.49.139/jwglxt/xtgl/login_slogin.html").build()
-    val resToken = client.newCall(reqToken).execute()
+    val reqToken = Request.Builder().get().url("http://222.31.49.139/jwglxt/xtgl/login_slogin.html").build()
+    val resToken = Dependencies.okhttp.newCall(reqToken).execute()
     val index_html = resToken.body().string()
     val pattern = "name=\"csrftoken\" value=\"(.*?)\""
     val pat = Pattern.compile(pattern)
@@ -46,7 +35,7 @@ fun login(): String {
     val reqKey = Request.Builder().get()
         .url("http://222.31.49.139/jwglxt/xtgl/login_getPublicKey.html")
         .build()
-    val resKey = client.newCall(reqKey).execute()
+    val resKey = Dependencies.okhttp.newCall(reqKey).execute()
     val key = resKey.body().string()
     val jsonKey = JsonParser().parse(key)
     val bigIntMod = BigInteger(1, Base64.getDecoder().decode(jsonKey.asJsonObject["modulus"].asString))
@@ -72,19 +61,19 @@ fun login(): String {
         .add("yhm", name)
         .add("mm", mm)
         .build()
-    val cookie = cookieStore["222.31.49.139"].toString()
-    val reqLogin = Request.Builder().post(formBody).addHeader("cookie", cookie)
+
+    val reqLogin = Request.Builder().post(formBody)
         .url("http://222.31.49.139/jwglxt/xtgl/login_slogin.html")
         .build()
-    val resLogin = client.newCall(reqLogin).execute()
+    val resLogin = Dependencies.okhttp.newCall(reqLogin).execute()
     //获取成绩
 
     //获取个人信息主页，供测试用
     val reqGrade = Request.Builder().post(formBody)
         .url("http://222.31.49.139/jwglxt/xtgl/index_initMenu.html")
         .build()
-    val resGrade = client.newCall(reqGrade).execute()
-    println(cookieStore)
+    val resGrade = Dependencies.okhttp.newCall(reqGrade).execute()
+
     println(resGrade.body().string())
 
     //关闭
@@ -92,6 +81,6 @@ fun login(): String {
     resLogin.close()
     resKey.close()
     resGrade.close()
-    return cookie
 
+    return ""
 }

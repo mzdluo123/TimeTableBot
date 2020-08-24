@@ -11,7 +11,7 @@ import io.github.mzdluo123.timetablebot.db.Course
 import io.github.mzdluo123.timetablebot.db.User
 import io.github.mzdluo123.timetablebot.utils.logger
 import io.github.mzdluo123.timetablebot.utils.timeToStr
-import io.github.mzdluo123.timetablebot.utils.yaml
+
 import io.io.github.mzdluo123.timetablebot.BuildConfig
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.joinAll
@@ -22,9 +22,6 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import java.io.File
 
 private val mainLogger = logger()
-
-lateinit var config: AppConfig
-    private set
 
 internal val appJob = Job()
 
@@ -58,20 +55,16 @@ suspend fun main(args: Array<String>) {
         mainLogger.fatal("${configFile.name} not exists!")
         return
     }
-    configFile.inputStream().use {
-        config = yaml.load(it)
-    }
+    AppConfig.loadConfig(configFile)
     mainLogger.info("config loaded")
-
-
 
     mainLogger.info("connecting database")
 
     val dbConfig = HikariConfig().apply {
-        jdbcUrl = config.dbUrl
+        jdbcUrl = AppConfig.getInstance().dbUrl
         driverClassName = "com.mysql.cj.jdbc.Driver"
-        username = config.dbUser
-        password = config.dbPwd
+        username = AppConfig.getInstance().dbUser
+        password = AppConfig.getInstance().dbPwd
         maximumPoolSize = 5
     }
     val dataSource = HikariDataSource(dbConfig)
@@ -84,7 +77,7 @@ suspend fun main(args: Array<String>) {
         BotsManager.registerEvents(it)
     }
     mainLogger.info("event listener registered")
-    BotsManager.loginBots(config.botAccounts)
+    BotsManager.loginBots(AppConfig.getInstance().botAccounts)
     joinAll(BotsManager.jobs)
 }
 
