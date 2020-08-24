@@ -20,11 +20,11 @@ object Dependencies {
     @JvmStatic
     val okhttp = OkHttpClient.Builder().cookieJar(object : CookieJar {
         override fun saveFromResponse(httpUrl: HttpUrl, list: List<Cookie>) {
-            cookieStore.put(httpUrl.host(), list)
+            cookieStore[httpUrl.host()] = list
         }
 
         override fun loadForRequest(httpUrl: HttpUrl): List<Cookie> {
-            val cookies: List<Cookie>? = cookieStore.get(httpUrl.host())
+            val cookies: List<Cookie>? = cookieStore[httpUrl.host()]
             return cookies ?: ArrayList()
         }
     }).build()

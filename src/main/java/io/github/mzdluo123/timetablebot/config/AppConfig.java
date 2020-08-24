@@ -15,6 +15,7 @@ public class AppConfig {
     public String dbUrl;
     public String dbUser;
     public String dbPwd;
+    public String baseUrl;
 
     private AppConfig() {
     }

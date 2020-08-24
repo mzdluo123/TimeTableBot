@@ -5,7 +5,7 @@ import org.jetbrains.exposed.sql.jodatime.datetime
 
 object User : IntIdTable() {
     val account = long("account").uniqueIndex()
-    val studentId = integer("student_id").uniqueIndex()
+    val studentId = integer("student_id").uniqueIndex()  //学号
     val `class` = reference("class", Class)
 
     val lastActiveDate = datetime("last_active").nullable()
@@ -21,11 +21,17 @@ object Course : IntIdTable() {
     val teacher = varchar("thacher",10)
     val courseId = varchar("course_id",10)
     val classRoom = varchar("class_room",10)
+
     val startWeek = integer("start_week")
     val endWeek = integer("end_week")
+    val dayOfWeek = short("day_of_week").index()
 
-    val startTime = datetime("start_time").index()
-    val endTime = datetime("end_time").index()
+    val start = short("start_time").index()
+    val length = short("length").index()
+
+    val points = float("points") // 绩点
+    val score = float("score")  //学分
+
 }
 
 object ClassCourse : IntIdTable() {
