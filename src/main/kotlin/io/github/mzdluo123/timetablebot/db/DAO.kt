@@ -1,13 +1,15 @@
 package io.github.mzdluo123.timetablebot.db
 
+import com.mysql.cj.xdevapi.Column
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.jodatime.datetime
+import org.jetbrains.exposed.sql.stringParam
 
 object User : IntIdTable() {
     val account = long("account").uniqueIndex()
-    val studentId = integer("student_id").uniqueIndex()  //学号
+    val studentId = integer("student_id").uniqueIndex()  // 学号
     val `class` = reference("class", Class)
-
+    val password= varchar("password",11)// 密码
     val lastActiveDate = datetime("last_active").nullable()
     val joinTime = datetime("join_time").nullable()
 }
