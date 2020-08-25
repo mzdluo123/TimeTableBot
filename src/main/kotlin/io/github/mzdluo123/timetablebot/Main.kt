@@ -5,10 +5,10 @@ import com.zaxxer.hikari.HikariDataSource
 import io.github.mzdluo123.timetablebot.bots.BotsManager
 import io.github.mzdluo123.timetablebot.bots.listeners.BaseListeners
 import io.github.mzdluo123.timetablebot.config.AppConfig
-import io.github.mzdluo123.timetablebot.db.Class
-import io.github.mzdluo123.timetablebot.db.ClassCourse
-import io.github.mzdluo123.timetablebot.db.Course
-import io.github.mzdluo123.timetablebot.db.User
+import io.github.mzdluo123.timetablebot.data.Class
+import io.github.mzdluo123.timetablebot.data.ClassCourse
+import io.github.mzdluo123.timetablebot.data.Course
+import io.github.mzdluo123.timetablebot.data.User
 import io.github.mzdluo123.timetablebot.utils.logger
 import io.github.mzdluo123.timetablebot.utils.timeToStr
 import io.io.github.mzdluo123.timetablebot.BuildConfig
