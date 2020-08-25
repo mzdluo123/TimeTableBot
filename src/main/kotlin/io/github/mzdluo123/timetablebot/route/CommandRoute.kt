@@ -2,13 +2,12 @@ package io.github.mzdluo123.timetablebot.route
 
 import io.github.mzdluo123.timetablebot.appJob
 import io.github.mzdluo123.timetablebot.utils.logger
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.*
 import net.mamoe.mirai.message.MessageEvent
 import net.mamoe.mirai.message.data.Message
 import kotlin.coroutines.CoroutineContext
+
+val unCompleteValue = hashMapOf<Long, CompletableDeferred<String>>()
 
 class CommandRoute<T : MessageEvent>(val args: List<String>?, val event: T) : CoroutineScope {
     private var called = false
@@ -44,7 +43,7 @@ class CommandRoute<T : MessageEvent>(val args: List<String>?, val event: T) : Co
         }
     }
 
-    suspend fun exception(receiver: suspend (Throwable) -> Message?) {
+    fun exception(receiver: suspend (Throwable) -> Message?) {
         errHandler = receiver
     }
 
@@ -61,6 +60,12 @@ inline fun <reified T : MessageEvent> T.route(
     receiver: CommandRoute<T>.() -> Unit
 ): Boolean {
     val msg = this.message.contentToString()
+
+    if (unCompleteValue.containsKey(this.sender.id) ){
+        unCompleteValue[this.sender.id]?.complete(msg)
+        return true
+    }
+
     if (!msg.startsWith(prefix)) {
         return false
     }
@@ -68,4 +73,3 @@ inline fun <reified T : MessageEvent> T.route(
     receiver(CommandRoute(args, this))
     return true
 }
-

@@ -1,5 +1,6 @@
 package io.github.mzdluo123.timetablebot.bots.listeners
 
+import io.github.mzdluo123.timetablebot.route.CommandArg
 import io.github.mzdluo123.timetablebot.route.CommandRoute
 import io.github.mzdluo123.timetablebot.route.route
 import net.mamoe.mirai.event.EventHandler
@@ -13,7 +14,7 @@ class BotMsgListener : BaseListeners() {
 
     @EventHandler
     suspend fun FriendMessageEvent.onEvent() {
-        route(prefix = "!",delimiter = " ") {
+        route(prefix = "!", delimiter = " ") {
             case("dsd") {
 
             }
@@ -22,7 +23,7 @@ class BotMsgListener : BaseListeners() {
             }
             nextRoute("lalal", ::next)
             default {
-
+                val arg1: String by CommandArg(1, "描述", it)
             }
 
             exception { throwable ->
@@ -44,19 +45,20 @@ class BotMsgListener : BaseListeners() {
     }
 
     @EventHandler
-    suspend fun GroupMessageEvent.onEvent(){
+    suspend fun GroupMessageEvent.onEvent() {
         route {
-            case(""){
+            case("") {
 
             }
 
         }
 
     }
+
     @EventHandler
-    suspend fun TempMessageEvent.onEvent(){
+    suspend fun TempMessageEvent.onEvent() {
         route {
-            case(""){
+            case("") {
 
 
             }
