@@ -5,10 +5,10 @@ import com.zaxxer.hikari.HikariDataSource
 import io.github.mzdluo123.timetablebot.bots.BotsManager
 import io.github.mzdluo123.timetablebot.bots.listeners.BaseListeners
 import io.github.mzdluo123.timetablebot.config.AppConfig
-import io.github.mzdluo123.timetablebot.data.Class
-import io.github.mzdluo123.timetablebot.data.ClassCourse
 import io.github.mzdluo123.timetablebot.data.Course
+import io.github.mzdluo123.timetablebot.data.CourseTimeTable
 import io.github.mzdluo123.timetablebot.data.User
+import io.github.mzdluo123.timetablebot.data.UserCourse
 import io.github.mzdluo123.timetablebot.utils.logger
 import io.github.mzdluo123.timetablebot.utils.timeToStr
 import io.io.github.mzdluo123.timetablebot.BuildConfig
@@ -69,7 +69,7 @@ suspend fun main(args: Array<String>) {
     val dataSource = HikariDataSource(dbConfig)
     Database.connect(dataSource)
     transaction {
-        SchemaUtils.create(User, Class, ClassCourse, Course)
+        SchemaUtils.create(User, CourseTimeTable, UserCourse, Course)
     }
     mainLogger.info("database connected")
     BaseListeners.listeners.forEach {

@@ -16,6 +16,7 @@ public class AppConfig {
     public String dbUser;
     public String dbPwd;
     public String baseUrl;
+    public String authUrl;
     public List<Long> admin;
 
     private AppConfig() {

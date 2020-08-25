@@ -5,10 +5,12 @@ import org.jetbrains.exposed.sql.jodatime.datetime
 
 object User : IntIdTable() {
     val account = long("account").uniqueIndex()
+    val name = varchar("name", 5)
     val studentId = integer("student_id").uniqueIndex()  // 学号
     val lastActiveDate = datetime("last_active").nullable()
     val joinTime = datetime("join_time").nullable()
 
+    val enable = bool("enable")
 }
 
 
