@@ -8,6 +8,7 @@ import okhttp3.OkHttpClient
 import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.constructor.Constructor
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 object Dependencies {
     @JvmStatic
@@ -18,7 +19,7 @@ object Dependencies {
         HashMap<String, List<Cookie>>()
 
     @JvmStatic
-    val okhttp = OkHttpClient.Builder().cookieJar(object : CookieJar {
+    val okhttp = OkHttpClient.Builder().readTimeout(20, TimeUnit.SECONDS).cookieJar(object : CookieJar {
         override fun saveFromResponse(httpUrl: HttpUrl, list: List<Cookie>) {
             cookieStore[httpUrl.host()] = list
         }
