@@ -1,12 +1,17 @@
 package io.github.mzdluo123.timetablebot.utils
 
 import com.google.gson.Gson
+import com.zaxxer.hikari.HikariConfig
+import com.zaxxer.hikari.HikariDataSource
 import io.github.mzdluo123.timetablebot.config.AppConfig
 import okhttp3.Cookie
 import okhttp3.CookieJar
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.jooq.DSLContext
+import org.jooq.SQLDialect
+import org.jooq.impl.DSL
 import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.constructor.Constructor
 import java.util.concurrent.TimeUnit
@@ -49,8 +54,21 @@ object Dependencies {
             level = HttpLoggingInterceptor.Level.BODY
         }).build()
 
+    val dataSource by lazy {
+         val dbConfig = HikariConfig().apply {
+            jdbcUrl = AppConfig.getInstance().dbUrl
+            driverClassName = "com.mysql.cj.jdbc.Driver"
+            username = AppConfig.getInstance().dbUser
+            password = AppConfig.getInstance().dbPwd
+            maximumPoolSize = 5
+        }
+        HikariDataSource(dbConfig)
+    }
+
 
     fun resetCookie() {
         cookies.clear()
     }
 }
+
+fun dbCtx(): DSLContext = DSL.using(Dependencies.dataSource,SQLDialect.MYSQL)

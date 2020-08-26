@@ -1,3 +1,20 @@
+import groovy.xml.MarkupBuilder
+import org.yaml.snakeyaml.Yaml
+
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'org.jooq:jooq-codegen:3.13.4'
+        classpath 'mysql:mysql-connector-java:8.0.19'
+        classpath 'org.yaml:snakeyaml:1.26'
+    }
+}
+
+
 plugins {
     id 'java'
     id 'application'
@@ -5,8 +22,19 @@ plugins {
     id "de.fuerstenau.buildconfig" version "1.1.8"
 }
 
+sourceSets{
+    main{
+        java{
+            srcDir "src/main/java"
+            srcDir "build/gen/jooq/src/java/main"
+        }
+    }
+}
+
+
 group 'io.io.github.mzdluo123.timetablebot'
 version '1.0-SNAPSHOT'
+
 def versionCode  = 1
 
 mainClassName = 'io.github.mzdluo123.timetablebot.MainKt'
@@ -18,6 +46,8 @@ repositories {
 //        url "https://libraries.minecraft.net"
 //    }
 }
+
+
 buildConfig{
     appName = project.name
     version = project.version.toString()
@@ -58,10 +88,13 @@ dependencies {
 //    compile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.30'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.8.0'
 
-    compile "org.jetbrains.exposed:exposed-core:0.24.1"
-    compile"org.jetbrains.exposed:exposed-dao:0.24.1"
-    compile"org.jetbrains.exposed:exposed-jdbc:0.24.1"
-    compile"org.jetbrains.exposed:exposed-jodatime:0.24.1"
+//    compile "org.jetbrains.exposed:exposed-core:0.24.1"
+//    compile"org.jetbrains.exposed:exposed-dao:0.24.1"
+//    compile"org.jetbrains.exposed:exposed-jdbc:0.24.1"
+//    compile"org.jetbrains.exposed:exposed-jodatime:0.24.1"
+
+    compile 'org.jooq:jooq:3.13.4'
+
     compile 'com.squareup.okhttp3:okhttp:4.8.0'
     implementation "com.google.code.gson:gson:2.8.5"
     implementation "mysql:mysql-connector-java:8.0.19"
@@ -80,9 +113,42 @@ dependencies {
 //// https://mvnrepository.com/artifact/commons-codec/commons-codec
 //    compile group: 'commons-codec', name: 'commons-codec', version: '1.14'
 
-
-
 //    compile 'com.mojang:brigadier:1.0.17'
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+task generateJooq{
+    def yml = new Yaml()
+    def data = yml.load(new FileReader( new File("config.yml")))
+    def writer = new StringWriter()
+    def xml = new MarkupBuilder(writer)
+            .configuration('xmlns': 'http://www.jooq.org/xsd/jooq-codegen-3.13.0.xsd') {
+                jdbc() {
+                    url(data["dbUrl"])
+                    user(data["dbUser"])
+                    password(data["dbPwd"])
+                }
+                generator() {
+                    database() {
+
+                    }
+                    // Watch out for this caveat when using MarkupBuilder with "reserved names"
+                    // - https://github.com/jOOQ/jOOQ/issues/4797
+                    // - http://stackoverflow.com/a/11389034/521799
+                    // - https://groups.google.com/forum/#!topic/jooq-user/wi4S9rRxk4A
+                    generate([:]) {
+                        pojos true
+                        daos true
+                    }
+                    target() {
+                        packageName('io.github.mzdluo123.timetablebot.generated.jooq')
+                        directory('build/gen/jooq/src/java/main')
+                    }
+                }
+            }
+
+// Run the code generator
+// ----------------------
+    org.jooq.codegen.GenerationTool.generate(writer.toString())
 }
