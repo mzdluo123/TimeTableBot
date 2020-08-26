@@ -9,6 +9,13 @@ import okhttp3.FormBody
 import okhttp3.Request
 import org.jsoup.Jsoup
 
+/**
+ * 不要尝试更改这里的任何一个代码，尽管它看起来很奇怪
+ * 反正就是这样，他能跑
+ * 如果你修改了任何一个地方他可能就不能跑了
+ *
+ * */
+
 data class PK(val modulus: String, val exponent: String)
 
 private suspend fun getPublicKey(): PK {
@@ -17,11 +24,6 @@ private suspend fun getPublicKey(): PK {
         .url("${AppConfig.getInstance().authUrl}/cas/v2/getPubKey")
         .build()
     val resKey = withContext(Dispatchers.IO) { Dependencies.okhttp.newCall(reqKey).execute() }
-    //    val bigIntMod = BigInteger(pk.modulus,16)
-//    val bigIntExp = BigInteger(pk.exponent, 10)
-//    val keySpec = RSAPublicKeySpec(bigIntMod, bigIntExp)
-//    return KeyFactory.getInstance("RSA").generatePublic(keySpec)
-    //  return RSAUtils.getRSAPublicKey(pk.modulus, "%02x".format(pk.exponent.toInt()))
     return Dependencies.gson.fromJson(resKey.body().string(), PK::class.java)
 }
 
@@ -40,7 +42,7 @@ private suspend fun execution(): String {
 private suspend fun encryptPwd(publicKey: PK, pwd: String): String? {
     val rep = withContext(Dispatchers.IO) {
         Dependencies.okhttp.newCall(
-            Request.Builder().url("https://whispering-furry-charger.glitch.me/encode").post(
+            Request.Builder().url("https://whispering-furry-charger.glitch.me/encode").post(  // 部署的在线服务，源码在/rsa
                 FormBody.Builder()
                     .add("e", publicKey.exponent)
                     .add("m", publicKey.modulus)
@@ -59,14 +61,6 @@ private suspend fun encryptPwd(publicKey: PK, pwd: String): String? {
 suspend fun loginToCAS(user: String, pwd: String) {
     val pk = getPublicKey()
     val execution = execution()
-
-//    val cipher = Cipher.getInstance("RSA/None/NoPadding", BouncyCastleProvider())
-//    cipher.init(Cipher.ENCRYPT_MODE, pk)
-//
-//    val bytes = pwd.toByteArray(charset("UTF-8")).toMutableList()
-
-    //  val encodedPwd = bytesPasswd.joinToString(separator = "") { "%02x".format(it) }
-
     val encodedPwd = encryptPwd(pk,pwd.reversed())
     val result = withContext(Dispatchers.IO) {
         Dependencies.okhttp.newCall(
