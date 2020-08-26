@@ -1,4 +1,4 @@
-package io.github.mzdluo123.timetablebot.bots.listeners
+package io.github.mzdluo123.timetablebot.controller
 
 import net.mamoe.mirai.event.EventHandler
 import net.mamoe.mirai.event.events.NewFriendRequestEvent

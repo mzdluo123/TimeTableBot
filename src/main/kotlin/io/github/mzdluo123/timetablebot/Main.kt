@@ -3,8 +3,8 @@ package io.github.mzdluo123.timetablebot
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.github.mzdluo123.timetablebot.bots.BotsManager
-import io.github.mzdluo123.timetablebot.bots.listeners.BaseListeners
 import io.github.mzdluo123.timetablebot.config.AppConfig
+import io.github.mzdluo123.timetablebot.controller.BaseListeners
 import io.github.mzdluo123.timetablebot.data.Course
 import io.github.mzdluo123.timetablebot.data.CourseTimeTable
 import io.github.mzdluo123.timetablebot.data.User

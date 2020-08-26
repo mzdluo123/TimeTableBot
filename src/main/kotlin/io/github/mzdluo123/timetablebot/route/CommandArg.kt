@@ -3,37 +3,51 @@ package io.github.mzdluo123.timetablebot.route
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeoutOrNull
+import net.mamoe.mirai.message.MessageEvent
+import net.mamoe.mirai.message.data.PlainText
 import java.util.concurrent.TimeoutException
 import kotlin.reflect.KProperty
 
-class CommandArg(val index: Int = 0, val desc: String, val args: List<String>?) {
-    lateinit var data: String
+class CommandArg<T : MessageEvent>(val index: Int = 0, val desc: String, val args: List<String>?, val event: T) {
+    var data: String? = null
     val waitValue = CompletableDeferred<String>()
 
-    inline operator fun <reified T> getValue(n:Nothing?, property: KProperty<*>): T {
+    inline operator fun <reified T> getValue(n: Nothing?, property: KProperty<*>): T {
         if (args != null && index < args.size) {
             data = args[index]
         } else {
-
+            unCompleteValue[event.sender.id] = waitValue
             runBlocking {
-                data =  withTimeoutOrNull(60*1000){
+                event.reply(
+                    PlainText(
+                        """缺少参数:$desc
+                    |类型:${property.returnType}
+                    |请在60秒内输入即可
+                """.trimMargin()
+                    )
+                )
+                data = withTimeoutOrNull(60 * 1000) {
                     waitValue.await()
-                } ?: throw TimeoutException("等待输入 $desc 时超时")
+                }
+                unCompleteValue.remove(event.sender.id)
+                if (data == null) {
+                    throw TimeoutException("获取参数超时")
+                }
             }
         }
 
         return when (T::class) {
             Int::class -> {
-                data.toInt() as T
+                data!!.toInt() as T
             }
             Long::class -> {
-                data.toLong() as T
+                data!!.toLong() as T
             }
             String::class -> {
                 data as T
             }
             Boolean::class -> {
-                val trim = data.trim().toLowerCase()
+                val trim = data!!.trim().toLowerCase()
                 if (trim == "好" || trim == "是" || trim == "true" || trim == "yes" || trim == "y" || trim == "1") {
                     true as T
                 } else {
@@ -45,5 +59,8 @@ class CommandArg(val index: Int = 0, val desc: String, val args: List<String>?) 
         }
     }
 }
+
+fun <T : MessageEvent> T.cmdArg(index: Int = 0, desc: String, args: List<String>?) =
+    CommandArg<T>(index, desc, args, this)
 
 

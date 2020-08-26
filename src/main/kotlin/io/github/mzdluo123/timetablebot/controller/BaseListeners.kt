@@ -1,4 +1,4 @@
-package io.github.mzdluo123.timetablebot.bots.listeners
+package io.github.mzdluo123.timetablebot.controller
 
 import net.mamoe.mirai.event.SimpleListenerHost
 import org.apache.logging.log4j.LogManager
@@ -6,7 +6,7 @@ import org.apache.logging.log4j.Logger
 import org.apache.logging.log4j.util.StackLocatorUtil
 import kotlin.coroutines.CoroutineContext
 
-open class BaseListeners : SimpleListenerHost() {
+abstract class BaseListeners : SimpleListenerHost() {
     protected val logger: Logger
         get() = LogManager.getLogger(StackLocatorUtil.getCallerClass(2).name)
 
