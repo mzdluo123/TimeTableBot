@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class User implements Serializable {
 
-    private static final long serialVersionUID = -1962611987;
+    private static final long serialVersionUID = -999150824;
 
     private Integer       id;
     private Long          account;
@@ -23,6 +23,7 @@ public class User implements Serializable {
     private LocalDateTime lastActive;
     private LocalDateTime joinTime;
     private Byte          enable;
+    private Long          bot;
 
     public User() {}
 
@@ -34,6 +35,7 @@ public class User implements Serializable {
         this.lastActive = value.lastActive;
         this.joinTime = value.joinTime;
         this.enable = value.enable;
+        this.bot = value.bot;
     }
 
     public User(
@@ -43,7 +45,8 @@ public class User implements Serializable {
         Integer       studentId,
         LocalDateTime lastActive,
         LocalDateTime joinTime,
-        Byte          enable
+        Byte          enable,
+        Long          bot
     ) {
         this.id = id;
         this.account = account;
@@ -52,6 +55,7 @@ public class User implements Serializable {
         this.lastActive = lastActive;
         this.joinTime = joinTime;
         this.enable = enable;
+        this.bot = bot;
     }
 
     public Integer getId() {
@@ -110,6 +114,14 @@ public class User implements Serializable {
         this.enable = enable;
     }
 
+    public Long getBot() {
+        return this.bot;
+    }
+
+    public void setBot(Long bot) {
+        this.bot = bot;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("User (");
@@ -121,6 +133,7 @@ public class User implements Serializable {
         sb.append(", ").append(lastActive);
         sb.append(", ").append(joinTime);
         sb.append(", ").append(enable);
+        sb.append(", ").append(bot);
 
         sb.append(")");
         return sb.toString();

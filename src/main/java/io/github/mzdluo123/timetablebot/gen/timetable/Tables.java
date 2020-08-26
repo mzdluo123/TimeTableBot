@@ -29,6 +29,11 @@ public class Tables {
     public static final Coursetime COURSETIME = Coursetime.COURSETIME;
 
     /**
+     * The table <code>timetable.profile</code>.
+     */
+    public static final Profile PROFILE = Profile.PROFILE;
+
+    /**
      * The table <code>timetable.user</code>.
      */
     public static final User USER = User.USER;

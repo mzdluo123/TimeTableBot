@@ -156,4 +156,18 @@ public class UserDao extends DAOImpl<UserRecord, io.github.mzdluo123.timetablebo
     public List<io.github.mzdluo123.timetablebot.gen.timetable.tables.pojos.User> fetchByEnable(Byte... values) {
         return fetch(User.USER.ENABLE, values);
     }
+
+    /**
+     * Fetch records that have <code>bot BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<io.github.mzdluo123.timetablebot.gen.timetable.tables.pojos.User> fetchRangeOfBot(Long lowerInclusive, Long upperInclusive) {
+        return fetchRange(User.USER.BOT, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>bot IN (values)</code>
+     */
+    public List<io.github.mzdluo123.timetablebot.gen.timetable.tables.pojos.User> fetchByBot(Long... values) {
+        return fetch(User.USER.BOT, values);
+    }
 }

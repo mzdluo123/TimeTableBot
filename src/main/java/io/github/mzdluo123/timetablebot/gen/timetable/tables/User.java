@@ -22,7 +22,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class User extends TableImpl<UserRecord> {
 
-    private static final long serialVersionUID = -1414255417;
+    private static final long serialVersionUID = 1848722072;
 
     /**
      * The reference instance of <code>timetable.user</code>
@@ -71,6 +71,11 @@ public class User extends TableImpl<UserRecord> {
      * The column <code>timetable.user.enable</code>.
      */
     public final TableField<UserRecord, Byte> ENABLE = createField(DSL.name("enable"), org.jooq.impl.SQLDataType.TINYINT.nullable(false), this, "");
+
+    /**
+     * The column <code>timetable.user.bot</code>.
+     */
+    public final TableField<UserRecord, Long> BOT = createField(DSL.name("bot"), org.jooq.impl.SQLDataType.BIGINT.nullable(false), this, "");
 
     /**
      * Create a <code>timetable.user</code> table reference
@@ -152,11 +157,11 @@ public class User extends TableImpl<UserRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row7 type methods
+    // Row8 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row7<Integer, Long, String, Integer, LocalDateTime, LocalDateTime, Byte> fieldsRow() {
-        return (Row7) super.fieldsRow();
+    public Row8<Integer, Long, String, Integer, LocalDateTime, LocalDateTime, Byte, Long> fieldsRow() {
+        return (Row8) super.fieldsRow();
     }
 }
