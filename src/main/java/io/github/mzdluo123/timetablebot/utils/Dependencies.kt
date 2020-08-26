@@ -8,36 +8,32 @@ import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.constructor.Constructor
-import java.util.ArrayList
-import java.util.HashMap
 import java.util.concurrent.TimeUnit
 
 object Dependencies {
     @JvmStatic
     val yaml = Yaml(Constructor(AppConfig::class.java))
 
-    @JvmStatic
-    val cookieStore =
-        HashMap<String, List<Cookie>>()
-
 
     @JvmStatic
     val gson = Gson()
 
+    @JvmStatic
+    private var cookies = hashMapOf<String,Cookie>()
 
     @JvmStatic
     val okhttp = OkHttpClient.Builder()
         .readTimeout(20, TimeUnit.SECONDS)
         .cookieJar(object : CookieJar {
+
             override fun saveFromResponse(httpUrl: HttpUrl, list: List<Cookie>) {
-                cookieStore[httpUrl.host()] = list
-                println("save $list")
+                for (cookie in list){
+                    cookies[cookie.name()] = cookie
+                }
             }
 
             override fun loadForRequest(httpUrl: HttpUrl): List<Cookie> {
-                val cookies: List<Cookie>? = cookieStore[httpUrl.host()]
-                println("load $cookies")
-                return cookies ?: ArrayList()
+                return cookies.values.toList()
             }
         }).addInterceptor {
             it.proceed(
@@ -48,4 +44,8 @@ object Dependencies {
             )
         }.build()
 
+
+    fun resetCookie(){
+        cookies.clear()
+    }
 }

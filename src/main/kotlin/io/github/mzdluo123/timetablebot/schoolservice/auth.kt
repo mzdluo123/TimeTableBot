@@ -60,7 +60,6 @@ suspend fun loginToCAS(user: String, pwd: String) {
     val pk = getPublicKey()
     val execution = execution()
 
-
 //    val cipher = Cipher.getInstance("RSA/None/NoPadding", BouncyCastleProvider())
 //    cipher.init(Cipher.ENCRYPT_MODE, pk)
 //
@@ -84,17 +83,11 @@ suspend fun loginToCAS(user: String, pwd: String) {
                 ).build()
         ).execute()
     }
-    println(result.code())
-    val page = Jsoup.parse(result.body().string())
-    println(page.title())
-    println(page.select("#errormsg > span").text())
-    println(page.html())
-}
-
-suspend fun getInfo() {
-    val res = withContext(Dispatchers.IO) {
-        Dependencies.okhttp.newCall(Request.Builder().url("http://newi.nuc.edu.cn/personal-center").build()).execute()
+    if (result.isSuccessful){
+        val page = Jsoup.parse(result.body().string())
+        if (page.title() != "新门户"){
+            throw IllegalStateException("登录失败 ${page.select("#errormsg > span").text()}")
+        }
     }
-    println(res.body().string())
 
 }
