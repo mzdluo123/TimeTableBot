@@ -3,6 +3,7 @@ package io.github.mzdluo123.timetablebot.schoolservice
 import com.google.gson.JsonParser
 import io.github.mzdluo123.timetablebot.config.AppConfig
 import io.github.mzdluo123.timetablebot.utils.Dependencies
+import io.github.mzdluo123.timetablebot.utils.logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.FormBody
@@ -17,7 +18,7 @@ import org.jsoup.Jsoup
  * */
 
 class AuthorizationException(override val message: String) : Exception(message)
-
+class EncryptionFailed(override val message: String):Exception(message)
 data class PK(val modulus: String, val exponent: String)
 
 private suspend fun getPublicKey(): PK {
@@ -63,7 +64,19 @@ private suspend fun encryptPwd(publicKey: PK, pwd: String): String? {
 suspend fun loginToCAS(user: String, pwd: String) {
     val pk = getPublicKey()
     val execution = execution()
-    val encodedPwd = encryptPwd(pk, pwd.reversed())
+    var encodedPwd:String?=""
+    for(tryNum in 1..4){
+        try {
+            encodedPwd = encryptPwd(pk, pwd.reversed())
+            break
+        }catch (e:Exception){
+            if (tryNum>3){
+                throw EncryptionFailed("加密失败")
+            }
+            logger().info("密码加密失败，正在进行第$tryNum 次尝试")
+        }
+    }
+
     val result = withContext(Dispatchers.IO) {
         Dependencies.okhttp.newCall(
             Request.Builder().url("${AppConfig.getInstance().authUrl}/cas/login")
