@@ -16,6 +16,8 @@ import org.jsoup.Jsoup
  *
  * */
 
+class AuthorizationException(override val message: String) : Exception(message)
+
 data class PK(val modulus: String, val exponent: String)
 
 private suspend fun getPublicKey(): PK {
@@ -51,9 +53,9 @@ private suspend fun encryptPwd(publicKey: PK, pwd: String): String? {
             ).build()
         ).execute()
     }
-    if (rep.isSuccessful){
+    if (rep.isSuccessful) {
         return JsonParser().parse(rep.body().string()).asJsonObject["encoded"].asString
-    }else{
+    } else {
         throw IllegalStateException("无法加密密码: ${rep.message()}")
     }
 }
@@ -61,7 +63,7 @@ private suspend fun encryptPwd(publicKey: PK, pwd: String): String? {
 suspend fun loginToCAS(user: String, pwd: String) {
     val pk = getPublicKey()
     val execution = execution()
-    val encodedPwd = encryptPwd(pk,pwd.reversed())
+    val encodedPwd = encryptPwd(pk, pwd.reversed())
     val result = withContext(Dispatchers.IO) {
         Dependencies.okhttp.newCall(
             Request.Builder().url("${AppConfig.getInstance().authUrl}/cas/login")
@@ -77,10 +79,10 @@ suspend fun loginToCAS(user: String, pwd: String) {
                 ).build()
         ).execute()
     }
-    if (result.isSuccessful){
+    if (result.isSuccessful) {
         val page = Jsoup.parse(result.body().string())
-        if (page.title() != "新门户"){
-            throw IllegalStateException("登录失败 ${page.select("#errormsg > span").text()}")
+        if (page.title() != "新门户") {
+            throw AuthorizationException(page.select("#errormsg > span").text())
         }
     }
 
