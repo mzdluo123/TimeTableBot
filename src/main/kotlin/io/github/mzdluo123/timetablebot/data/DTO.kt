@@ -21,12 +21,12 @@ data class TimeTableDTO(
         val cdmc: String = "",   // 教室
         val cxbj: String = "",
         val date: String = "",   // 当前时间（查询的日期）,比如 二○二○年八月二十六日
-        val dateDigit: String = "",   // 当前时间，比如 2020年8月26日
+        val dateDigit: String = "",             // 当前时间，比如 2020年8月26日
         val dateDigitSeparator: String = "",    // 同上，比如 2020-8-26
         val day: String = "",  // 日 比如 26
         val jc: String = "",   // 当前课程上课时间，比如1-2节
         val jcor: String = "", // 课程长度（节），比如5-6
-        val jcs: String = "",  // 同上
+        val jcs: String = "",  // 课程长度（节），比如5-6
         @SerializedName("jgh_id")
         val jghId: String = "", // 教工号ID（唯一），在一张表里id相同，比如1120031
         val jgpxzd: String = "",
@@ -41,21 +41,21 @@ data class TimeTableDTO(
         val khfsmc: String = "", // 考核方式,比如 考试或者未安排
         val listnav: String = "",
         val localeKey: String = "", // 语言，比如 zh_CN
-        val month: String = "",  // 开课月份,比如 8
+        val month: String = "",     // 开课月份,比如 8
         val oldjc: String = "",
         val oldzc: String = "",
         val pageable: Boolean = false,
-        val pkbj: String = "", // 排课表据 比如 1
-        val queryModel: QueryModel = QueryModel(), // 查询模型
+        val pkbj: String = "",
+        val queryModel: QueryModel = QueryModel(),
         val rangeable: Boolean = false,
         val rsdzjs: Int = 0,
         val sxbj: String = "",
         val totalResult: String = "",
         val userModel: UserModel = UserModel(),
-        val xf: String = "", // 学分
-        val xkbz: String = "", // 选课备注
-        val xm: String = "",  // 老师名字
-        val xnm: String = "",  // 学年，比如2019，和下面的year构成2019-2020学年
+        val xf: String = "",    // 学分
+        val xkbz: String = "",  // 选课备注
+        val xm: String = "",    // 老师名字
+        val xnm: String = "",   // 学年，比如2019，和下面的year构成2019-2020学年
         val xqdm: String = "",
         val xqh1: String = "",
         @SerializedName("xqh_id")
@@ -163,12 +163,12 @@ data class TimeTableDTO(
         val x5: String = ""
     )
 
-    data class Xsxx( //学生信息
+    data class Xsxx( // 学生信息
         @SerializedName("KXKXXQ")
         val kXKXXQ: String = "",
         @SerializedName("XH") // 学号
         val xH: String = "",
-        @SerializedName("XH_ID") //学号
+        @SerializedName("XH_ID") // 学号
         val xHID: String = "",
         @SerializedName("XKKG")
         val xKKG: String = "",
@@ -185,6 +185,6 @@ data class TimeTableDTO(
         @SerializedName("XQMMC")
         val xQMMC: String = "",
         @SerializedName("YWXM")
-        val yWXM: String = "" 
+        val yWXM: String = ""
     )
 }
