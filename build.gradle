@@ -30,6 +30,7 @@ buildConfig{
     buildConfigField("int",    "VERSION_CODE",     versionCode.toString())
 }
 
+
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib"
 
@@ -55,13 +56,13 @@ dependencies {
 
 //    // https://mvnrepository.com/artifact/org.slf4j/slf4j-log4j12
 //    compile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.30'
-
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.8.0'
 
     compile "org.jetbrains.exposed:exposed-core:0.24.1"
     compile"org.jetbrains.exposed:exposed-dao:0.24.1"
     compile"org.jetbrains.exposed:exposed-jdbc:0.24.1"
     compile"org.jetbrains.exposed:exposed-jodatime:0.24.1"
-    compile 'com.squareup.okhttp3:okhttp:3.6.0'
+    compile 'com.squareup.okhttp3:okhttp:4.8.0'
     implementation "com.google.code.gson:gson:2.8.5"
     implementation "mysql:mysql-connector-java:8.0.19"
     implementation "com.zaxxer:HikariCP:3.4.2"

@@ -26,7 +26,7 @@ private suspend fun getPublicKey(): PK {
         .url("${AppConfig.getInstance().authUrl}/cas/v2/getPubKey")
         .build()
     val resKey = withContext(Dispatchers.IO) { Dependencies.okhttp.newCall(reqKey).execute() }
-    return Dependencies.gson.fromJson(resKey.body().string(), PK::class.java)
+    return Dependencies.gson.fromJson(resKey.body?.string(), PK::class.java)
 }
 
 
@@ -34,7 +34,7 @@ private suspend fun execution(): String {
     val mainPage = withContext(Dispatchers.IO) {
         Dependencies.okhttp.newCall(
             Request.Builder().url("${AppConfig.getInstance().authUrl}/cas/login").build()
-        ).execute().body().string()
+        ).execute().body?.string()
     }
     val page = Jsoup.parse(mainPage)
     return page.select("input[name=execution]").`val`()
@@ -54,9 +54,9 @@ private suspend fun encryptPwd(publicKey: PK, pwd: String): String? {
         ).execute()
     }
     if (rep.isSuccessful) {
-        return JsonParser().parse(rep.body().string()).asJsonObject["encoded"].asString
+        return JsonParser().parse(rep.body?.string()).asJsonObject["encoded"].asString
     } else {
-        throw IllegalStateException("无法加密密码: ${rep.message()}")
+        throw IllegalStateException("无法加密密码: ${rep.message}")
     }
 }
 
@@ -70,7 +70,7 @@ suspend fun loginToCAS(user: String, pwd: String) {
                 .post(
                     FormBody.Builder()
                         .add("username", user)
-                        .add("password", encodedPwd)
+                        .add("password", encodedPwd!!)
                         .add("mobileCode", "")
                         .add("execution", execution)
                         .add("authcode", "")
@@ -80,7 +80,7 @@ suspend fun loginToCAS(user: String, pwd: String) {
         ).execute()
     }
     if (result.isSuccessful) {
-        val page = Jsoup.parse(result.body().string())
+        val page = Jsoup.parse(result.body?.string())
         if (page.title() != "新门户") {
             throw AuthorizationException(page.select("#errormsg > span").text())
         }
