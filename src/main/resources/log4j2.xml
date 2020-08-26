@@ -8,9 +8,9 @@
         <Property name="LOG_LEVEL_PATTERN">%5p</Property>
         <Property name="LOG_DATEFORMAT_PATTERN">yyyy-MM-dd HH:mm:ss.SSS</Property>
         <!--<Property name="CONSOLE_LOG_PATTERN">%clr{%d{${LOG_DATEFORMAT_PATTERN}}}{faint} %clr{${LOG_LEVEL_PATTERN}} %clr{${sys:PID}}{magenta} %clr{-&#45;&#45;}{faint} %clr{[%15.15t]}{faint} %clr{%-40.40c{1.}}{cyan} %clr{:}{faint} %m%n${sys:LOG_EXCEPTION_CONVERSION_WORD}</Property>-->
-        <Property name="CONSOLE_LOG_PATTERN">%highlight{%style{%d{${LOG_DATEFORMAT_PATTERN}}}{Dim} %highlight{${LOG_LEVEL_PATTERN}}{FATAL=white, ERROR=red, WARN=blue, INFO=black, DEBUG=green, TRACE=blue} %style{[%10.15t]}{Dim} %style{%-10.30c{1.}}{Cyan} %style{:}{Dim} %m%n${sys:LOG_EXCEPTION_CONVERSION_WORD}}
+        <Property name="CONSOLE_LOG_PATTERN">%highlight{%style{%d{${LOG_DATEFORMAT_PATTERN}}}{Dim} %highlight{${LOG_LEVEL_PATTERN}}{FATAL=white, ERROR=red, WARN=blue, INFO=black, DEBUG=green, TRACE=blue} %style{[%10.20t]}{Dim} %style{%-20.35c}{Cyan} %style{:}{Dim} %m%n${sys:LOG_EXCEPTION_CONVERSION_WORD}}
         </Property>
-        <Property name="FILE_LOG_PATTERN">%d{${LOG_DATEFORMAT_PATTERN}} ${LOG_LEVEL_PATTERN} [%t] %-20.15c{1.} : %m%n${sys:LOG_EXCEPTION_CONVERSION_WORD}
+        <Property name="FILE_LOG_PATTERN">%d{${LOG_DATEFORMAT_PATTERN}} ${LOG_LEVEL_PATTERN} [%t] %-20.30c : %m%n${sys:LOG_EXCEPTION_CONVERSION_WORD}
         </Property>
 
 
@@ -105,6 +105,15 @@
         <Logger name="NETWORK" level="trace" additivity="false">
             <AppenderRef ref="Console"/>
         </Logger>
+
+        <Logger name="org.jooq.tools.LoggerListener" level="debug" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+
+        <Logger name="org.jooq.tools.LoggerListener" level="trace" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+
 
     </loggers>
 

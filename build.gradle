@@ -1,4 +1,5 @@
 import groovy.xml.MarkupBuilder
+import org.jooq.codegen.GenerationTool
 import org.yaml.snakeyaml.Yaml
 
 buildscript {
@@ -150,5 +151,5 @@ task generateJooq{
 
 // Run the code generator
 // ----------------------
-    org.jooq.codegen.GenerationTool.generate(writer.toString())
+    GenerationTool.generate(writer.toString())
 }
