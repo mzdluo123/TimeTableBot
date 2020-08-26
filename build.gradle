@@ -119,37 +119,40 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
-task generateJooq{
-    def yml = new Yaml()
-    def data = yml.load(new FileReader( new File("config.yml")))
-    def writer = new StringWriter()
-    def xml = new MarkupBuilder(writer)
-            .configuration('xmlns': 'http://www.jooq.org/xsd/jooq-codegen-3.13.0.xsd') {
-                jdbc() {
-                    url(data["dbUrl"])
-                    user(data["dbUser"])
-                    password(data["dbPwd"])
-                }
-                generator() {
-                    database() {
+task generateJooq {
+   doLast("gen") {
+       def yml = new Yaml()
+       def data = yml.load(new FileReader( new File("config.yml")))
+       def writer = new StringWriter()
+       def xml = new MarkupBuilder(writer)
+               .configuration('xmlns': 'http://www.jooq.org/xsd/jooq-codegen-3.13.0.xsd') {
+                   jdbc() {
+                       url(data["dbUrl"])
+                       user(data["dbUser"])
+                       password(data["dbPwd"])
+                   }
+                   generator() {
+                       database() {
 
-                    }
-                    // Watch out for this caveat when using MarkupBuilder with "reserved names"
-                    // - https://github.com/jOOQ/jOOQ/issues/4797
-                    // - http://stackoverflow.com/a/11389034/521799
-                    // - https://groups.google.com/forum/#!topic/jooq-user/wi4S9rRxk4A
-                    generate([:]) {
-                        pojos true
-                        daos true
-                    }
-                    target() {
-                        packageName('io.github.mzdluo123.timetablebot.generated.jooq')
-                        directory('build/gen/jooq/src/java/main')
-                    }
-                }
-            }
+                       }
+                       // Watch out for this caveat when using MarkupBuilder with "reserved names"
+                       // - https://github.com/jOOQ/jOOQ/issues/4797
+                       // - http://stackoverflow.com/a/11389034/521799
+                       // - https://groups.google.com/forum/#!topic/jooq-user/wi4S9rRxk4A
+                       generate([:]) {
+                           pojos true
+                           daos true
+                       }
+                       target() {
+                           packageName('io.github.mzdluo123.timetablebot.gen')
+                           directory('src/main/java')
+                       }
+                   }
+               }
 
 // Run the code generator
 // ----------------------
-    GenerationTool.generate(writer.toString())
+       GenerationTool.generate(writer.toString())
+
+   }
 }
