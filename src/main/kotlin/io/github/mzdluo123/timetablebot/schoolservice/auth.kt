@@ -97,6 +97,7 @@ suspend fun loginToCAS(user: String, pwd: String) {
         if (page.title() != "新门户") {
             throw AuthorizationException(page.select("#errormsg > span").text())
         }
+        logger().info("个人门户登录成功！")
     }
 
 }
