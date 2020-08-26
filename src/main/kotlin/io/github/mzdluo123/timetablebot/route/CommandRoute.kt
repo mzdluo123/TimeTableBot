@@ -9,7 +9,7 @@ import kotlin.coroutines.CoroutineContext
 
 val unCompleteValue = hashMapOf<Long, CompletableDeferred<String>>()
 
-class CommandRoute<T : MessageEvent>(val args: List<String>?, val event: T) : CoroutineScope {
+class CommandRoute<T : MessageEvent>(private val args: List<String>?, private val event: T) : CoroutineScope {
     private var called = false
     private var errHandler: (suspend (Throwable) -> Message?)? = null
 
