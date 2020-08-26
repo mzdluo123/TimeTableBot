@@ -6,26 +6,27 @@ import io.github.mzdluo123.timetablebot.controller.BaseListeners
 import io.github.mzdluo123.timetablebot.utils.dbCtx
 import io.github.mzdluo123.timetablebot.utils.logger
 import io.github.mzdluo123.timetablebot.utils.timeToStr
-import io.io.github.mzdluo123.timetablebot.BuildConfig
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.joinAll
 import net.mamoe.mirai.event.registerEvents
 import java.io.File
+
 
 private val mainLogger = logger()
 
 internal val appJob = Job()
 
 suspend fun main(args: Array<String>) {
-    println(
-        """
- _________  ___  _____ ______   _______  _________  ________  ________  ___       _______   ________  ________  _________   
-|\___   ___\\  \|\   _ \  _   \|\  ___ \|\___   ___\\   __  \|\   __  \|\  \     |\  ___ \ |\   __  \|\   __  \|\___   ___\ 
-\|___ \  \_\ \  \ \  \\\__\ \  \ \   __/\|___ \  \_\ \  \|\  \ \  \|\ /\ \  \    \ \   __/|\ \  \|\ /\ \  \|\  \|___ \  \_| 
-     \ \  \ \ \  \ \  \\|__| \  \ \  \_|/__  \ \  \ \ \   __  \ \   __  \ \  \    \ \  \_|/_\ \   __  \ \  \\\  \   \ \  \  
-      \ \  \ \ \  \ \  \    \ \  \ \  \_|\ \  \ \  \ \ \  \ \  \ \  \|\  \ \  \____\ \  \_|\ \ \  \|\  \ \  \\\  \   \ \  \ 
-       \ \__\ \ \__\ \__\    \ \__\ \_______\  \ \__\ \ \__\ \__\ \_______\ \_______\ \_______\ \_______\ \_______\   \ \__\
-        \|__|  \|__|\|__|     \|__|\|_______|   \|__|  \|__|\|__|\|_______|\|_______|\|_______|\|_______|\|_______|    \|__|
+    println("""
+ ________  __                        ________         __        __            _______               __     
+/        |/  |                      /        |       /  |      /  |          /       \             /  |    
+$$$$$$$$/ $$/  _____  ____    ______$$$$$$$$/______  $$ |____  $$ |  ______  $$$$$$$  |  ______   _$$ |_   
+   $$ |   /  |/     \/    \  /      \  $$ | /      \ $$      \ $$ | /      \ $$ |__$$ | /      \ / $$   |  
+   $$ |   $$ |$$$$$$ $$$$  |/$$$$$$  | $$ | $$$$$$  |$$$$$$$  |$$ |/$$$$$$  |$$    $$< /$$$$$$  |$$$$$$/   
+   $$ |   $$ |$$ | $$ | $$ |$$    $$ | $$ | /    $$ |$$ |  $$ |$$ |$$    $$ |$$$$$$$  |$$ |  $$ |  $$ | __ 
+   $$ |   $$ |$$ | $$ | $$ |$$$$$$$$/  $$ |/$$$$$$$ |$$ |__$$ |$$ |$$$$$$$$/ $$ |__$$ |$$ \__$$ |  $$ |/  |
+   $$ |   $$ |$$ | $$ | $$ |$$       | $$ |$$    $$ |$$    $$/ $$ |$$       |$$    $$/ $$    $$/   $$  $$/ 
+   $$/    $$/ $$/  $$/  $$/  $$$$$$$/  $$/  $$$$$$$/ $$$$$$$/  $$/  $$$$$$$/ $$$$$$$/   $$$$$$/     $$$$/
     """.trimIndent()
     )
     Runtime.getRuntime().addShutdownHook(Thread {
@@ -51,8 +52,8 @@ suspend fun main(args: Array<String>) {
 
     mainLogger.info("connecting database")
 
-    dbCtx().use {
-        it.select().limit(1).fetch()
+    dbCtx {
+
     }
 
     mainLogger.info("database connected")

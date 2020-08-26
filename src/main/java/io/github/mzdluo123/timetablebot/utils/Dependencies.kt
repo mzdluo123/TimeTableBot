@@ -55,7 +55,7 @@ object Dependencies {
         }).build()
 
     val dataSource by lazy {
-         val dbConfig = HikariConfig().apply {
+        val dbConfig = HikariConfig().apply {
             jdbcUrl = AppConfig.getInstance().dbUrl
             driverClassName = "com.mysql.cj.jdbc.Driver"
             username = AppConfig.getInstance().dbUser
@@ -71,4 +71,8 @@ object Dependencies {
     }
 }
 
-fun dbCtx(): DSLContext = DSL.using(Dependencies.dataSource,SQLDialect.MYSQL)
+inline fun dbCtx(receiver: (DSLContext) -> Unit) {
+    DSL.using(Dependencies.dataSource, SQLDialect.MYSQL).use {
+        receiver(it)
+    }
+}

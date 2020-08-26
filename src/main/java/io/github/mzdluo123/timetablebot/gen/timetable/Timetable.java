@@ -20,7 +20,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Timetable extends SchemaImpl {
 
-    private static final long serialVersionUID = -1639170560;
+    private static final long serialVersionUID = 526725040;
 
     /**
      * The reference instance of <code>timetable</code>
@@ -41,6 +41,11 @@ public class Timetable extends SchemaImpl {
      * The table <code>timetable.coursetime</code>.
      */
     public final Coursetime COURSETIME = Coursetime.COURSETIME;
+
+    /**
+     * The table <code>timetable.profile</code>.
+     */
+    public final Profile PROFILE = Profile.PROFILE;
 
     /**
      * The table <code>timetable.user</code>.
@@ -71,6 +76,7 @@ public class Timetable extends SchemaImpl {
             Classroom.CLASSROOM,
             Course.COURSE,
             Coursetime.COURSETIME,
+            Profile.PROFILE,
             User.USER,
             Usercourse.USERCOURSE);
     }
