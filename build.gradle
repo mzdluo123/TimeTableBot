@@ -27,7 +27,6 @@ sourceSets{
     main{
         java{
             srcDir "src/main/java"
-            srcDir "build/gen/jooq/src/java/main"
         }
     }
 }
