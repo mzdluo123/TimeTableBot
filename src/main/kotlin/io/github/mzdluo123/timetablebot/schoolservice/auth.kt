@@ -1,32 +1,28 @@
 package io.github.mzdluo123.timetablebot.schoolservice
 
+import com.google.gson.JsonParser
 import io.github.mzdluo123.timetablebot.config.AppConfig
 import io.github.mzdluo123.timetablebot.utils.Dependencies
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.FormBody
 import okhttp3.Request
-import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.jsoup.Jsoup
-import java.math.BigInteger
-import java.security.KeyFactory
-import java.security.PublicKey
-import java.security.spec.RSAPublicKeySpec
-import javax.crypto.Cipher
 
 data class PK(val modulus: String, val exponent: String)
 
-private suspend fun getPK(): PublicKey {
+private suspend fun getPublicKey(): PK {
     //获取public_key
     val reqKey = Request.Builder().get()
         .url("${AppConfig.getInstance().authUrl}/cas/v2/getPubKey")
         .build()
     val resKey = withContext(Dispatchers.IO) { Dependencies.okhttp.newCall(reqKey).execute() }
-    val pk = Dependencies.gson.fromJson(resKey.body().string(), PK::class.java)
-    val bigIntMod = BigInteger("e1ae70083e0bb9a136552224d6696dc029f6757ae784fce95301bcccef4005562208e08607886b18495d305c8bba0a12559fdf370051bf847c1ee4557b3d61c7",16)
-    val bigIntExp = BigInteger(pk.exponent, 10)
-    val keySpec = RSAPublicKeySpec(bigIntMod, bigIntExp)
-    return KeyFactory.getInstance("RSA").generatePublic(keySpec)
+    //    val bigIntMod = BigInteger(pk.modulus,16)
+//    val bigIntExp = BigInteger(pk.exponent, 10)
+//    val keySpec = RSAPublicKeySpec(bigIntMod, bigIntExp)
+//    return KeyFactory.getInstance("RSA").generatePublic(keySpec)
+    //  return RSAUtils.getRSAPublicKey(pk.modulus, "%02x".format(pk.exponent.toInt()))
+    return Dependencies.gson.fromJson(resKey.body().string(), PK::class.java)
 }
 
 
@@ -41,34 +37,50 @@ private suspend fun execution(): String {
 }
 
 
-suspend fun loginToCAS(user: String, pwd: String) {
-
-    val execution = execution()
-    val pk = getPK()
-
-    val cipher = Cipher.getInstance("RSA/None/NoPadding", BouncyCastleProvider())
-    cipher.init(Cipher.ENCRYPT_MODE, pk)
-
-    val bytes = pwd.reversed().toByteArray(charset("UTF-8")).toMutableList()
-
-    while (bytes.size % 62 != 0){
-        bytes.add(0)
+private suspend fun encryptPwd(publicKey: PK, pwd: String): String? {
+    val rep = withContext(Dispatchers.IO) {
+        Dependencies.okhttp.newCall(
+            Request.Builder().url("https://whispering-furry-charger.glitch.me/encode").post(
+                FormBody.Builder()
+                    .add("e", publicKey.exponent)
+                    .add("m", publicKey.modulus)
+                    .add("data", pwd)
+                    .build()
+            ).build()
+        ).execute()
     }
+    if (rep.isSuccessful){
+        return JsonParser().parse(rep.body().string()).asJsonObject["encoded"].asString
+    }else{
+        throw IllegalStateException("无法加密密码: ${rep.message()}")
+    }
+}
 
-    val bytesPasswd = cipher.doFinal(bytes.toByteArray())
-    val encodedPwd =bytesPasswd.joinToString(separator = "") { "%02x".format(it) }
+suspend fun loginToCAS(user: String, pwd: String) {
+    val pk = getPublicKey()
+    val execution = execution()
 
+
+//    val cipher = Cipher.getInstance("RSA/None/NoPadding", BouncyCastleProvider())
+//    cipher.init(Cipher.ENCRYPT_MODE, pk)
+//
+//    val bytes = pwd.toByteArray(charset("UTF-8")).toMutableList()
+
+    //  val encodedPwd = bytesPasswd.joinToString(separator = "") { "%02x".format(it) }
+
+    val encodedPwd = encryptPwd(pk,pwd.reversed())
     val result = withContext(Dispatchers.IO) {
         Dependencies.okhttp.newCall(
             Request.Builder().url("${AppConfig.getInstance().authUrl}/cas/login")
-                .post(FormBody.Builder()
-                    .add("username", user)
-                    .add("password",encodedPwd)
-                    .add("mobileCode","")
-                    .add("execution",execution)
-                    .add("authcode","")
-                    .add("_eventId","submit")
-                    .build()
+                .post(
+                    FormBody.Builder()
+                        .add("username", user)
+                        .add("password", encodedPwd)
+                        .add("mobileCode", "")
+                        .add("execution", execution)
+                        .add("authcode", "")
+                        .add("_eventId", "submit")
+                        .build()
                 ).build()
         ).execute()
     }
@@ -76,10 +88,11 @@ suspend fun loginToCAS(user: String, pwd: String) {
     val page = Jsoup.parse(result.body().string())
     println(page.title())
     println(page.select("#errormsg > span").text())
+    println(page.html())
 }
 
-suspend fun getInfo(){
-    val res = withContext(Dispatchers.IO){
+suspend fun getInfo() {
+    val res = withContext(Dispatchers.IO) {
         Dependencies.okhttp.newCall(Request.Builder().url("http://newi.nuc.edu.cn/personal-center").build()).execute()
     }
     println(res.body().string())

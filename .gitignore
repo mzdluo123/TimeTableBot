@@ -3,5 +3,6 @@
 build
 logs
 devices
+rsa/node_modules
 
 config.yml
