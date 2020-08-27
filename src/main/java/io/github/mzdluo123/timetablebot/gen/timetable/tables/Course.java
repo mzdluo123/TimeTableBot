@@ -21,7 +21,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Course extends TableImpl<CourseRecord> {
 
-    private static final long serialVersionUID = 626070566;
+    private static final long serialVersionUID = 25553252;
 
     /**
      * The reference instance of <code>timetable.course</code>
@@ -42,29 +42,34 @@ public class Course extends TableImpl<CourseRecord> {
     public final TableField<CourseRecord, Integer> ID = createField(DSL.name("id"), org.jooq.impl.SQLDataType.INTEGER.nullable(false).identity(true), this, "");
 
     /**
-     * The column <code>timetable.course.name</code>.
+     * The column <code>timetable.course.name</code>. 课程名字
      */
-    public final TableField<CourseRecord, String> NAME = createField(DSL.name("name"), org.jooq.impl.SQLDataType.VARCHAR(10).nullable(false), this, "");
+    public final TableField<CourseRecord, String> NAME = createField(DSL.name("name"), org.jooq.impl.SQLDataType.VARCHAR(10).nullable(false), this, "课程名字");
 
     /**
-     * The column <code>timetable.course.thacher</code>.
+     * The column <code>timetable.course.thacher</code>. 老师名字
      */
-    public final TableField<CourseRecord, String> THACHER = createField(DSL.name("thacher"), org.jooq.impl.SQLDataType.VARCHAR(10).nullable(false), this, "");
+    public final TableField<CourseRecord, String> THACHER = createField(DSL.name("thacher"), org.jooq.impl.SQLDataType.VARCHAR(10).nullable(false), this, "老师名字");
 
     /**
-     * The column <code>timetable.course.course_id</code>.
+     * The column <code>timetable.course.course_id</code>. 课程id
      */
-    public final TableField<CourseRecord, String> COURSE_ID = createField(DSL.name("course_id"), org.jooq.impl.SQLDataType.VARCHAR(32).nullable(false), this, "");
+    public final TableField<CourseRecord, String> COURSE_ID = createField(DSL.name("course_id"), org.jooq.impl.SQLDataType.VARCHAR(32).nullable(false), this, "课程id");
 
     /**
-     * The column <code>timetable.course.points</code>.
+     * The column <code>timetable.course.week_period</code>. 周学时
      */
-    public final TableField<CourseRecord, Double> POINTS = createField(DSL.name("points"), org.jooq.impl.SQLDataType.FLOAT.nullable(false), this, "");
+    public final TableField<CourseRecord, Byte> WEEK_PERIOD = createField(DSL.name("week_period"), org.jooq.impl.SQLDataType.TINYINT.nullable(false), this, "周学时");
 
     /**
-     * The column <code>timetable.course.score</code>.
+     * The column <code>timetable.course.period</code>. 学时
      */
-    public final TableField<CourseRecord, Double> SCORE = createField(DSL.name("score"), org.jooq.impl.SQLDataType.FLOAT.nullable(false), this, "");
+    public final TableField<CourseRecord, Byte> PERIOD = createField(DSL.name("period"), org.jooq.impl.SQLDataType.TINYINT.nullable(false), this, "学时");
+
+    /**
+     * The column <code>timetable.course.score</code>. 学分
+     */
+    public final TableField<CourseRecord, Double> SCORE = createField(DSL.name("score"), org.jooq.impl.SQLDataType.FLOAT.nullable(false), this, "学分");
 
     /**
      * Create a <code>timetable.course</code> table reference
@@ -116,7 +121,7 @@ public class Course extends TableImpl<CourseRecord> {
 
     @Override
     public List<UniqueKey<CourseRecord>> getKeys() {
-        return Arrays.<UniqueKey<CourseRecord>>asList(Keys.KEY_COURSE_PRIMARY);
+        return Arrays.<UniqueKey<CourseRecord>>asList(Keys.KEY_COURSE_PRIMARY, Keys.KEY_COURSE_COURSE_ID);
     }
 
     @Override
@@ -146,11 +151,11 @@ public class Course extends TableImpl<CourseRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row6 type methods
+    // Row7 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row6<Integer, String, String, String, Double, Double> fieldsRow() {
-        return (Row6) super.fieldsRow();
+    public Row7<Integer, String, String, String, Byte, Byte, Double> fieldsRow() {
+        return (Row7) super.fieldsRow();
     }
 }

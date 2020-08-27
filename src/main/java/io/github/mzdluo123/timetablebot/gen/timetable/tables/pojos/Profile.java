@@ -13,24 +13,28 @@ import java.io.Serializable;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Profile implements Serializable {
 
-    private static final long serialVersionUID = 1091595931;
+    private static final long serialVersionUID = -680930105;
 
     private Integer id;
     private Integer user;
+    private String  extra;
 
     public Profile() {}
 
     public Profile(Profile value) {
         this.id = value.id;
         this.user = value.user;
+        this.extra = value.extra;
     }
 
     public Profile(
         Integer id,
-        Integer user
+        Integer user,
+        String  extra
     ) {
         this.id = id;
         this.user = user;
+        this.extra = extra;
     }
 
     public Integer getId() {
@@ -49,12 +53,21 @@ public class Profile implements Serializable {
         this.user = user;
     }
 
+    public String getExtra() {
+        return this.extra;
+    }
+
+    public void setExtra(String extra) {
+        this.extra = extra;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("Profile (");
 
         sb.append(id);
         sb.append(", ").append(user);
+        sb.append(", ").append(extra);
 
         sb.append(")");
         return sb.toString();

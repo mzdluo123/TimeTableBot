@@ -13,13 +13,14 @@ import java.io.Serializable;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Course implements Serializable {
 
-    private static final long serialVersionUID = -493970495;
+    private static final long serialVersionUID = -1195902738;
 
     private Integer id;
     private String  name;
     private String  thacher;
     private String  courseId;
-    private Double  points;
+    private Byte    weekPeriod;
+    private Byte    period;
     private Double  score;
 
     public Course() {}
@@ -29,7 +30,8 @@ public class Course implements Serializable {
         this.name = value.name;
         this.thacher = value.thacher;
         this.courseId = value.courseId;
-        this.points = value.points;
+        this.weekPeriod = value.weekPeriod;
+        this.period = value.period;
         this.score = value.score;
     }
 
@@ -38,14 +40,16 @@ public class Course implements Serializable {
         String  name,
         String  thacher,
         String  courseId,
-        Double  points,
+        Byte    weekPeriod,
+        Byte    period,
         Double  score
     ) {
         this.id = id;
         this.name = name;
         this.thacher = thacher;
         this.courseId = courseId;
-        this.points = points;
+        this.weekPeriod = weekPeriod;
+        this.period = period;
         this.score = score;
     }
 
@@ -81,12 +85,20 @@ public class Course implements Serializable {
         this.courseId = courseId;
     }
 
-    public Double getPoints() {
-        return this.points;
+    public Byte getWeekPeriod() {
+        return this.weekPeriod;
     }
 
-    public void setPoints(Double points) {
-        this.points = points;
+    public void setWeekPeriod(Byte weekPeriod) {
+        this.weekPeriod = weekPeriod;
+    }
+
+    public Byte getPeriod() {
+        return this.period;
+    }
+
+    public void setPeriod(Byte period) {
+        this.period = period;
     }
 
     public Double getScore() {
@@ -105,7 +117,8 @@ public class Course implements Serializable {
         sb.append(", ").append(name);
         sb.append(", ").append(thacher);
         sb.append(", ").append(courseId);
-        sb.append(", ").append(points);
+        sb.append(", ").append(weekPeriod);
+        sb.append(", ").append(period);
         sb.append(", ").append(score);
 
         sb.append(")");

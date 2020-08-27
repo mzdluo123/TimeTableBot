@@ -110,7 +110,7 @@ data class TimeTableDTO(
         val month: String = "",// 开课月
         val pageable: Boolean = false,
         val qsjsz: String = "", // 时间 比如 1-8周
-        val qtkcgs: String = "", // 其他课程概述 比如 程序设计基础（2）雷海卫(共8周)/1-8周/无
+        val qtkcgs: String = "", // 其他课程概述 比如 程序设计基础（2）雷海卫(共8周)/1-8周/无 做id
         val queryModel: QueryModel = QueryModel(),
         val rangeable: Boolean = false,
         val rsdzjs: Int = 0,

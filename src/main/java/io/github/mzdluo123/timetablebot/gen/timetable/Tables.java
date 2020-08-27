@@ -24,9 +24,14 @@ public class Tables {
     public static final Course COURSE = Course.COURSE;
 
     /**
-     * The table <code>timetable.coursetime</code>.
+     * The table <code>timetable.course_time</code>.
      */
-    public static final Coursetime COURSETIME = Coursetime.COURSETIME;
+    public static final CourseTime COURSE_TIME = CourseTime.COURSE_TIME;
+
+    /**
+     * The table <code>timetable.other_course</code>.
+     */
+    public static final OtherCourse OTHER_COURSE = OtherCourse.OTHER_COURSE;
 
     /**
      * The table <code>timetable.profile</code>.
@@ -39,7 +44,12 @@ public class Tables {
     public static final User USER = User.USER;
 
     /**
-     * The table <code>timetable.usercourse</code>.
+     * The table <code>timetable.user_course</code>.
      */
-    public static final Usercourse USERCOURSE = Usercourse.USERCOURSE;
+    public static final UserCourse USER_COURSE = UserCourse.USER_COURSE;
+
+    /**
+     * The table <code>timetable.user_other_course</code>.
+     */
+    public static final UserOtherCourse USER_OTHER_COURSE = UserOtherCourse.USER_OTHER_COURSE;
 }

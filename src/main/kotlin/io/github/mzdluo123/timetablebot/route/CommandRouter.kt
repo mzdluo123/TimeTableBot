@@ -9,7 +9,7 @@ import kotlin.coroutines.CoroutineContext
 
 val unCompleteValue = hashMapOf<Long, CompletableDeferred<String>>()
 
-class CommandRoute<T : MessageEvent>(private val args: List<String>?, private val event: T) : CoroutineScope {
+class CommandRouter<T : MessageEvent>(private val args: List<String>?, private val event: T) : CoroutineScope {
     private var called = false
     private var errHandler: (suspend (Throwable) -> Message?)? = null
 
@@ -42,14 +42,14 @@ class CommandRoute<T : MessageEvent>(private val args: List<String>?, private va
         }
     }
 
-    suspend fun nextRoute(case: String, desc: String = "暂无描述", next: suspend (CommandRoute<T>) -> Unit) {
+    suspend fun nextRoute(case: String, desc: String = "暂无描述", next: suspend (CommandRouter<T>) -> Unit) {
         commandMap[case] = desc
         if (args?.size == 0){
             return
         }
         if (!called && case == args?.get(0)) {
             called = true
-            kotlin.runCatching { next(CommandRoute(args.subList(1, args.size), event)) }.also {
+            kotlin.runCatching { next(CommandRouter(args.subList(1, args.size), event)) }.also {
                 handleException(it.exceptionOrNull())
             }
         }
@@ -76,7 +76,7 @@ class CommandRoute<T : MessageEvent>(private val args: List<String>?, private va
 inline fun <reified T : MessageEvent> T.route(
     prefix: String = "",
     delimiter: String = " ",
-    receiver: CommandRoute<T>.() -> Unit
+    receiver: CommandRouter<T>.() -> Unit
 ): Boolean {
     val msg = this.message.contentToString()
 
@@ -89,6 +89,6 @@ inline fun <reified T : MessageEvent> T.route(
         return false
     }
     val args = msg.split(delimiter)
-    receiver(CommandRoute(args, this))
+    receiver(CommandRouter(args, this))
     return true
 }

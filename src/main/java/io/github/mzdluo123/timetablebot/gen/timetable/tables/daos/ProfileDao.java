@@ -71,4 +71,18 @@ public class ProfileDao extends DAOImpl<ProfileRecord, io.github.mzdluo123.timet
     public List<io.github.mzdluo123.timetablebot.gen.timetable.tables.pojos.Profile> fetchByUser(Integer... values) {
         return fetch(Profile.PROFILE.USER, values);
     }
+
+    /**
+     * Fetch records that have <code>extra BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<io.github.mzdluo123.timetablebot.gen.timetable.tables.pojos.Profile> fetchRangeOfExtra(String lowerInclusive, String upperInclusive) {
+        return fetchRange(Profile.PROFILE.EXTRA, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>extra IN (values)</code>
+     */
+    public List<io.github.mzdluo123.timetablebot.gen.timetable.tables.pojos.Profile> fetchByExtra(String... values) {
+        return fetch(Profile.PROFILE.EXTRA, values);
+    }
 }

@@ -18,7 +18,7 @@ import org.jsoup.Jsoup
  * */
 
 class AuthorizationException(override val message: String) : Exception(message)
-class EncryptionFailed(override val message: String):Exception(message)
+class EncryptionFailed(override val message: String) : Exception(message)
 data class PK(val modulus: String, val exponent: String)
 
 private suspend fun getPublicKey(): PK {
@@ -64,13 +64,13 @@ private suspend fun encryptPwd(publicKey: PK, pwd: String): String? {
 suspend fun loginToCAS(user: String, pwd: String) {
     val pk = getPublicKey()
     val execution = execution()
-    var encodedPwd:String?=""
-    for(tryNum in 1..4){
+    var encodedPwd: String? = ""
+    for (tryNum in 1..4) {
         try {
             encodedPwd = encryptPwd(pk, pwd.reversed())
             break
-        }catch (e:Exception){
-            if (tryNum>3){
+        } catch (e: Exception) {
+            if (tryNum > 3) {
                 throw EncryptionFailed("加密失败")
             }
             logger().info("密码加密失败，正在进行第$tryNum 次尝试")

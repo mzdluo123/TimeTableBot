@@ -1,11 +1,14 @@
 package io.github.mzdluo123.timetablebot.controller
 
-import io.github.mzdluo123.timetablebot.route.CommandRoute
+import io.github.mzdluo123.timetablebot.gen.timetable.tables.User
+import io.github.mzdluo123.timetablebot.route.CommandRouter
 import io.github.mzdluo123.timetablebot.route.cmdArg
 import io.github.mzdluo123.timetablebot.route.route
+import io.github.mzdluo123.timetablebot.utils.dbCtx
 import net.mamoe.mirai.event.EventHandler
 import net.mamoe.mirai.message.FriendMessageEvent
 import net.mamoe.mirai.message.data.PlainText
+import java.time.LocalDateTime
 
 
 class BotMsgListener : BaseListeners() {
@@ -16,19 +19,35 @@ class BotMsgListener : BaseListeners() {
             exception { throwable ->
                 PlainText(throwable.toString())
             }
-            case("1","一号命令") {
-                val arg1: String by cmdArg(0, "这是一个字符串", it)
-                val arg2: Int by cmdArg(1, "这是一个数字", it)
-                val arg3: Boolean by cmdArg(2, "这是一个Boolean", it)
-                reply(PlainText("$arg1 $arg2 $arg3"))
+            case("init", "设置学号") {
+                val arg2: Int by cmdArg(0, "学号", it)
+                dbCtx {
+                    if (it.select().from(User.USER).where(User.USER.ACCOUNT.eq(sender.id)).limit(1).fetch().isNotEmpty) {
+                        it.update(User.USER).set(User.USER.STUDENT_ID, arg2).where(User.USER.ACCOUNT.eq(sender.id)).execute()
+                        reply(PlainText("设置学号成功"))
+                    } else {
+                        it.insertInto(User.USER)
+                            .columns(
+                                User.USER.ACCOUNT,
+                                User.USER.BOT,
+                                User.USER.STUDENT_ID,
+                                User.USER.ENABLE,
+                                User.USER.JOIN_TIME
+                            ).values(
+                                sender.id, sender.bot.id, arg2, 1.toByte(),
+                                LocalDateTime.now()
+                            ).execute()
+                        reply(PlainText("创建账号成功"))
+                    }
+                }
             }
-            case("2","二号命令") {
+            case("2", "二号命令") {
                 reply("啦啦啦啦")
             }
-            case("3","异常测试"){
+            case("3", "异常测试") {
                 throw IllegalAccessError("2333")
             }
-            nextRoute("lalal","", ::next)
+            nextRoute("lalal", "", ::next)
             default {
                 reply(PlainText(generateHelp()))
 
@@ -38,7 +57,7 @@ class BotMsgListener : BaseListeners() {
 
     }
 
-    suspend fun next(route: CommandRoute<FriendMessageEvent>) {
+    suspend fun next(route: CommandRouter<FriendMessageEvent>) {
         route.case("dsd") {
 
             reply("dsd")

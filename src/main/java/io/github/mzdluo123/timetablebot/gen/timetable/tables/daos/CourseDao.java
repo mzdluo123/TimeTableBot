@@ -101,17 +101,38 @@ public class CourseDao extends DAOImpl<CourseRecord, io.github.mzdluo123.timetab
     }
 
     /**
-     * Fetch records that have <code>points BETWEEN lowerInclusive AND upperInclusive</code>
+     * Fetch a unique record that has <code>course_id = value</code>
      */
-    public List<io.github.mzdluo123.timetablebot.gen.timetable.tables.pojos.Course> fetchRangeOfPoints(Double lowerInclusive, Double upperInclusive) {
-        return fetchRange(Course.COURSE.POINTS, lowerInclusive, upperInclusive);
+    public io.github.mzdluo123.timetablebot.gen.timetable.tables.pojos.Course fetchOneByCourseId(String value) {
+        return fetchOne(Course.COURSE.COURSE_ID, value);
     }
 
     /**
-     * Fetch records that have <code>points IN (values)</code>
+     * Fetch records that have <code>week_period BETWEEN lowerInclusive AND upperInclusive</code>
      */
-    public List<io.github.mzdluo123.timetablebot.gen.timetable.tables.pojos.Course> fetchByPoints(Double... values) {
-        return fetch(Course.COURSE.POINTS, values);
+    public List<io.github.mzdluo123.timetablebot.gen.timetable.tables.pojos.Course> fetchRangeOfWeekPeriod(Byte lowerInclusive, Byte upperInclusive) {
+        return fetchRange(Course.COURSE.WEEK_PERIOD, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>week_period IN (values)</code>
+     */
+    public List<io.github.mzdluo123.timetablebot.gen.timetable.tables.pojos.Course> fetchByWeekPeriod(Byte... values) {
+        return fetch(Course.COURSE.WEEK_PERIOD, values);
+    }
+
+    /**
+     * Fetch records that have <code>period BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<io.github.mzdluo123.timetablebot.gen.timetable.tables.pojos.Course> fetchRangeOfPeriod(Byte lowerInclusive, Byte upperInclusive) {
+        return fetchRange(Course.COURSE.PERIOD, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>period IN (values)</code>
+     */
+    public List<io.github.mzdluo123.timetablebot.gen.timetable.tables.pojos.Course> fetchByPeriod(Byte... values) {
+        return fetch(Course.COURSE.PERIOD, values);
     }
 
     /**

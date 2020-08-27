@@ -21,7 +21,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Profile extends TableImpl<ProfileRecord> {
 
-    private static final long serialVersionUID = 376364875;
+    private static final long serialVersionUID = 1480708030;
 
     /**
      * The reference instance of <code>timetable.profile</code>
@@ -45,6 +45,11 @@ public class Profile extends TableImpl<ProfileRecord> {
      * The column <code>timetable.profile.user</code>.
      */
     public final TableField<ProfileRecord, Integer> USER = createField(DSL.name("user"), org.jooq.impl.SQLDataType.INTEGER.defaultValue(org.jooq.impl.DSL.inline("NULL", org.jooq.impl.SQLDataType.INTEGER)), this, "");
+
+    /**
+     * The column <code>timetable.profile.extra</code>. json存储的用户额外信息
+     */
+    public final TableField<ProfileRecord, String> EXTRA = createField(DSL.name("extra"), org.jooq.impl.SQLDataType.CLOB.defaultValue(org.jooq.impl.DSL.inline("NULL", org.jooq.impl.SQLDataType.CLOB)), this, "json存储的用户额外信息");
 
     /**
      * Create a <code>timetable.profile</code> table reference
@@ -135,11 +140,11 @@ public class Profile extends TableImpl<ProfileRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row2 type methods
+    // Row3 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row2<Integer, Integer> fieldsRow() {
-        return (Row2) super.fieldsRow();
+    public Row3<Integer, Integer, String> fieldsRow() {
+        return (Row3) super.fieldsRow();
     }
 }

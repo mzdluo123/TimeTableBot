@@ -4,7 +4,9 @@
 package io.github.mzdluo123.timetablebot.gen.timetable;
 
 
-import io.github.mzdluo123.timetablebot.gen.timetable.tables.Coursetime;
+import io.github.mzdluo123.timetablebot.gen.timetable.tables.CourseTime;
+import io.github.mzdluo123.timetablebot.gen.timetable.tables.OtherCourse;
+import io.github.mzdluo123.timetablebot.gen.timetable.tables.User;
 import org.jooq.Index;
 import org.jooq.OrderField;
 import org.jooq.impl.Internal;
@@ -20,23 +22,23 @@ public class Indexes {
     // INDEX definitions
     // -------------------------------------------------------------------------
 
-    public static final Index COURSETIME_COURSETIME_CLASS_ROOM = Indexes0.COURSETIME_COURSETIME_CLASS_ROOM;
-    public static final Index COURSETIME_COURSETIME_COURSE = Indexes0.COURSETIME_COURSETIME_COURSE;
-    public static final Index COURSETIME_COURSETIME_DAY_OF_WEEK = Indexes0.COURSETIME_COURSETIME_DAY_OF_WEEK;
-    public static final Index COURSETIME_COURSETIME_LENGTH = Indexes0.COURSETIME_COURSETIME_LENGTH;
-    public static final Index COURSETIME_COURSETIME_START_TIME = Indexes0.COURSETIME_COURSETIME_START_TIME;
-    public static final Index COURSETIME_COURSETIME_WEEK = Indexes0.COURSETIME_COURSETIME_WEEK;
+    public static final Index COURSE_TIME_COURSETIME_COURSE = Indexes0.COURSE_TIME_COURSETIME_COURSE;
+    public static final Index COURSE_TIME_COURSETIME_DAY_OF_WEEK = Indexes0.COURSE_TIME_COURSETIME_DAY_OF_WEEK;
+    public static final Index COURSE_TIME_COURSETIME_START_TIME = Indexes0.COURSE_TIME_COURSETIME_START_TIME;
+    public static final Index COURSE_TIME_COURSETIME_WEEK = Indexes0.COURSE_TIME_COURSETIME_WEEK;
+    public static final Index OTHER_COURSE_WEEK = Indexes0.OTHER_COURSE_WEEK;
+    public static final Index USER_ENABLE = Indexes0.USER_ENABLE;
 
     // -------------------------------------------------------------------------
     // [#1459] distribute members to avoid static initialisers > 64kb
     // -------------------------------------------------------------------------
 
     private static class Indexes0 {
-        public static Index COURSETIME_COURSETIME_CLASS_ROOM = Internal.createIndex("coursetime_class_room", Coursetime.COURSETIME, new OrderField[] { Coursetime.COURSETIME.CLASS_ROOM }, false);
-        public static Index COURSETIME_COURSETIME_COURSE = Internal.createIndex("coursetime_course", Coursetime.COURSETIME, new OrderField[] { Coursetime.COURSETIME.COURSE }, false);
-        public static Index COURSETIME_COURSETIME_DAY_OF_WEEK = Internal.createIndex("coursetime_day_of_week", Coursetime.COURSETIME, new OrderField[] { Coursetime.COURSETIME.DAY_OF_WEEK }, false);
-        public static Index COURSETIME_COURSETIME_LENGTH = Internal.createIndex("coursetime_length", Coursetime.COURSETIME, new OrderField[] { Coursetime.COURSETIME.LENGTH }, false);
-        public static Index COURSETIME_COURSETIME_START_TIME = Internal.createIndex("coursetime_start_time", Coursetime.COURSETIME, new OrderField[] { Coursetime.COURSETIME.START_TIME }, false);
-        public static Index COURSETIME_COURSETIME_WEEK = Internal.createIndex("coursetime_week", Coursetime.COURSETIME, new OrderField[] { Coursetime.COURSETIME.WEEK }, false);
+        public static Index COURSE_TIME_COURSETIME_COURSE = Internal.createIndex("coursetime_course", CourseTime.COURSE_TIME, new OrderField[] { CourseTime.COURSE_TIME.COURSE }, false);
+        public static Index COURSE_TIME_COURSETIME_DAY_OF_WEEK = Internal.createIndex("coursetime_day_of_week", CourseTime.COURSE_TIME, new OrderField[] { CourseTime.COURSE_TIME.DAY_OF_WEEK }, false);
+        public static Index COURSE_TIME_COURSETIME_START_TIME = Internal.createIndex("coursetime_start_time", CourseTime.COURSE_TIME, new OrderField[] { CourseTime.COURSE_TIME.START_TIME }, false);
+        public static Index COURSE_TIME_COURSETIME_WEEK = Internal.createIndex("coursetime_week", CourseTime.COURSE_TIME, new OrderField[] { CourseTime.COURSE_TIME.WEEK }, false);
+        public static Index OTHER_COURSE_WEEK = Internal.createIndex("week", OtherCourse.OTHER_COURSE, new OrderField[] { OtherCourse.OTHER_COURSE.WEEK }, false);
+        public static Index USER_ENABLE = Internal.createIndex("enable", User.USER, new OrderField[] { User.USER.ENABLE }, false);
     }
 }

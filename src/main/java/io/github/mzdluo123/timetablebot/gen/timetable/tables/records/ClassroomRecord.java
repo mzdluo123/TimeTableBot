@@ -18,7 +18,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class ClassroomRecord extends UpdatableRecordImpl<ClassroomRecord> implements Record2<Integer, String> {
 
-    private static final long serialVersionUID = 1385952332;
+    private static final long serialVersionUID = 301115170;
 
     /**
      * Setter for <code>timetable.classroom.id</code>.
@@ -35,14 +35,14 @@ public class ClassroomRecord extends UpdatableRecordImpl<ClassroomRecord> implem
     }
 
     /**
-     * Setter for <code>timetable.classroom.location</code>.
+     * Setter for <code>timetable.classroom.location</code>. 教室位置
      */
     public void setLocation(String value) {
         set(1, value);
     }
 
     /**
-     * Getter for <code>timetable.classroom.location</code>.
+     * Getter for <code>timetable.classroom.location</code>. 教室位置
      */
     public String getLocation() {
         return (String) get(1);

@@ -4,6 +4,7 @@
 package io.github.mzdluo123.timetablebot.gen.timetable.tables;
 
 
+import io.github.mzdluo123.timetablebot.gen.timetable.Indexes;
 import io.github.mzdluo123.timetablebot.gen.timetable.Keys;
 import io.github.mzdluo123.timetablebot.gen.timetable.Timetable;
 import io.github.mzdluo123.timetablebot.gen.timetable.tables.records.UserRecord;
@@ -22,7 +23,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class User extends TableImpl<UserRecord> {
 
-    private static final long serialVersionUID = 1848722072;
+    private static final long serialVersionUID = -1817650236;
 
     /**
      * The reference instance of <code>timetable.user</code>
@@ -50,7 +51,7 @@ public class User extends TableImpl<UserRecord> {
     /**
      * The column <code>timetable.user.name</code>.
      */
-    public final TableField<UserRecord, String> NAME = createField(DSL.name("name"), org.jooq.impl.SQLDataType.VARCHAR(5).nullable(false), this, "");
+    public final TableField<UserRecord, String> NAME = createField(DSL.name("name"), org.jooq.impl.SQLDataType.VARCHAR(5).defaultValue(org.jooq.impl.DSL.inline("NULL", org.jooq.impl.SQLDataType.VARCHAR)), this, "");
 
     /**
      * The column <code>timetable.user.student_id</code>.
@@ -65,7 +66,7 @@ public class User extends TableImpl<UserRecord> {
     /**
      * The column <code>timetable.user.join_time</code>.
      */
-    public final TableField<UserRecord, LocalDateTime> JOIN_TIME = createField(DSL.name("join_time"), org.jooq.impl.SQLDataType.LOCALDATETIME.defaultValue(org.jooq.impl.DSL.inline("NULL", org.jooq.impl.SQLDataType.LOCALDATETIME)), this, "");
+    public final TableField<UserRecord, LocalDateTime> JOIN_TIME = createField(DSL.name("join_time"), org.jooq.impl.SQLDataType.LOCALDATETIME.nullable(false), this, "");
 
     /**
      * The column <code>timetable.user.enable</code>.
@@ -113,6 +114,11 @@ public class User extends TableImpl<UserRecord> {
     @Override
     public Schema getSchema() {
         return Timetable.TIMETABLE;
+    }
+
+    @Override
+    public List<Index> getIndexes() {
+        return Arrays.<Index>asList(Indexes.USER_ENABLE);
     }
 
     @Override
