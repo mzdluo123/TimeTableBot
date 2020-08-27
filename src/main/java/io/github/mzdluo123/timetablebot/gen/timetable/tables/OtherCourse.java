@@ -22,7 +22,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class OtherCourse extends TableImpl<OtherCourseRecord> {
 
-    private static final long serialVersionUID = -39841485;
+    private static final long serialVersionUID = -239833524;
 
     /**
      * The reference instance of <code>timetable.other_course</code>
@@ -56,6 +56,11 @@ public class OtherCourse extends TableImpl<OtherCourseRecord> {
      * The column <code>timetable.other_course.week</code>. 第几周
      */
     public final TableField<OtherCourseRecord, Byte> WEEK = createField(DSL.name("week"), org.jooq.impl.SQLDataType.TINYINT.defaultValue(org.jooq.impl.DSL.inline("NULL", org.jooq.impl.SQLDataType.TINYINT)), this, "第几周");
+
+    /**
+     * The column <code>timetable.other_course.teacher</code>. 老师
+     */
+    public final TableField<OtherCourseRecord, String> TEACHER = createField(DSL.name("teacher"), org.jooq.impl.SQLDataType.VARCHAR(255).defaultValue(org.jooq.impl.DSL.inline("NULL", org.jooq.impl.SQLDataType.VARCHAR)), this, "老师");
 
     /**
      * Create a <code>timetable.other_course</code> table reference
@@ -137,11 +142,11 @@ public class OtherCourse extends TableImpl<OtherCourseRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row4 type methods
+    // Row5 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row4<Integer, String, Double, Byte> fieldsRow() {
-        return (Row4) super.fieldsRow();
+    public Row5<Integer, String, Double, Byte, String> fieldsRow() {
+        return (Row5) super.fieldsRow();
     }
 }

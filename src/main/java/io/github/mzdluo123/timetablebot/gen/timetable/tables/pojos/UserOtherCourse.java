@@ -13,12 +13,11 @@ import java.io.Serializable;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class UserOtherCourse implements Serializable {
 
-    private static final long serialVersionUID = -595002184;
+    private static final long serialVersionUID = -479528304;
 
     private Integer id;
     private Integer user;
     private Integer otherCourse;
-    private String  teacher;
 
     public UserOtherCourse() {}
 
@@ -26,19 +25,16 @@ public class UserOtherCourse implements Serializable {
         this.id = value.id;
         this.user = value.user;
         this.otherCourse = value.otherCourse;
-        this.teacher = value.teacher;
     }
 
     public UserOtherCourse(
         Integer id,
         Integer user,
-        Integer otherCourse,
-        String  teacher
+        Integer otherCourse
     ) {
         this.id = id;
         this.user = user;
         this.otherCourse = otherCourse;
-        this.teacher = teacher;
     }
 
     public Integer getId() {
@@ -65,14 +61,6 @@ public class UserOtherCourse implements Serializable {
         this.otherCourse = otherCourse;
     }
 
-    public String getTeacher() {
-        return this.teacher;
-    }
-
-    public void setTeacher(String teacher) {
-        this.teacher = teacher;
-    }
-
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("UserOtherCourse (");
@@ -80,7 +68,6 @@ public class UserOtherCourse implements Serializable {
         sb.append(id);
         sb.append(", ").append(user);
         sb.append(", ").append(otherCourse);
-        sb.append(", ").append(teacher);
 
         sb.append(")");
         return sb.toString();

@@ -21,7 +21,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class UserOtherCourse extends TableImpl<UserOtherCourseRecord> {
 
-    private static final long serialVersionUID = -357941552;
+    private static final long serialVersionUID = -690827444;
 
     /**
      * The reference instance of <code>timetable.user_other_course</code>
@@ -50,11 +50,6 @@ public class UserOtherCourse extends TableImpl<UserOtherCourseRecord> {
      * The column <code>timetable.user_other_course.other_course</code>.
      */
     public final TableField<UserOtherCourseRecord, Integer> OTHER_COURSE = createField(DSL.name("other_course"), org.jooq.impl.SQLDataType.INTEGER.nullable(false), this, "");
-
-    /**
-     * The column <code>timetable.user_other_course.teacher</code>.
-     */
-    public final TableField<UserOtherCourseRecord, String> TEACHER = createField(DSL.name("teacher"), org.jooq.impl.SQLDataType.VARCHAR(255).defaultValue(org.jooq.impl.DSL.inline("NULL", org.jooq.impl.SQLDataType.VARCHAR)), this, "");
 
     /**
      * Create a <code>timetable.user_other_course</code> table reference
@@ -144,11 +139,11 @@ public class UserOtherCourse extends TableImpl<UserOtherCourseRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row4 type methods
+    // Row3 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row4<Integer, Integer, Integer, String> fieldsRow() {
-        return (Row4) super.fieldsRow();
+    public Row3<Integer, Integer, Integer> fieldsRow() {
+        return (Row3) super.fieldsRow();
     }
 }

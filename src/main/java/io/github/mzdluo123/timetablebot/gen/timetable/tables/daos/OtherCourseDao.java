@@ -106,4 +106,18 @@ public class OtherCourseDao extends DAOImpl<OtherCourseRecord, io.github.mzdluo1
     public List<io.github.mzdluo123.timetablebot.gen.timetable.tables.pojos.OtherCourse> fetchByWeek(Byte... values) {
         return fetch(OtherCourse.OTHER_COURSE.WEEK, values);
     }
+
+    /**
+     * Fetch records that have <code>teacher BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<io.github.mzdluo123.timetablebot.gen.timetable.tables.pojos.OtherCourse> fetchRangeOfTeacher(String lowerInclusive, String upperInclusive) {
+        return fetchRange(OtherCourse.OTHER_COURSE.TEACHER, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>teacher IN (values)</code>
+     */
+    public List<io.github.mzdluo123.timetablebot.gen.timetable.tables.pojos.OtherCourse> fetchByTeacher(String... values) {
+        return fetch(OtherCourse.OTHER_COURSE.TEACHER, values);
+    }
 }

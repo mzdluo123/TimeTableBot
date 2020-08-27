@@ -85,18 +85,4 @@ public class UserOtherCourseDao extends DAOImpl<UserOtherCourseRecord, io.github
     public List<io.github.mzdluo123.timetablebot.gen.timetable.tables.pojos.UserOtherCourse> fetchByOtherCourse(Integer... values) {
         return fetch(UserOtherCourse.USER_OTHER_COURSE.OTHER_COURSE, values);
     }
-
-    /**
-     * Fetch records that have <code>teacher BETWEEN lowerInclusive AND upperInclusive</code>
-     */
-    public List<io.github.mzdluo123.timetablebot.gen.timetable.tables.pojos.UserOtherCourse> fetchRangeOfTeacher(String lowerInclusive, String upperInclusive) {
-        return fetchRange(UserOtherCourse.USER_OTHER_COURSE.TEACHER, lowerInclusive, upperInclusive);
-    }
-
-    /**
-     * Fetch records that have <code>teacher IN (values)</code>
-     */
-    public List<io.github.mzdluo123.timetablebot.gen.timetable.tables.pojos.UserOtherCourse> fetchByTeacher(String... values) {
-        return fetch(UserOtherCourse.USER_OTHER_COURSE.TEACHER, values);
-    }
 }
