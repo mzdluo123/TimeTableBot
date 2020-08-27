@@ -50,10 +50,9 @@ object SyncTask : CoroutineScope {
                                 name = it.kcmc
                                 teacher = it.xm
                                 weekPeriod = it.zxs.toByte()
-
-
+                                score = it.xf.toDouble()
+                                period = it.zxs.toByte()
                             })
-
                         }
 
                     }
