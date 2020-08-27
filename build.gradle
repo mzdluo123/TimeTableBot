@@ -88,10 +88,9 @@ dependencies {
 //    compile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.30'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.8.0'
 
-//    compile "org.jetbrains.exposed:exposed-core:0.24.1"
-//    compile"org.jetbrains.exposed:exposed-dao:0.24.1"
-//    compile"org.jetbrains.exposed:exposed-jdbc:0.24.1"
-//    compile"org.jetbrains.exposed:exposed-jodatime:0.24.1"
+    // https://mvnrepository.com/artifact/org.quartz-scheduler/quartz
+    compile group: 'org.quartz-scheduler', name: 'quartz', version: '2.3.2'
+
 
     compile 'org.jooq:jooq:3.13.4'
 
@@ -102,18 +101,6 @@ dependencies {
 
     // https://mvnrepository.com/artifact/org.jsoup/jsoup
     compile group: 'org.jsoup', name: 'jsoup', version: '1.13.1'
-//// https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk15on
-//    compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.66'
-
-//// https://mvnrepository.com/artifact/commons-io/commons-io
-//    compile group: 'commons-io', name: 'commons-io', version: '2.5'
-//// https://mvnrepository.com/artifact/commons-lang/commons-lang
-//    compile group: 'commons-lang', name: 'commons-lang', version: '2.6'
-//
-//// https://mvnrepository.com/artifact/commons-codec/commons-codec
-//    compile group: 'commons-codec', name: 'commons-codec', version: '1.14'
-
-//    compile 'com.mojang:brigadier:1.0.17'
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }

@@ -18,6 +18,7 @@ public class AppConfig {
     public String baseUrl;
     public String authUrl;
     public List<Long> admin;
+    public List<String> classTime;
 
     private AppConfig() {
     }

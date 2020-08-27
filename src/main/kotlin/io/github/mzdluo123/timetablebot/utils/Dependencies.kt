@@ -14,6 +14,7 @@ import org.jooq.SQLDialect
 import org.jooq.impl.DSL
 import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.constructor.Constructor
+import java.time.LocalTime
 import java.util.concurrent.TimeUnit
 
 object Dependencies {
@@ -65,6 +66,13 @@ object Dependencies {
         HikariDataSource(dbConfig)
     }
 
+    val classTimeTable by lazy {
+        val list = mutableListOf<LocalTime>()
+        AppConfig.getInstance().classTime.forEach {
+            list.add(parseClassTime(it))
+        }
+        list
+    }
 
     fun resetCookie() {
         cookies.clear()

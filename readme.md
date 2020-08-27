@@ -14,9 +14,16 @@
 dbUrl: "jdbc:mysql://xxxxx"
 dbUser: "xxx"
 dbPwd: "xxx"
-baseUrl: "xxxxx"
 botAccounts:
   - id: xxx
     pwd: "xxxx"  # 账号可添加多个
 
+baseUrl: "xxx" # api地址
+authUrl: "xxx" # 统一认证地址
+
+admin: # 管理员列表
+  - xxxx
+
+classTime:  # 每节课的上课时间
+  - "9:00"
 ```

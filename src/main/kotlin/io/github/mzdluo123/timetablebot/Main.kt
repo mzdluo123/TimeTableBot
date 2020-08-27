@@ -36,6 +36,8 @@ $$$$$$$$/ $$/  _____  ____    ______$$$$$$$$/______  $$ |____  $$ |  ______  $$$
 
     mainLogger.info("TimeTableBot ${BuildConfig.VERSION} build ${timeToStr(BuildConfig.BUILD_UNIXTIME)} loading.... ")
 
+    mainLogger.info("now ${timeToStr(System.currentTimeMillis())}")
+
     mainLogger.info("loading config.")
 
     val configFile = if (args.isNotEmpty()) {
@@ -53,7 +55,7 @@ $$$$$$$$/ $$/  _____  ____    ______$$$$$$$$/______  $$ |____  $$ |  ______  $$$
     mainLogger.info("connecting database")
 
     dbCtx {
-
+        it.select().from().fetch()
     }
 
     mainLogger.info("database connected")
