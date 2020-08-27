@@ -19,6 +19,8 @@ public class AppConfig {
     public String authUrl;
     public List<Long> admin;
     public List<String> classTime;
+    public int year;
+    public int term;
 
     private AppConfig() {
     }

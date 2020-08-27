@@ -6,8 +6,9 @@ import io.github.mzdluo123.timetablebot.gen.timetable.tables.pojos.User
 import io.github.mzdluo123.timetablebot.route.CommandRouter
 import io.github.mzdluo123.timetablebot.route.cmdArg
 import io.github.mzdluo123.timetablebot.route.route
+import io.github.mzdluo123.timetablebot.task.SyncRequest
+import io.github.mzdluo123.timetablebot.task.SyncTask
 import io.github.mzdluo123.timetablebot.utils.createDao
-import io.github.mzdluo123.timetablebot.utils.dbCtx
 import net.mamoe.mirai.event.EventHandler
 import net.mamoe.mirai.message.FriendMessageEvent
 import net.mamoe.mirai.message.data.PlainText
@@ -19,33 +20,39 @@ class BotMsgListener : BaseListeners() {
 
     @EventHandler
     suspend fun FriendMessageEvent.onEvent() {
+        val user = userDao.fetchOneByAccount(sender.id)
         route(prefix = "", delimiter = " ") {
             exception { throwable ->
                 PlainText(throwable.toString())
             }
             case("init", "设置学号") {
                 val arg2: Int by cmdArg(0, "学号", it)
-                dbCtx {
-                    val user = userDao.fetchOneByAccount(sender.id)
-                    if (user != null) {
-                        userDao.update(user.apply {
-                            studentId = arg2
-                        })
-                        reply(PlainText("设置学号成功"))
-                    } else {
-                        userDao.insert(User().apply {
-                            account = sender.id
-                            bot = sender.bot.id
-                            joinTime = LocalDateTime.now()
-                            enable = 1.toByte()
-                            studentId = arg2
-                        })
-                        reply(PlainText("创建账号成功"))
-                    }
+                if (user != null) {
+                    userDao.update(user.apply {
+                        studentId = arg2
+                    })
+                    reply(PlainText("设置学号成功"))
+                } else {
+                    userDao.insert(User().apply {
+                        account = sender.id
+                        bot = sender.bot.id
+                        joinTime = LocalDateTime.now()
+                        enable = 1.toByte()
+                        studentId = arg2
+                    })
+                    reply(PlainText("创建账号成功"))
                 }
             }
-            case("2", "二号命令") {
-                reply("啦啦啦啦")
+            case("sync", "从教务系统同步课程表") {
+
+                if (user == null) {
+                    reply("你没有创建账号，请使用init创建账户")
+                    return@case
+                }
+                val arg: String by cmdArg(0, "密码", it)
+                SyncTask.requestSync(SyncRequest(user.id, arg))
+                reply("我们将在后台刷新你的课程表，完成后会向你发送信息，请稍后\n同步较慢，请勿重复提交")
+
             }
             case("3", "异常测试") {
                 throw IllegalAccessError("2333")

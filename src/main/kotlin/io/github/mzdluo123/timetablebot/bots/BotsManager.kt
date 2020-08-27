@@ -10,10 +10,13 @@ package io.github.mzdluo123.timetablebot.bots
 
 import io.github.mzdluo123.timetablebot.appJob
 import io.github.mzdluo123.timetablebot.config.Account
+import io.github.mzdluo123.timetablebot.gen.timetable.tables.daos.UserDao
+import io.github.mzdluo123.timetablebot.utils.createDao
 import io.github.mzdluo123.timetablebot.utils.globalExceptionHandler
 import io.github.mzdluo123.timetablebot.utils.logger
 import kotlinx.coroutines.*
 import net.mamoe.mirai.Bot
+import net.mamoe.mirai.message.data.Message
 import net.mamoe.mirai.utils.internal.logging.Log4jLogger
 import org.apache.logging.log4j.LogManager
 import java.io.File
@@ -21,6 +24,7 @@ import kotlin.coroutines.CoroutineContext
 
 object BotsManager : CoroutineScope {
     val jobs = Job()
+    private val userDao = createDao(UserDao::class)
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Default + SupervisorJob(appJob) + jobs
@@ -62,4 +66,8 @@ object BotsManager : CoroutineScope {
         }
     }
 
+    suspend fun sendMsg(user: Int, msg: Message) {
+        val userPO = userDao.fetchOneById(user)
+        Bot.getInstance(userPO.bot).getFriend(userPO.account).sendMessage(msg)
+    }
 }
