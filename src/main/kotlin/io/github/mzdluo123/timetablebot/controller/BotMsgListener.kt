@@ -1,9 +1,12 @@
 package io.github.mzdluo123.timetablebot.controller
 
-import io.github.mzdluo123.timetablebot.gen.timetable.tables.User
+
+import io.github.mzdluo123.timetablebot.gen.timetable.tables.daos.UserDao
+import io.github.mzdluo123.timetablebot.gen.timetable.tables.pojos.User
 import io.github.mzdluo123.timetablebot.route.CommandRouter
 import io.github.mzdluo123.timetablebot.route.cmdArg
 import io.github.mzdluo123.timetablebot.route.route
+import io.github.mzdluo123.timetablebot.utils.createDao
 import io.github.mzdluo123.timetablebot.utils.dbCtx
 import net.mamoe.mirai.event.EventHandler
 import net.mamoe.mirai.message.FriendMessageEvent
@@ -12,6 +15,7 @@ import java.time.LocalDateTime
 
 
 class BotMsgListener : BaseListeners() {
+    private val userDao = createDao(UserDao::class)
 
     @EventHandler
     suspend fun FriendMessageEvent.onEvent() {
@@ -22,21 +26,20 @@ class BotMsgListener : BaseListeners() {
             case("init", "设置学号") {
                 val arg2: Int by cmdArg(0, "学号", it)
                 dbCtx {
-                    if (it.select().from(User.USER).where(User.USER.ACCOUNT.eq(sender.id)).limit(1).fetch().isNotEmpty) {
-                        it.update(User.USER).set(User.USER.STUDENT_ID, arg2).where(User.USER.ACCOUNT.eq(sender.id)).execute()
+                    val user = userDao.fetchOneByAccount(sender.id)
+                    if (user != null) {
+                        userDao.update(user.apply {
+                            studentId = arg2
+                        })
                         reply(PlainText("设置学号成功"))
                     } else {
-                        it.insertInto(User.USER)
-                            .columns(
-                                User.USER.ACCOUNT,
-                                User.USER.BOT,
-                                User.USER.STUDENT_ID,
-                                User.USER.ENABLE,
-                                User.USER.JOIN_TIME
-                            ).values(
-                                sender.id, sender.bot.id, arg2, 1.toByte(),
-                                LocalDateTime.now()
-                            ).execute()
+                        userDao.insert(User().apply {
+                            account = sender.id
+                            bot = sender.bot.id
+                            joinTime = LocalDateTime.now()
+                            enable = 1.toByte()
+                            studentId = arg2
+                        })
                         reply(PlainText("创建账号成功"))
                     }
                 }
