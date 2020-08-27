@@ -173,7 +173,6 @@ object SyncTask : CoroutineScope {
                 BotsManager.sendMsg(task.uid, PlainText("出现未知错误，请联系管理员: $e"))
             }
         }
-
     }
 
     public suspend fun requestSync(task: SyncRequest) {

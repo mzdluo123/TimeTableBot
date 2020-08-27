@@ -17,7 +17,7 @@ private val logger = logger()
 suspend fun getTimeTable(schoolYear: Int, term: Int): TimeTableDTO? {
 
     val xqm = arrayListOf<String>("3", "12", "16")
-    if (term < 0 && term > 2) {
+    if (term < 0 || term > 2) {
         throw IllegalAccessError("非法学年！")
     }
     withContext(Dispatchers.IO) {
