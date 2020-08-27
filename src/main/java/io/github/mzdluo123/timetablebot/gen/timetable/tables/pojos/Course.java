@@ -13,11 +13,11 @@ import java.io.Serializable;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Course implements Serializable {
 
-    private static final long serialVersionUID = -1195902738;
+    private static final long serialVersionUID = -2039682721;
 
     private Integer id;
     private String  name;
-    private String  thacher;
+    private String  teacher;
     private String  courseId;
     private Byte    weekPeriod;
     private Byte    period;
@@ -28,7 +28,7 @@ public class Course implements Serializable {
     public Course(Course value) {
         this.id = value.id;
         this.name = value.name;
-        this.thacher = value.thacher;
+        this.teacher = value.teacher;
         this.courseId = value.courseId;
         this.weekPeriod = value.weekPeriod;
         this.period = value.period;
@@ -38,7 +38,7 @@ public class Course implements Serializable {
     public Course(
         Integer id,
         String  name,
-        String  thacher,
+        String  teacher,
         String  courseId,
         Byte    weekPeriod,
         Byte    period,
@@ -46,7 +46,7 @@ public class Course implements Serializable {
     ) {
         this.id = id;
         this.name = name;
-        this.thacher = thacher;
+        this.teacher = teacher;
         this.courseId = courseId;
         this.weekPeriod = weekPeriod;
         this.period = period;
@@ -69,12 +69,12 @@ public class Course implements Serializable {
         this.name = name;
     }
 
-    public String getThacher() {
-        return this.thacher;
+    public String getTeacher() {
+        return this.teacher;
     }
 
-    public void setThacher(String thacher) {
-        this.thacher = thacher;
+    public void setTeacher(String teacher) {
+        this.teacher = teacher;
     }
 
     public String getCourseId() {
@@ -115,7 +115,7 @@ public class Course implements Serializable {
 
         sb.append(id);
         sb.append(", ").append(name);
-        sb.append(", ").append(thacher);
+        sb.append(", ").append(teacher);
         sb.append(", ").append(courseId);
         sb.append(", ").append(weekPeriod);
         sb.append(", ").append(period);

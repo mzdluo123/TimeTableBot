@@ -73,17 +73,17 @@ public class CourseDao extends DAOImpl<CourseRecord, io.github.mzdluo123.timetab
     }
 
     /**
-     * Fetch records that have <code>thacher BETWEEN lowerInclusive AND upperInclusive</code>
+     * Fetch records that have <code>teacher BETWEEN lowerInclusive AND upperInclusive</code>
      */
-    public List<io.github.mzdluo123.timetablebot.gen.timetable.tables.pojos.Course> fetchRangeOfThacher(String lowerInclusive, String upperInclusive) {
-        return fetchRange(Course.COURSE.THACHER, lowerInclusive, upperInclusive);
+    public List<io.github.mzdluo123.timetablebot.gen.timetable.tables.pojos.Course> fetchRangeOfTeacher(String lowerInclusive, String upperInclusive) {
+        return fetchRange(Course.COURSE.TEACHER, lowerInclusive, upperInclusive);
     }
 
     /**
-     * Fetch records that have <code>thacher IN (values)</code>
+     * Fetch records that have <code>teacher IN (values)</code>
      */
-    public List<io.github.mzdluo123.timetablebot.gen.timetable.tables.pojos.Course> fetchByThacher(String... values) {
-        return fetch(Course.COURSE.THACHER, values);
+    public List<io.github.mzdluo123.timetablebot.gen.timetable.tables.pojos.Course> fetchByTeacher(String... values) {
+        return fetch(Course.COURSE.TEACHER, values);
     }
 
     /**

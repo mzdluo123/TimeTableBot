@@ -3,7 +3,9 @@ package io.github.mzdluo123.timetablebot.task
 import io.github.mzdluo123.timetablebot.appJob
 import io.github.mzdluo123.timetablebot.bots.BotsManager
 import io.github.mzdluo123.timetablebot.config.AppConfig
+import io.github.mzdluo123.timetablebot.gen.timetable.tables.daos.CourseDao
 import io.github.mzdluo123.timetablebot.gen.timetable.tables.daos.UserDao
+import io.github.mzdluo123.timetablebot.gen.timetable.tables.pojos.Course
 import io.github.mzdluo123.timetablebot.schoolservice.*
 import io.github.mzdluo123.timetablebot.utils.Dependencies
 import io.github.mzdluo123.timetablebot.utils.createDao
@@ -22,6 +24,7 @@ object SyncTask : CoroutineScope {
     private val taskQueue = Channel<SyncRequest>()
     private val logger = logger()
     private val userDao = createDao(UserDao::class)
+    private val courseDao = createDao(CourseDao::class)
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.IO + SupervisorJob(appJob)
 
@@ -38,7 +41,22 @@ object SyncTask : CoroutineScope {
                     val studentId = userDao.fetchOneById(task.uid).studentId
                     loginToCAS(studentId.toString(),task.pwd)
                     val timetable = getTimeTable(AppConfig.getInstance().year,AppConfig.getInstance().term)
-                    logger.info(timetable.toString())
+
+                    timetable?.kbList?.forEach {
+                        val course = courseDao.fetchByCourseId(it.jxbId)
+                        if (course == null){
+                            courseDao.insert(Course().apply {
+                                courseId = it.jxbId
+                                name = it.kcmc
+                                teacher = it.xm
+                                weekPeriod = it.zxs.toByte()
+
+
+                            })
+
+                        }
+
+                    }
 
 
                     BotsManager.sendMsg(task.uid,PlainText("课程表刷新完成，共记录了${timetable?.kbList?.size ?: 0}节课程"))

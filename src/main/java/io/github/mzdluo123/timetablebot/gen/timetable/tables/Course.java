@@ -21,7 +21,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Course extends TableImpl<CourseRecord> {
 
-    private static final long serialVersionUID = 25553252;
+    private static final long serialVersionUID = 1534829441;
 
     /**
      * The reference instance of <code>timetable.course</code>
@@ -47,9 +47,9 @@ public class Course extends TableImpl<CourseRecord> {
     public final TableField<CourseRecord, String> NAME = createField(DSL.name("name"), org.jooq.impl.SQLDataType.VARCHAR(10).nullable(false), this, "课程名字");
 
     /**
-     * The column <code>timetable.course.thacher</code>. 老师名字
+     * The column <code>timetable.course.teacher</code>. 老师名字
      */
-    public final TableField<CourseRecord, String> THACHER = createField(DSL.name("thacher"), org.jooq.impl.SQLDataType.VARCHAR(10).nullable(false), this, "老师名字");
+    public final TableField<CourseRecord, String> TEACHER = createField(DSL.name("teacher"), org.jooq.impl.SQLDataType.VARCHAR(10).nullable(false), this, "老师名字");
 
     /**
      * The column <code>timetable.course.course_id</code>. 课程id

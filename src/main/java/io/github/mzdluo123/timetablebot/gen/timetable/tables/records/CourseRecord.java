@@ -18,7 +18,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class CourseRecord extends UpdatableRecordImpl<CourseRecord> implements Record7<Integer, String, String, String, Byte, Byte, Double> {
 
-    private static final long serialVersionUID = 1183323004;
+    private static final long serialVersionUID = -1258968740;
 
     /**
      * Setter for <code>timetable.course.id</code>.
@@ -49,16 +49,16 @@ public class CourseRecord extends UpdatableRecordImpl<CourseRecord> implements R
     }
 
     /**
-     * Setter for <code>timetable.course.thacher</code>. 老师名字
+     * Setter for <code>timetable.course.teacher</code>. 老师名字
      */
-    public void setThacher(String value) {
+    public void setTeacher(String value) {
         set(2, value);
     }
 
     /**
-     * Getter for <code>timetable.course.thacher</code>. 老师名字
+     * Getter for <code>timetable.course.teacher</code>. 老师名字
      */
-    public String getThacher() {
+    public String getTeacher() {
         return (String) get(2);
     }
 
@@ -153,7 +153,7 @@ public class CourseRecord extends UpdatableRecordImpl<CourseRecord> implements R
 
     @Override
     public Field<String> field3() {
-        return Course.COURSE.THACHER;
+        return Course.COURSE.TEACHER;
     }
 
     @Override
@@ -188,7 +188,7 @@ public class CourseRecord extends UpdatableRecordImpl<CourseRecord> implements R
 
     @Override
     public String component3() {
-        return getThacher();
+        return getTeacher();
     }
 
     @Override
@@ -223,7 +223,7 @@ public class CourseRecord extends UpdatableRecordImpl<CourseRecord> implements R
 
     @Override
     public String value3() {
-        return getThacher();
+        return getTeacher();
     }
 
     @Override
@@ -260,7 +260,7 @@ public class CourseRecord extends UpdatableRecordImpl<CourseRecord> implements R
 
     @Override
     public CourseRecord value3(String value) {
-        setThacher(value);
+        setTeacher(value);
         return this;
     }
 
@@ -314,12 +314,12 @@ public class CourseRecord extends UpdatableRecordImpl<CourseRecord> implements R
     /**
      * Create a detached, initialised CourseRecord
      */
-    public CourseRecord(Integer id, String name, String thacher, String courseId, Byte weekPeriod, Byte period, Double score) {
+    public CourseRecord(Integer id, String name, String teacher, String courseId, Byte weekPeriod, Byte period, Double score) {
         super(Course.COURSE);
 
         set(0, id);
         set(1, name);
-        set(2, thacher);
+        set(2, teacher);
         set(3, courseId);
         set(4, weekPeriod);
         set(5, period);
