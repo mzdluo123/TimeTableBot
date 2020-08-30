@@ -46,6 +46,14 @@ object SyncTask : CoroutineScope {
                 loginToCAS(studentId.toString(), task.pwd)
                 val timetable = getTimeTable(AppConfig.getInstance().year, AppConfig.getInstance().term)
 
+                // 更新名字
+
+                if (timetable != null) {
+                    user.name = timetable.xsxx.xM
+                    userDao.update(user)
+                }
+
+
                 //必修课
                 timetable?.kbList?.forEach { c ->
                     var course = courseDao.fetchOneByCourseId(c.jxbId)

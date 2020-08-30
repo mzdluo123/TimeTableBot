@@ -21,6 +21,7 @@ public class AppConfig {
     public List<String> classTime;
     public int year;
     public int term;
+    public String termBegin;
 
     private AppConfig() {
     }

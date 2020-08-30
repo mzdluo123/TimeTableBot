@@ -2,9 +2,7 @@ package io.github.mzdluo123.timetablebot.utils
 
 import io.github.mzdluo123.timetablebot.config.AppConfig
 import java.io.File
-import java.time.Instant
-import java.time.LocalTime
-import java.time.ZoneId
+import java.time.*
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Locale
@@ -66,8 +64,30 @@ fun parseWeek(weekStr: String): List<Int> {
     return res
 }
 
+
+/**
+ * 获取现在是第几周
+ * */
+fun week(): Int {
+    val begin = LocalDate.parse(AppConfig.getInstance().termBegin)
+    //val today = LocalDate.of(2020,9,13)
+    val today = LocalDate.now()
+    val p = Period.between(begin,today)
+    return p.days /7 +1
+
+}
+
+/**
+ * 获取现在是星期几
+ * */
+fun dayOfWeek(): Int {
+    return LocalDate.now().dayOfWeek.value
+}
+
 fun main() {
     AppConfig.loadConfig(File("config.yml"))
-    println(parseWeek("9-10周,13-18周"))
-    println(parseWeek("1-9周(单),13周"))
+//    println(parseWeek("9-10周,13-18周"))
+//    println(parseWeek("1-9周(单),13周"))
+    println(week())
+    println(dayOfWeek())
 }
