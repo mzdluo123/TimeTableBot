@@ -23,6 +23,8 @@ public class AppConfig {
     public int term;
     public String termBegin;
 
+    private static File configFile;
+
     private AppConfig() {
     }
 
@@ -30,16 +32,27 @@ public class AppConfig {
         return INSTANCE;
     }
 
-    public boolean isAdmin(Long user){
+    public boolean isAdmin(Long user) {
+        if (admin == null) {
+            return false;
+        }
         return admin.contains(user);
     }
 
     public static void loadConfig(File file) throws IOException {
-        if (INSTANCE != null){
+        if (INSTANCE != null) {
             return;
         }
+        configFile = file;
         Yaml yaml = Dependencies.getYaml();
         FileInputStream fileInputStream = new FileInputStream(file);
+        INSTANCE = yaml.load(fileInputStream);
+        fileInputStream.close();
+    }
+
+    public static void reload() throws IOException {
+        Yaml yaml = Dependencies.getYaml();
+        FileInputStream fileInputStream = new FileInputStream(configFile);
         INSTANCE = yaml.load(fileInputStream);
         fileInputStream.close();
     }

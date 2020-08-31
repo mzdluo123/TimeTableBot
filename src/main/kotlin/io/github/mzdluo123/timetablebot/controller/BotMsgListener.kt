@@ -1,10 +1,12 @@
 package io.github.mzdluo123.timetablebot.controller
 
 
+import io.github.mzdluo123.timetablebot.config.AppConfig
 import io.github.mzdluo123.timetablebot.gen.timetable.tables.daos.UserDao
 import io.github.mzdluo123.timetablebot.gen.timetable.tables.pojos.User
 import io.github.mzdluo123.timetablebot.route.CommandRouter
 import io.github.mzdluo123.timetablebot.route.cmdArg
+import io.github.mzdluo123.timetablebot.route.requireAdminPermission
 import io.github.mzdluo123.timetablebot.route.route
 import io.github.mzdluo123.timetablebot.task.SyncRequest
 import io.github.mzdluo123.timetablebot.task.SyncTask
@@ -57,8 +59,9 @@ class BotMsgListener : BaseListeners() {
             case("3", "异常测试") {
                 throw IllegalAccessError("2333")
             }
-            nextRoute("lalal", "", ::next)
+            nextRoute("admin", "管理中心", ::admin)
             default {
+
                 reply(PlainText(generateHelp()))
 
             }
@@ -67,10 +70,15 @@ class BotMsgListener : BaseListeners() {
 
     }
 
-    suspend fun next(route: CommandRouter<FriendMessageEvent>) {
-        route.case("dsd") {
+    private suspend fun admin(route: CommandRouter<FriendMessageEvent>) {
 
-            reply("dsd")
+        route.exception {
+           PlainText(it.toString())
+        }
+        route.event.requireAdminPermission()
+        route.case("reload","重载配置") {
+            AppConfig.reload()
+            reply("配置重载成功!")
         }
         route.default {
 
