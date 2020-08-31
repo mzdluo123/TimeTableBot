@@ -23,9 +23,9 @@ val dataSource by lazy {
 }
 val dbConfig: Configuration = DefaultConfiguration().set(dataSource).set(SQLDialect.MYSQL)
 
-inline fun dbCtx(receiver: (DSLContext) -> Unit) {
+inline fun <reified  T >dbCtx(receiver: (DSLContext) -> T):T {
     DSL.using(dbConfig).use {
-        receiver(it)
+        return receiver(it)
     }
 }
 
