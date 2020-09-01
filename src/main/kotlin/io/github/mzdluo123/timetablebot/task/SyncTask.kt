@@ -136,19 +136,15 @@ object SyncTask : CoroutineScope {
                         val teacher = c.jsxm
                         for (w in week) {
                             var otherCourse = it.fetchOne(
-                                OtherCourse.OTHER_COURSE, OtherCourse.OTHER_COURSE.NAME.eq(name).and(
-                                    OtherCourse.OTHER_COURSE.SCORE.eq(score)
-                                        .and(OtherCourse.OTHER_COURSE.WEEK.eq(w.toByte())).and(
-                                            OtherCourse.OTHER_COURSE.TEACHER.eq(teacher)
-                                        )
-                                )
+                                OtherCourse.OTHER_COURSE, OtherCourse.OTHER_COURSE.NAME.eq(name)
                             )
                             if (otherCourse == null) {
                                 otherCourse = it.insertInto(OtherCourse.OTHER_COURSE).columns(
                                     OtherCourse.OTHER_COURSE.NAME,
                                     OtherCourse.OTHER_COURSE.SCORE,
-                                    OtherCourse.OTHER_COURSE.WEEK
-                                ).values(name, score, w.toByte()).returning().fetchOne()
+                                    OtherCourse.OTHER_COURSE.WEEK,
+                                    OtherCourse.OTHER_COURSE.TEACHER
+                                ).values(name, score, w.toByte(),teacher).returning(OtherCourse.OTHER_COURSE.ID).fetchOne()
                             }
 
                             var userOtherCourse = it.fetchOne(
@@ -157,10 +153,10 @@ object SyncTask : CoroutineScope {
                                     .and(UserOtherCourse.USER_OTHER_COURSE.OTHER_COURSE.eq(otherCourse.id))
                             )
                             if (userOtherCourse == null) {
-                                userOtherCourse = it.insertInto(UserOtherCourse.USER_OTHER_COURSE).columns(
+                                it.insertInto(UserOtherCourse.USER_OTHER_COURSE).columns(
                                     UserOtherCourse.USER_OTHER_COURSE.USER,
                                     UserOtherCourse.USER_OTHER_COURSE.OTHER_COURSE
-                                ).values(user.id, otherCourse.id).returning().fetchOne()
+                                ).values(user.id, otherCourse.id).execute()
 
                             }
 
@@ -179,6 +175,7 @@ object SyncTask : CoroutineScope {
                 BotsManager.sendMsg(task.uid, PlainText("无法获取课程表，请联系管理员"))
             } catch (e: Exception) {
                 BotsManager.sendMsg(task.uid, PlainText("出现未知错误，请联系管理员: $e"))
+                e.printStackTrace()
             }
         }
     }

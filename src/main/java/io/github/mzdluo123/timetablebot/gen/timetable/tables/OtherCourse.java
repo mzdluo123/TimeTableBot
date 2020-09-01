@@ -22,7 +22,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class OtherCourse extends TableImpl<OtherCourseRecord> {
 
-    private static final long serialVersionUID = -239833524;
+    private static final long serialVersionUID = -767048424;
 
     /**
      * The reference instance of <code>timetable.other_course</code>
@@ -40,7 +40,7 @@ public class OtherCourse extends TableImpl<OtherCourseRecord> {
     /**
      * The column <code>timetable.other_course.id</code>.
      */
-    public final TableField<OtherCourseRecord, Integer> ID = createField(DSL.name("id"), org.jooq.impl.SQLDataType.INTEGER.nullable(false), this, "");
+    public final TableField<OtherCourseRecord, Integer> ID = createField(DSL.name("id"), org.jooq.impl.SQLDataType.INTEGER.nullable(false).identity(true), this, "");
 
     /**
      * The column <code>timetable.other_course.name</code>. 课程名字
@@ -103,6 +103,11 @@ public class OtherCourse extends TableImpl<OtherCourseRecord> {
     @Override
     public List<Index> getIndexes() {
         return Arrays.<Index>asList(Indexes.OTHER_COURSE_WEEK);
+    }
+
+    @Override
+    public Identity<OtherCourseRecord, Integer> getIdentity() {
+        return Keys.IDENTITY_OTHER_COURSE;
     }
 
     @Override

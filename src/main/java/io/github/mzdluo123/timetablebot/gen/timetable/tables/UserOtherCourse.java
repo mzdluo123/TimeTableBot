@@ -21,7 +21,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class UserOtherCourse extends TableImpl<UserOtherCourseRecord> {
 
-    private static final long serialVersionUID = -690827444;
+    private static final long serialVersionUID = -1424837063;
 
     /**
      * The reference instance of <code>timetable.user_other_course</code>
@@ -39,7 +39,7 @@ public class UserOtherCourse extends TableImpl<UserOtherCourseRecord> {
     /**
      * The column <code>timetable.user_other_course.id</code>.
      */
-    public final TableField<UserOtherCourseRecord, Integer> ID = createField(DSL.name("id"), org.jooq.impl.SQLDataType.INTEGER.nullable(false), this, "");
+    public final TableField<UserOtherCourseRecord, Integer> ID = createField(DSL.name("id"), org.jooq.impl.SQLDataType.INTEGER.nullable(false).identity(true), this, "");
 
     /**
      * The column <code>timetable.user_other_course.user</code>.
@@ -90,6 +90,11 @@ public class UserOtherCourse extends TableImpl<UserOtherCourseRecord> {
     }
 
     @Override
+    public Identity<UserOtherCourseRecord, Integer> getIdentity() {
+        return Keys.IDENTITY_USER_OTHER_COURSE;
+    }
+
+    @Override
     public UniqueKey<UserOtherCourseRecord> getPrimaryKey() {
         return Keys.KEY_USER_OTHER_COURSE_PRIMARY;
     }
@@ -101,15 +106,15 @@ public class UserOtherCourse extends TableImpl<UserOtherCourseRecord> {
 
     @Override
     public List<ForeignKey<UserOtherCourseRecord, ?>> getReferences() {
-        return Arrays.<ForeignKey<UserOtherCourseRecord, ?>>asList(Keys.FK_USER_OTHER_COURSE, Keys.PF_OTHER_COURSE);
+        return Arrays.<ForeignKey<UserOtherCourseRecord, ?>>asList(Keys.FK_USER_COURSE, Keys.FK_OTHER_COURSE);
     }
 
     public User user() {
-        return new User(this, Keys.FK_USER_OTHER_COURSE);
+        return new User(this, Keys.FK_USER_COURSE);
     }
 
     public OtherCourse otherCourse() {
-        return new OtherCourse(this, Keys.PF_OTHER_COURSE);
+        return new OtherCourse(this, Keys.FK_OTHER_COURSE);
     }
 
     @Override

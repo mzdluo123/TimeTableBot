@@ -111,10 +111,11 @@
         </Logger>
 
         <Logger name="org.jooq.tools.LoggerListener" level="trace" additivity="false">
-            <AppenderRef ref="Console"/>
+
         </Logger>
+        <Logger name="org.jooq.impl.DefaultBinding" level="trace" additivity="false">
 
-
+        </Logger>
     </loggers>
 
 
