@@ -3,6 +3,7 @@ package io.github.mzdluo123.timetablebot
 import io.github.mzdluo123.timetablebot.bots.BotsManager
 import io.github.mzdluo123.timetablebot.config.AppConfig
 import io.github.mzdluo123.timetablebot.controller.BaseListeners
+import io.github.mzdluo123.timetablebot.task.TaskScheduler
 import io.github.mzdluo123.timetablebot.utils.dbCtx
 import io.github.mzdluo123.timetablebot.utils.logger
 import io.github.mzdluo123.timetablebot.utils.timeToStr
@@ -62,7 +63,9 @@ $$$$$$$$/ $$/  _____  ____    ______$$$$$$$$/______  $$ |____  $$ |  ______  $$$
     BaseListeners.listeners.forEach {
         BotsManager.registerEvents(it)
     }
+
     mainLogger.info("event listener registered")
+    TaskScheduler.init()
     BotsManager.loginBots(AppConfig.getInstance().botAccounts)
     joinAll(BotsManager.jobs)
 }

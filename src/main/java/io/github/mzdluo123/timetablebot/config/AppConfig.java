@@ -1,5 +1,6 @@
 package io.github.mzdluo123.timetablebot.config;
 
+import io.github.mzdluo123.timetablebot.task.TaskScheduler;
 import io.github.mzdluo123.timetablebot.utils.Dependencies;
 import org.yaml.snakeyaml.Yaml;
 
@@ -55,6 +56,7 @@ public class AppConfig {
         FileInputStream fileInputStream = new FileInputStream(configFile);
         INSTANCE = yaml.load(fileInputStream);
         fileInputStream.close();
+        TaskScheduler.INSTANCE.init();
     }
 
 }

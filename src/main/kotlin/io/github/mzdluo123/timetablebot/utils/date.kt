@@ -31,9 +31,9 @@ fun nextClassIndex(): Int {
     Dependencies.classTimeTable.forEachIndexed { index, time ->
         if (now.isBefore(time)) {
             return if (index - 1 >= 0 && now.isAfter(Dependencies.classTimeTable[index - 1])) {
-                index
+                index + 1
             } else {
-                0
+                1
             }
         }
     }

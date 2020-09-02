@@ -70,4 +70,8 @@ object BotsManager : CoroutineScope {
         val userPO = userDao.fetchOneById(user)
         Bot.getInstance(userPO.bot).getFriend(userPO.account).sendMessage(msg)
     }
+
+    suspend fun sendMsg(user: Int, bot: Long, account: Long, msg: Message) {
+        Bot.getInstance(bot).getFriend(account).sendMessage(msg)
+    }
 }
