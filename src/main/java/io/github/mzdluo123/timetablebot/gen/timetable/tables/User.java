@@ -8,13 +8,25 @@ import io.github.mzdluo123.timetablebot.gen.timetable.Indexes;
 import io.github.mzdluo123.timetablebot.gen.timetable.Keys;
 import io.github.mzdluo123.timetablebot.gen.timetable.Timetable;
 import io.github.mzdluo123.timetablebot.gen.timetable.tables.records.UserRecord;
-import org.jooq.*;
-import org.jooq.impl.DSL;
-import org.jooq.impl.TableImpl;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+
+import org.jooq.Field;
+import org.jooq.ForeignKey;
+import org.jooq.Identity;
+import org.jooq.Index;
+import org.jooq.Name;
+import org.jooq.Record;
+import org.jooq.Row8;
+import org.jooq.Schema;
+import org.jooq.Table;
+import org.jooq.TableField;
+import org.jooq.TableOptions;
+import org.jooq.UniqueKey;
+import org.jooq.impl.DSL;
+import org.jooq.impl.TableImpl;
 
 
 /**

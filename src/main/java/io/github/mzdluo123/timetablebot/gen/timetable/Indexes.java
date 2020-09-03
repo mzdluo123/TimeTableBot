@@ -7,6 +7,7 @@ package io.github.mzdluo123.timetablebot.gen.timetable;
 import io.github.mzdluo123.timetablebot.gen.timetable.tables.CourseTime;
 import io.github.mzdluo123.timetablebot.gen.timetable.tables.OtherCourse;
 import io.github.mzdluo123.timetablebot.gen.timetable.tables.User;
+
 import org.jooq.Index;
 import org.jooq.OrderField;
 import org.jooq.impl.Internal;

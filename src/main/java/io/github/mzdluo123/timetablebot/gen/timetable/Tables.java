@@ -4,7 +4,14 @@
 package io.github.mzdluo123.timetablebot.gen.timetable;
 
 
-import io.github.mzdluo123.timetablebot.gen.timetable.tables.*;
+import io.github.mzdluo123.timetablebot.gen.timetable.tables.Classroom;
+import io.github.mzdluo123.timetablebot.gen.timetable.tables.Course;
+import io.github.mzdluo123.timetablebot.gen.timetable.tables.CourseTime;
+import io.github.mzdluo123.timetablebot.gen.timetable.tables.OtherCourse;
+import io.github.mzdluo123.timetablebot.gen.timetable.tables.Profile;
+import io.github.mzdluo123.timetablebot.gen.timetable.tables.User;
+import io.github.mzdluo123.timetablebot.gen.timetable.tables.UserCourse;
+import io.github.mzdluo123.timetablebot.gen.timetable.tables.UserOtherCourse;
 
 
 /**

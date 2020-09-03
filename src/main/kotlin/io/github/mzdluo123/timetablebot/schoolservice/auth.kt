@@ -94,7 +94,7 @@ suspend fun loginToCAS(user: String, pwd: String) {
     }
     if (result.isSuccessful) {
         val page = Jsoup.parse(result.body?.string())
-        if (page.title() != "新门户") {
+        if ("统一身份认证平台" in page.title()) {
             throw AuthorizationException(page.select("#errormsg > span").text())
         }
         logger().info("个人门户登录成功！")

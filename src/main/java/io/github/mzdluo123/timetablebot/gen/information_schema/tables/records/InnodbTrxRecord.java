@@ -5,13 +5,14 @@ package io.github.mzdluo123.timetablebot.gen.information_schema.tables.records;
 
 
 import io.github.mzdluo123.timetablebot.gen.information_schema.tables.InnodbTrx;
+
+import java.time.LocalDateTime;
+
 import org.jooq.Field;
 import org.jooq.Record22;
 import org.jooq.Row22;
 import org.jooq.impl.TableRecordImpl;
 import org.jooq.types.ULong;
-
-import java.time.LocalDateTime;
 
 
 /**

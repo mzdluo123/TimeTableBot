@@ -6,7 +6,16 @@ package io.github.mzdluo123.timetablebot.gen.information_schema.tables;
 
 import io.github.mzdluo123.timetablebot.gen.information_schema.InformationSchema;
 import io.github.mzdluo123.timetablebot.gen.information_schema.tables.records.InnodbCmpRecord;
-import org.jooq.*;
+
+import org.jooq.Field;
+import org.jooq.ForeignKey;
+import org.jooq.Name;
+import org.jooq.Record;
+import org.jooq.Row6;
+import org.jooq.Schema;
+import org.jooq.Table;
+import org.jooq.TableField;
+import org.jooq.TableOptions;
 import org.jooq.impl.DSL;
 import org.jooq.impl.TableImpl;
 

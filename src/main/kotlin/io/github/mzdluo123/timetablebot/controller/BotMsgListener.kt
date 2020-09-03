@@ -11,6 +11,7 @@ import io.github.mzdluo123.timetablebot.route.route
 import io.github.mzdluo123.timetablebot.task.SyncRequest
 import io.github.mzdluo123.timetablebot.task.SyncTask
 import io.github.mzdluo123.timetablebot.utils.createDao
+import kotlinx.coroutines.launch
 import net.mamoe.mirai.event.EventHandler
 import net.mamoe.mirai.message.FriendMessageEvent
 import net.mamoe.mirai.message.data.PlainText
@@ -52,7 +53,7 @@ class BotMsgListener : BaseListeners() {
                     return@case
                 }
                 val arg: String by cmdArg(0, "密码", it)
-                SyncTask.requestSync(SyncRequest(user.id, arg))
+                launch { SyncTask.requestSync(SyncRequest(user.id, arg)) }
                 reply("我们将在后台刷新你的课程表，完成后会向你发送信息，请稍后\n同步较慢，请勿重复提交")
 
             }
@@ -73,10 +74,10 @@ class BotMsgListener : BaseListeners() {
     private suspend fun admin(route: CommandRouter<FriendMessageEvent>) {
 
         route.exception {
-           PlainText(it.toString())
+            PlainText(it.toString())
         }
         route.event.requireAdminPermission()
-        route.case("reload","重载配置") {
+        route.case("reload", "重载配置") {
             AppConfig.reload()
             reply("配置重载成功!")
         }

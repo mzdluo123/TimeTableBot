@@ -5,6 +5,7 @@ package io.github.mzdluo123.timetablebot.gen.information_schema.tables.records;
 
 
 import io.github.mzdluo123.timetablebot.gen.information_schema.tables.UserVariables;
+
 import org.jooq.Field;
 import org.jooq.Record4;
 import org.jooq.Row4;

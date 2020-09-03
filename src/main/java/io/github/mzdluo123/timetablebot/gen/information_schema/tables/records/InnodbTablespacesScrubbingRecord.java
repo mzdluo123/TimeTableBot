@@ -5,14 +5,15 @@ package io.github.mzdluo123.timetablebot.gen.information_schema.tables.records;
 
 
 import io.github.mzdluo123.timetablebot.gen.information_schema.tables.InnodbTablespacesScrubbing;
+
+import java.time.LocalDateTime;
+
 import org.jooq.Field;
 import org.jooq.Record9;
 import org.jooq.Row9;
 import org.jooq.impl.TableRecordImpl;
 import org.jooq.types.UInteger;
 import org.jooq.types.ULong;
-
-import java.time.LocalDateTime;
 
 
 /**

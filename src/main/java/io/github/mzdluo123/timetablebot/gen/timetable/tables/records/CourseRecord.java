@@ -5,6 +5,7 @@ package io.github.mzdluo123.timetablebot.gen.timetable.tables.records;
 
 
 import io.github.mzdluo123.timetablebot.gen.timetable.tables.Course;
+
 import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.Record7;

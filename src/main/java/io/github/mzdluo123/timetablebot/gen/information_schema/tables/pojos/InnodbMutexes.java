@@ -4,10 +4,10 @@
 package io.github.mzdluo123.timetablebot.gen.information_schema.tables.pojos;
 
 
+import java.io.Serializable;
+
 import org.jooq.types.UInteger;
 import org.jooq.types.ULong;
-
-import java.io.Serializable;
 
 
 /**
