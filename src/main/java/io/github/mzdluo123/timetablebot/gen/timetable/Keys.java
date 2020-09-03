@@ -4,8 +4,23 @@
 package io.github.mzdluo123.timetablebot.gen.timetable;
 
 
-import io.github.mzdluo123.timetablebot.gen.timetable.tables.*;
-import io.github.mzdluo123.timetablebot.gen.timetable.tables.records.*;
+import io.github.mzdluo123.timetablebot.gen.timetable.tables.Classroom;
+import io.github.mzdluo123.timetablebot.gen.timetable.tables.Course;
+import io.github.mzdluo123.timetablebot.gen.timetable.tables.CourseTime;
+import io.github.mzdluo123.timetablebot.gen.timetable.tables.OtherCourse;
+import io.github.mzdluo123.timetablebot.gen.timetable.tables.Profile;
+import io.github.mzdluo123.timetablebot.gen.timetable.tables.User;
+import io.github.mzdluo123.timetablebot.gen.timetable.tables.UserCourse;
+import io.github.mzdluo123.timetablebot.gen.timetable.tables.UserOtherCourse;
+import io.github.mzdluo123.timetablebot.gen.timetable.tables.records.ClassroomRecord;
+import io.github.mzdluo123.timetablebot.gen.timetable.tables.records.CourseRecord;
+import io.github.mzdluo123.timetablebot.gen.timetable.tables.records.CourseTimeRecord;
+import io.github.mzdluo123.timetablebot.gen.timetable.tables.records.OtherCourseRecord;
+import io.github.mzdluo123.timetablebot.gen.timetable.tables.records.ProfileRecord;
+import io.github.mzdluo123.timetablebot.gen.timetable.tables.records.UserCourseRecord;
+import io.github.mzdluo123.timetablebot.gen.timetable.tables.records.UserOtherCourseRecord;
+import io.github.mzdluo123.timetablebot.gen.timetable.tables.records.UserRecord;
+
 import org.jooq.ForeignKey;
 import org.jooq.Identity;
 import org.jooq.TableField;

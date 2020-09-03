@@ -5,13 +5,21 @@ package io.github.mzdluo123.timetablebot.gen.timetable;
 
 
 import io.github.mzdluo123.timetablebot.gen.DefaultCatalog;
-import io.github.mzdluo123.timetablebot.gen.timetable.tables.*;
-import org.jooq.Catalog;
-import org.jooq.Table;
-import org.jooq.impl.SchemaImpl;
+import io.github.mzdluo123.timetablebot.gen.timetable.tables.Classroom;
+import io.github.mzdluo123.timetablebot.gen.timetable.tables.Course;
+import io.github.mzdluo123.timetablebot.gen.timetable.tables.CourseTime;
+import io.github.mzdluo123.timetablebot.gen.timetable.tables.OtherCourse;
+import io.github.mzdluo123.timetablebot.gen.timetable.tables.Profile;
+import io.github.mzdluo123.timetablebot.gen.timetable.tables.User;
+import io.github.mzdluo123.timetablebot.gen.timetable.tables.UserCourse;
+import io.github.mzdluo123.timetablebot.gen.timetable.tables.UserOtherCourse;
 
 import java.util.Arrays;
 import java.util.List;
+
+import org.jooq.Catalog;
+import org.jooq.Table;
+import org.jooq.impl.SchemaImpl;
 
 
 /**

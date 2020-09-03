@@ -31,8 +31,10 @@ class NotifyTask : Job, CoroutineScope {
         val week = week()
         val dayOfWeek = dayOfWeek()
         if (nextClass == Int.MAX_VALUE) {
+            logger.info("无需报课")
             return
         }
+        logger.info("开始报课,下一节：${nextClass}")
         // 获取有课的用户
         val users = dbCtx {
             return@dbCtx it.select(USER.ID, USER.ACCOUNT, USER.BOT)
@@ -50,7 +52,7 @@ class NotifyTask : Job, CoroutineScope {
                 )
                 .groupBy(USER.ID).fetch()
         }
-
+        logger.info("需要对${users.size}个用户发送信息")
         for (u in users) {
             val userId = u.getValue(USER.ID)
             val account = u.getValue(USER.ACCOUNT)

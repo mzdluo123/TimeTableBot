@@ -5,6 +5,7 @@ package io.github.mzdluo123.timetablebot.gen.information_schema.tables.records;
 
 
 import io.github.mzdluo123.timetablebot.gen.information_schema.tables.InnodbFtConfig;
+
 import org.jooq.Field;
 import org.jooq.Record2;
 import org.jooq.Row2;

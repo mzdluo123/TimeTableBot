@@ -5,12 +5,13 @@ package io.github.mzdluo123.timetablebot.gen.information_schema.tables.records;
 
 
 import io.github.mzdluo123.timetablebot.gen.information_schema.tables.Processlist;
+
+import java.math.BigDecimal;
+
 import org.jooq.Field;
 import org.jooq.Record18;
 import org.jooq.Row18;
 import org.jooq.impl.TableRecordImpl;
-
-import java.math.BigDecimal;
 
 
 /**

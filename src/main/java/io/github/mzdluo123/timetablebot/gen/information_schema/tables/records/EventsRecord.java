@@ -5,9 +5,10 @@ package io.github.mzdluo123.timetablebot.gen.information_schema.tables.records;
 
 
 import io.github.mzdluo123.timetablebot.gen.information_schema.tables.Events;
-import org.jooq.impl.TableRecordImpl;
 
 import java.time.LocalDateTime;
+
+import org.jooq.impl.TableRecordImpl;
 
 
 /**

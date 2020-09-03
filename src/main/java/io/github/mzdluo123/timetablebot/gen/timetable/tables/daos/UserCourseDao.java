@@ -6,10 +6,11 @@ package io.github.mzdluo123.timetablebot.gen.timetable.tables.daos;
 
 import io.github.mzdluo123.timetablebot.gen.timetable.tables.UserCourse;
 import io.github.mzdluo123.timetablebot.gen.timetable.tables.records.UserCourseRecord;
-import org.jooq.Configuration;
-import org.jooq.impl.DAOImpl;
 
 import java.util.List;
+
+import org.jooq.Configuration;
+import org.jooq.impl.DAOImpl;
 
 
 /**

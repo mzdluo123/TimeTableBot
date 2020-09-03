@@ -116,7 +116,9 @@
         <Logger name="org.jooq.impl.DefaultBinding" level="trace" additivity="false">
 
         </Logger>
-    </loggers>
+        <Logger name="com.zaxxer.hikari.pool.HikariPool" level="trace" additivity="false">
 
+    </Logger>
+    </loggers>
 
 </configuration>

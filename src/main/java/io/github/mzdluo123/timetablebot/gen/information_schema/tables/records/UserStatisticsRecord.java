@@ -5,6 +5,7 @@ package io.github.mzdluo123.timetablebot.gen.information_schema.tables.records;
 
 
 import io.github.mzdluo123.timetablebot.gen.information_schema.tables.UserStatistics;
+
 import org.jooq.impl.TableRecordImpl;
 import org.jooq.types.ULong;
 

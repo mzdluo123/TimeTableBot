@@ -5,6 +5,7 @@ package io.github.mzdluo123.timetablebot.gen.information_schema.tables.records;
 
 
 import io.github.mzdluo123.timetablebot.gen.information_schema.tables.CheckConstraints;
+
 import org.jooq.Field;
 import org.jooq.Record5;
 import org.jooq.Row5;

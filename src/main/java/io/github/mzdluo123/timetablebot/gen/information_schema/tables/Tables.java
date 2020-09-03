@@ -6,12 +6,20 @@ package io.github.mzdluo123.timetablebot.gen.information_schema.tables;
 
 import io.github.mzdluo123.timetablebot.gen.information_schema.InformationSchema;
 import io.github.mzdluo123.timetablebot.gen.information_schema.tables.records.TablesRecord;
-import org.jooq.*;
+
+import java.time.LocalDateTime;
+
+import org.jooq.Field;
+import org.jooq.ForeignKey;
+import org.jooq.Name;
+import org.jooq.Record;
+import org.jooq.Schema;
+import org.jooq.Table;
+import org.jooq.TableField;
+import org.jooq.TableOptions;
 import org.jooq.impl.DSL;
 import org.jooq.impl.TableImpl;
 import org.jooq.types.ULong;
-
-import java.time.LocalDateTime;
 
 
 /**

@@ -6,11 +6,12 @@ package io.github.mzdluo123.timetablebot.gen;
 
 import io.github.mzdluo123.timetablebot.gen.information_schema.InformationSchema;
 import io.github.mzdluo123.timetablebot.gen.timetable.Timetable;
-import org.jooq.Schema;
-import org.jooq.impl.CatalogImpl;
 
 import java.util.Arrays;
 import java.util.List;
+
+import org.jooq.Schema;
+import org.jooq.impl.CatalogImpl;
 
 
 /**
