@@ -110,6 +110,11 @@
             <AppenderRef ref="Console"/>
         </Logger>
 
+        <Logger name=" g.quartz.core.QuartzSchedulerThread" level="debug" additivity="false">
+        <AppenderRef ref="Console"/>
+
+        </Logger>
+
         <Logger name="org.jooq.tools.LoggerListener" level="trace" additivity="false">
 
         </Logger>
