@@ -4,9 +4,7 @@ import io.github.mzdluo123.timetablebot.task.TaskScheduler;
 import io.github.mzdluo123.timetablebot.utils.Dependencies;
 import org.yaml.snakeyaml.Yaml;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.List;
 
 public class AppConfig {
@@ -23,6 +21,7 @@ public class AppConfig {
     public int year;
     public int term;
     public String termBegin;
+    public String help;
 
     private static File configFile;
 
@@ -57,6 +56,20 @@ public class AppConfig {
         INSTANCE = yaml.load(fileInputStream);
         fileInputStream.close();
         TaskScheduler.INSTANCE.init();
+    }
+    public static void loadHelp() throws IOException {
+        File helpFile = new File("help.txt");
+        StringBuilder sb = new StringBuilder();
+        FileReader fileReader = new FileReader(helpFile);
+        BufferedReader bufferedReader = new BufferedReader(fileReader);
+        String line;
+        while ((line = bufferedReader.readLine()) != null ){
+            sb.append(line);
+            sb.append("\n");
+        }
+        INSTANCE.help = sb.toString();
+        bufferedReader.close();
+        fileReader.close();
     }
 
 }

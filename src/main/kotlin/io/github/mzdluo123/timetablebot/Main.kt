@@ -51,6 +51,7 @@ $$$$$$$$/ $$/  _____  ____    ______$$$$$$$$/______  $$ |____  $$ |  ______  $$$
         return
     }
     AppConfig.loadConfig(configFile)
+    AppConfig.loadHelp()
     mainLogger.info("config loaded")
 
     mainLogger.info("connecting database")
