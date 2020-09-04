@@ -17,7 +17,9 @@ import io.github.mzdluo123.timetablebot.route.route
 import io.github.mzdluo123.timetablebot.task.SyncRequest
 import io.github.mzdluo123.timetablebot.task.SyncTask
 import io.github.mzdluo123.timetablebot.utils.*
+import net.mamoe.mirai.Bot
 import net.mamoe.mirai.event.EventHandler
+import net.mamoe.mirai.event.events.GroupMessagePostSendEvent
 import net.mamoe.mirai.message.FriendMessageEvent
 import net.mamoe.mirai.message.data.Message
 import net.mamoe.mirai.message.data.PlainText
@@ -69,6 +71,14 @@ class BotMsgListener : BaseListeners() {
             }
             case("3", "异常测试") {
                 throw IllegalAccessError("2333")
+            }
+            case("bug反馈","将bug反馈给开发者，帮助我们进行完善"){
+                val arg:String by cmdArg(0,"bug",it)
+                val list=AppConfig.getInstance().admin
+                for (u in AppConfig.getInstance().admin){
+                    bot.getFriend(u).sendMessage("来自用户${user.account}的反馈:"+arg)
+                }
+                reply("您反馈的问题我们已经收到，如果您还有疑问，请加群577595432")
             }
             nextRoute("admin", "管理中心", ::admin)
             default {
