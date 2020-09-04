@@ -102,51 +102,56 @@ class BotMsgListener : BaseListeners() {
         val week = week()
         var dayOfWeek = dayOfWeek()
         if (nextClass == Int.MAX_VALUE) {
-            dayOfWeek++
+            ++dayOfWeek
             nextClass = 1
+            reply("您今日已无课！正在为您查询明天的第一节课o((>ω< ))o")
         }
-
-        val course = dbCtx {
-            return@dbCtx it.select(
-                Course.COURSE.NAME,
-                Course.COURSE.TEACHER,
-                Classroom.CLASSROOM.LOCATION,
-                Course.COURSE.SCORE,
-                Course.COURSE.WEEK_PERIOD,
-                Course.COURSE.PERIOD
-            )
-                .from(
-                    UserCourse.USER_COURSE.innerJoin(USER).on(
-                        UserCourse.USER_COURSE.USER.eq(
-                            USER.ID
+        var msg="您最近已经没有课了哦(o゜▽゜)o☆";
+        while (nextClass<Dependencies.classTimeTable.size) {
+            val course = dbCtx {
+                return@dbCtx it.select(
+                        Course.COURSE.NAME,
+                        Course.COURSE.TEACHER,
+                        Classroom.CLASSROOM.LOCATION,
+                        Course.COURSE.SCORE,
+                        Course.COURSE.WEEK_PERIOD,
+                        Course.COURSE.PERIOD
+                )
+                        .from(
+                                UserCourse.USER_COURSE.innerJoin(USER).on(
+                                        UserCourse.USER_COURSE.USER.eq(
+                                                USER.ID
+                                        )
+                                )
+                                        .innerJoin(Course.COURSE).on(UserCourse.USER_COURSE.COURSE.eq(Course.COURSE.ID))
+                                        .innerJoin(CourseTime.COURSE_TIME)
+                                        .on(CourseTime.COURSE_TIME.COURSE.eq(Course.COURSE.ID))
+                                        .innerJoin(Classroom.CLASSROOM)
+                                        .on(CourseTime.COURSE_TIME.CLASS_ROOM.eq(Classroom.CLASSROOM.ID))
                         )
-                    )
-                        .innerJoin(Course.COURSE).on(UserCourse.USER_COURSE.COURSE.eq(Course.COURSE.ID))
-                        .innerJoin(CourseTime.COURSE_TIME)
-                        .on(CourseTime.COURSE_TIME.COURSE.eq(Course.COURSE.ID))
-                        .innerJoin(Classroom.CLASSROOM)
-                        .on(CourseTime.COURSE_TIME.CLASS_ROOM.eq(Classroom.CLASSROOM.ID))
-                )
-                .where(
-                    CourseTime.COURSE_TIME.WEEK.eq(week.toByte())
-                        .and(CourseTime.COURSE_TIME.DAY_OF_WEEK.eq(dayOfWeek.toByte()))
-                        .and(USER.ENABLE.eq(1))
-                        .and(USER.ID.eq(userId))
-                        .and(CourseTime.COURSE_TIME.START_TIME.eq(nextClass.toByte()))
-                )
-                .groupBy(USER.ID).fetchOne()
-        }
-        val msg = if (course != null){
-            buildString {
-                append("您好!接下来是第${nextClass}节课\n")
-                append(
-                    "${course.component1()}，在${course.getValue(Classroom.CLASSROOM.LOCATION)}，${
-                        course.getValue(Course.COURSE.SCORE)
-                    }个学分"
-                )
+                        .where(
+                                CourseTime.COURSE_TIME.WEEK.eq(week.toByte())
+                                        .and(CourseTime.COURSE_TIME.DAY_OF_WEEK.eq(dayOfWeek.toByte()))
+                                        .and(USER.ENABLE.eq(1))
+                                        .and(USER.ID.eq(userId))
+                                        .and(CourseTime.COURSE_TIME.START_TIME.eq(nextClass.toByte()))
+                        )
+                        .groupBy(USER.ID).fetchOne()
             }
-        }else{
-            "没有课了(●ˇ∀ˇ●)"
+            if (course!=null){
+                msg = buildString {
+                    append("您好!接下来是第${nextClass}节课\n")
+                    append(
+                            "${course.component1()}，在${course.getValue(Classroom.CLASSROOM.LOCATION)}，${
+                            course.getValue(Course.COURSE.SCORE)
+                            }个学分"
+                    )
+                }
+                break
+            }
+            else {
+                ++nextClass
+            }
         }
         reply(PlainText(msg))
 
