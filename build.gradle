@@ -23,14 +23,27 @@ plugins {
     id "de.fuerstenau.buildconfig" version "1.1.8"
 }
 
-sourceSets{
-    main{
-        java{
-            srcDir "src/main/java"
-        }
+//sourceSets{
+//    main{
+//        java{
+//            srcDir "src/main/java"
+//        }
+//    }
+//}
+
+sourceCompatibility = 1.8
+compileKotlin {
+    kotlinOptions {
+        freeCompilerArgs = ["-Xjsr305=strict"]
+        jvmTarget = "1.8"
     }
 }
-
+compileTestKotlin {
+    kotlinOptions {
+        freeCompilerArgs = ["-Xjsr305=strict"]
+        jvmTarget = "1.8"
+    }
+}
 
 group 'io.io.github.mzdluo123.timetablebot'
 version '1.0-SNAPSHOT'

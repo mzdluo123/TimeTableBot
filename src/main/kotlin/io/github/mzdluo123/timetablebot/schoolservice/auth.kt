@@ -62,8 +62,8 @@ private suspend fun encryptPwd(publicKey: PK, pwd: String): String? {
 }
 
 suspend fun loginToCAS(user: String, pwd: String) {
-    val pk = getPublicKey()
     val execution = execution()
+    val pk = getPublicKey()
     var encodedPwd: String? = ""
     for (tryNum in 1..4) {
         try {
