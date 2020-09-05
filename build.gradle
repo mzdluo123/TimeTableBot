@@ -6,6 +6,8 @@ buildscript {
     repositories {
         mavenLocal()
         mavenCentral()
+        maven { url 'https://maven.aliyun.com/repository/public' }
+        maven { url 'https://maven.aliyun.com/repository/jcenter' }
     }
 
     dependencies {
@@ -23,14 +25,27 @@ plugins {
     id "de.fuerstenau.buildconfig" version "1.1.8"
 }
 
-sourceSets{
-    main{
-        java{
-            srcDir "src/main/java"
-        }
+//sourceSets{
+//    main{
+//        java{
+//            srcDir "src/main/java"
+//        }
+//    }
+//}
+
+sourceCompatibility = 1.8
+compileKotlin {
+    kotlinOptions {
+        freeCompilerArgs = ["-Xjsr305=strict"]
+        jvmTarget = "1.8"
     }
 }
-
+compileTestKotlin {
+    kotlinOptions {
+        freeCompilerArgs = ["-Xjsr305=strict"]
+        jvmTarget = "1.8"
+    }
+}
 
 group 'io.io.github.mzdluo123.timetablebot'
 version '1.0-SNAPSHOT'
@@ -40,8 +55,11 @@ def versionCode  = 1
 mainClassName = 'io.github.mzdluo123.timetablebot.MainKt'
 
 repositories {
+    maven { url 'https://maven.aliyun.com/repository/public' }
+    maven { url 'https://maven.aliyun.com/repository/jcenter' }
     mavenCentral()
     jcenter()
+
 //    maven {
 //        url "https://libraries.minecraft.net"
 //    }

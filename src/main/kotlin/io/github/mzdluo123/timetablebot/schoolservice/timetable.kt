@@ -20,13 +20,14 @@ suspend fun getTimeTable(schoolYear: Int, term: Int): TimeTableDTO? {
     if (term < 0 || term > 2) {
         throw IllegalAccessError("非法学年！")
     }
-    withContext(Dispatchers.IO) {
+   withContext(Dispatchers.IO) {
         Dependencies.okhttp.newCall(
             Request.Builder().url(
                 "${AppConfig.getInstance().baseUrl}/jwglxt/kbcx/xskbcx_cxXskbcxIndex.html?gnmkdm=N2151&layout=default&su="
             ).build()
         ).execute()
     }
+
     val rsp = withContext(Dispatchers.IO) {
         Dependencies.okhttp.newCall(
             Request.Builder().url("${AppConfig.getInstance().baseUrl}/jwglxt/kbcx/xskbcx_cxXsKb.html?gnmkdm=N2151")

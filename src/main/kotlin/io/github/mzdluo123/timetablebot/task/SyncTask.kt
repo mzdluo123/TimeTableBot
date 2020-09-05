@@ -1,5 +1,6 @@
 package io.github.mzdluo123.timetablebot.task
 
+import com.google.gson.JsonSyntaxException
 import io.github.mzdluo123.timetablebot.appJob
 import io.github.mzdluo123.timetablebot.bots.BotsManager
 import io.github.mzdluo123.timetablebot.config.AppConfig
@@ -144,10 +145,11 @@ object SyncTask : CoroutineScope {
                                     OtherCourse.OTHER_COURSE.SCORE,
                                     OtherCourse.OTHER_COURSE.WEEK,
                                     OtherCourse.OTHER_COURSE.TEACHER
-                                ).values(name, score, w.toByte(),teacher).returning(OtherCourse.OTHER_COURSE.ID).fetchOne()
+                                ).values(name, score, w.toByte(), teacher).returning(OtherCourse.OTHER_COURSE.ID)
+                                    .fetchOne()
                             }
 
-                            var userOtherCourse = it.fetchOne(
+                            val userOtherCourse = it.fetchOne(
                                 UserOtherCourse.USER_OTHER_COURSE,
                                 UserOtherCourse.USER_OTHER_COURSE.USER.eq(user.id)
                                     .and(UserOtherCourse.USER_OTHER_COURSE.OTHER_COURSE.eq(otherCourse.id))
@@ -164,8 +166,6 @@ object SyncTask : CoroutineScope {
                     }
 
                 }
-
-
                 BotsManager.sendMsg(task.uid, PlainText("课程表刷新完成，共记录了${timetable?.kbList?.size ?: 0}节课程"))
             } catch (e: AuthorizationException) {
                 BotsManager.sendMsg(task.uid, PlainText("登录失败: ${e.message}"))
@@ -173,6 +173,11 @@ object SyncTask : CoroutineScope {
                 BotsManager.sendMsg(task.uid, PlainText("密码加密失败，请联系机器人管理员"))
             } catch (e: UnableGetTimeTableException) {
                 BotsManager.sendMsg(task.uid, PlainText("无法获取课程表，请联系管理员"))
+            } catch (e: JsonSyntaxException) {
+                BotsManager.sendMsg(
+                    task.uid,
+                    PlainText("您未绑定手机，无法正常获取课程表，请到${AppConfig.getInstance().authUrl}/cas/login登录并绑定手机号；如已绑定仍出现这个问题请联系管理员")
+                )
             } catch (e: Exception) {
                 BotsManager.sendMsg(task.uid, PlainText("出现未知错误，请联系管理员: $e"))
                 e.printStackTrace()

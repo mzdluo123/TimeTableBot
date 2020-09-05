@@ -6,6 +6,7 @@ import okhttp3.Cookie
 import okhttp3.CookieJar
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.constructor.Constructor
 import java.time.LocalTime
@@ -46,8 +47,11 @@ object Dependencies {
 //            )
 //        }
 //        .addInterceptor(HttpLoggingInterceptor().apply {
-//            level = HttpLoggingInterceptor.Level.BODY
+//            level = HttpLoggingInterceptor.Level.BASIC
 //        })
+//        .addInterceptor { chain ->
+//            chain.proceed(chain.request())
+//        }
         .build()
 
 
