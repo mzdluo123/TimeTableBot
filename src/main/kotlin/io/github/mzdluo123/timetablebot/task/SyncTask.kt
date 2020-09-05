@@ -4,6 +4,7 @@ import com.google.gson.JsonSyntaxException
 import io.github.mzdluo123.timetablebot.appJob
 import io.github.mzdluo123.timetablebot.bots.BotsManager
 import io.github.mzdluo123.timetablebot.config.AppConfig
+import io.github.mzdluo123.timetablebot.controller.BotMsgListener
 import io.github.mzdluo123.timetablebot.gen.timetable.tables.*
 import io.github.mzdluo123.timetablebot.gen.timetable.tables.daos.CourseDao
 import io.github.mzdluo123.timetablebot.gen.timetable.tables.daos.CourseTimeDao
@@ -44,7 +45,14 @@ object SyncTask : CoroutineScope {
                 Dependencies.resetCookie()
                 val user = userDao.fetchOneById(task.uid)
                 val studentId = user.studentId
-                loginToCAS(studentId.toString(), task.pwd)
+                try {
+                    loginV1(studentId.toString(), task.pwd)
+                }catch (e:Exception){
+                    BotsManager.sendMsg(user.id,PlainText("登录失败，正在使用统一认证系统登录"))
+                    Dependencies.resetCookie()
+                    loginToCAS(studentId.toString(), task.pwd)
+                }
+
                 val timetable = getTimeTable(AppConfig.getInstance().year, AppConfig.getInstance().term)
 
                 // 更新名字
