@@ -1,13 +1,7 @@
 package io.github.mzdluo123.timetablebot.controller
 
 
-import io.github.mzdluo123.timetablebot.bots.BotsManager
 import io.github.mzdluo123.timetablebot.config.AppConfig
-import io.github.mzdluo123.timetablebot.gen.timetable.tables.User.USER
-import io.github.mzdluo123.timetablebot.gen.timetable.tables.Classroom
-import io.github.mzdluo123.timetablebot.gen.timetable.tables.Course
-import io.github.mzdluo123.timetablebot.gen.timetable.tables.CourseTime
-import io.github.mzdluo123.timetablebot.gen.timetable.tables.UserCourse
 import io.github.mzdluo123.timetablebot.gen.timetable.tables.daos.UserDao
 import io.github.mzdluo123.timetablebot.gen.timetable.tables.pojos.User
 import io.github.mzdluo123.timetablebot.route.CommandRouter
@@ -17,13 +11,9 @@ import io.github.mzdluo123.timetablebot.route.route
 import io.github.mzdluo123.timetablebot.task.SyncRequest
 import io.github.mzdluo123.timetablebot.task.SyncTask
 import io.github.mzdluo123.timetablebot.utils.*
-import net.mamoe.mirai.Bot
 import net.mamoe.mirai.event.EventHandler
-import net.mamoe.mirai.event.events.GroupMessagePostSendEvent
 import net.mamoe.mirai.message.FriendMessageEvent
-import net.mamoe.mirai.message.data.Message
 import net.mamoe.mirai.message.data.PlainText
-import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.INT
 import java.time.LocalDateTime
 
 
@@ -67,7 +57,7 @@ class BotMsgListener : BaseListeners() {
 
             }
             case("select", "查询下节课") {
-                queryNextClass(it, user.id)
+                queryNextClass(it, user)
             }
             case("3", "异常测试") {
                 throw IllegalAccessError("2333")
@@ -107,63 +97,65 @@ class BotMsgListener : BaseListeners() {
         }
     }
 
-    private suspend fun FriendMessageEvent.queryNextClass(msg: List<String>?, userId: Int) {
-        var nextClass = nextClassIndex()
-        val week = week()
-        var dayOfWeek = dayOfWeek()
-        if (nextClass == Int.MAX_VALUE) {
-            ++dayOfWeek
-            nextClass = 1
-            reply("您今日已无课！正在为您查询明天的第一节课o((>ω< ))o")
-        }
-        var msg="您最近已经没有课了哦(o゜▽゜)o☆";
-        while (nextClass<Dependencies.classTimeTable.size) {
-            val course = dbCtx {
-                return@dbCtx it.select(
-                        Course.COURSE.NAME,
-                        Course.COURSE.TEACHER,
-                        Classroom.CLASSROOM.LOCATION,
-                        Course.COURSE.SCORE,
-                        Course.COURSE.WEEK_PERIOD,
-                        Course.COURSE.PERIOD
-                )
-                        .from(
-                                UserCourse.USER_COURSE.innerJoin(USER).on(
-                                        UserCourse.USER_COURSE.USER.eq(
-                                                USER.ID
-                                        )
-                                )
-                                        .innerJoin(Course.COURSE).on(UserCourse.USER_COURSE.COURSE.eq(Course.COURSE.ID))
-                                        .innerJoin(CourseTime.COURSE_TIME)
-                                        .on(CourseTime.COURSE_TIME.COURSE.eq(Course.COURSE.ID))
-                                        .innerJoin(Classroom.CLASSROOM)
-                                        .on(CourseTime.COURSE_TIME.CLASS_ROOM.eq(Classroom.CLASSROOM.ID))
-                        )
-                        .where(
-                                CourseTime.COURSE_TIME.WEEK.eq(week.toByte())
-                                        .and(CourseTime.COURSE_TIME.DAY_OF_WEEK.eq(dayOfWeek.toByte()))
-                                        .and(USER.ENABLE.eq(1))
-                                        .and(USER.ID.eq(userId))
-                                        .and(CourseTime.COURSE_TIME.START_TIME.eq(nextClass.toByte()))
-                        )
-                        .groupBy(USER.ID).fetchOne()
-            }
-            if (course!=null){
-                msg = buildString {
-                    append("您好!接下来是第${nextClass}节课\n")
-                    append(
-                            "${course.component1()}，在${course.getValue(Classroom.CLASSROOM.LOCATION)}，${
-                            course.getValue(Course.COURSE.SCORE)
-                            }个学分"
-                    )
-                }
-                break
-            }
-            else {
-                ++nextClass
-            }
-        }
-        reply(PlainText(msg))
+    private suspend fun FriendMessageEvent.queryNextClass(msg: List<String>?, user:User) {
+
+        var nextClass = nextClass(user)
+        reply(nextClass)
+//        val week = week()
+//        var dayOfWeek = dayOfWeek()
+//        if (nextClass == Int.MAX_VALUE) {
+//            ++dayOfWeek
+//            nextClass = 1
+//            reply("您今日已无课！正在为您查询明天的第一节课o((>ω< ))o")
+//        }
+//        var msg="您最近已经没有课了哦(o゜▽゜)o☆";
+//        while (nextClass<Dependencies.classTimeTable.size) {
+//            val course = dbCtx {
+//                return@dbCtx it.select(
+//                        Course.COURSE.NAME,
+//                        Course.COURSE.TEACHER,
+//                        Classroom.CLASSROOM.LOCATION,
+//                        Course.COURSE.SCORE,
+//                        Course.COURSE.WEEK_PERIOD,
+//                        Course.COURSE.PERIOD
+//                )
+//                        .from(
+//                                UserCourse.USER_COURSE.innerJoin(USER).on(
+//                                        UserCourse.USER_COURSE.USER.eq(
+//                                                USER.ID
+//                                        )
+//                                )
+//                                        .innerJoin(Course.COURSE).on(UserCourse.USER_COURSE.COURSE.eq(Course.COURSE.ID))
+//                                        .innerJoin(CourseTime.COURSE_TIME)
+//                                        .on(CourseTime.COURSE_TIME.COURSE.eq(Course.COURSE.ID))
+//                                        .innerJoin(Classroom.CLASSROOM)
+//                                        .on(CourseTime.COURSE_TIME.CLASS_ROOM.eq(Classroom.CLASSROOM.ID))
+//                        )
+//                        .where(
+//                                CourseTime.COURSE_TIME.WEEK.eq(week.toByte())
+//                                        .and(CourseTime.COURSE_TIME.DAY_OF_WEEK.eq(dayOfWeek.toByte()))
+//                                        .and(USER.ENABLE.eq(1))
+//                                        .and(USER.ID.eq(userId))
+//                                        .and(CourseTime.COURSE_TIME.START_TIME.eq(nextClass.toByte()))
+//                        )
+//                        .groupBy(USER.ID).fetchOne()
+//            }
+//            if (course!=null){
+//                msg = buildString {
+//                    append("您好!接下来是第${nextClass}节课\n")
+//                    append(
+//                            "${course.component1()}，在${course.getValue(Classroom.CLASSROOM.LOCATION)}，${
+//                            course.getValue(Course.COURSE.SCORE)
+//                            }个学分"
+//                    )
+//                }
+//                break
+//            }
+//            else {
+//                ++nextClass
+//            }
+//        }
+//        reply(PlainText(msg))
 
     }
 
