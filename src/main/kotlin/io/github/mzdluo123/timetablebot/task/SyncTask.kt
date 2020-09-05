@@ -1,5 +1,6 @@
 package io.github.mzdluo123.timetablebot.task
 
+import com.google.gson.JsonSyntaxException
 import io.github.mzdluo123.timetablebot.appJob
 import io.github.mzdluo123.timetablebot.bots.BotsManager
 import io.github.mzdluo123.timetablebot.config.AppConfig
@@ -172,7 +173,7 @@ object SyncTask : CoroutineScope {
                 BotsManager.sendMsg(task.uid, PlainText("密码加密失败，请联系机器人管理员"))
             } catch (e: UnableGetTimeTableException) {
                 BotsManager.sendMsg(task.uid, PlainText("无法获取课程表，请联系管理员"))
-            } catch (e: IllegalStateException) {
+            } catch (e: JsonSyntaxException) {
                 BotsManager.sendMsg(
                     task.uid,
                     PlainText("您未绑定手机，无法正常获取课程表，请到${AppConfig.getInstance().authUrl}/cas/login登录并绑定手机号；如已绑定仍出现这个问题请联系管理员")

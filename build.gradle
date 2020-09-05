@@ -6,6 +6,8 @@ buildscript {
     repositories {
         mavenLocal()
         mavenCentral()
+        maven { url 'https://maven.aliyun.com/repository/public' }
+        maven { url 'https://maven.aliyun.com/repository/jcenter' }
     }
 
     dependencies {
@@ -53,8 +55,11 @@ def versionCode  = 1
 mainClassName = 'io.github.mzdluo123.timetablebot.MainKt'
 
 repositories {
+    maven { url 'https://maven.aliyun.com/repository/public' }
+    maven { url 'https://maven.aliyun.com/repository/jcenter' }
     mavenCentral()
     jcenter()
+
 //    maven {
 //        url "https://libraries.minecraft.net"
 //    }
