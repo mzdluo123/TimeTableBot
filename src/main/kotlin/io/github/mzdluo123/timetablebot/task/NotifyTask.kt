@@ -93,7 +93,7 @@ class NotifyTask : Job, CoroutineScope {
                     )
                 }
 
-                BotsManager.sendMsg(userId, bot, account, PlainText(msg))
+                BotsManager.sendMsg(bot, account, PlainText(msg))
             } catch (e: Exception) {
                 logger.error(e)
             }

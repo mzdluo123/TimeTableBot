@@ -1,6 +1,7 @@
 package io.github.mzdluo123.timetablebot.controller
 
 
+import io.github.mzdluo123.timetablebot.BuildConfig
 import io.github.mzdluo123.timetablebot.bots.BotsManager
 import io.github.mzdluo123.timetablebot.config.AppConfig
 import io.github.mzdluo123.timetablebot.gen.timetable.tables.User.USER
@@ -66,24 +67,24 @@ class BotMsgListener : BaseListeners() {
                 reply("我们将在后台刷新你的课程表，完成后会向你发送信息，请稍后\n同步较慢，请勿重复提交")
 
             }
-            case("select", "查询下节课") {
+            case("next", "查询下节课") {
                 queryNextClass(it, user.id)
             }
             case("3", "异常测试") {
                 throw IllegalAccessError("2333")
             }
-            case("bug反馈","将bug反馈给开发者，帮助我们进行完善"){
-                val arg:String by cmdArg(0,"bug",it)
-                val list=AppConfig.getInstance().admin
-                for (u in AppConfig.getInstance().admin){
-                    bot.getFriend(u).sendMessage("来自用户${user.account}的反馈:"+arg)
+            case("bug反馈", "将bug反馈给开发者，帮助我们进行完善") {
+                val arg: String by cmdArg(0, "bug", it)
+                val list = AppConfig.getInstance().admin
+                for (u in AppConfig.getInstance().admin) {
+                    bot.getFriend(u).sendMessage("来自用户${user.account}的反馈:" + arg)
                 }
-                reply("您反馈的问题我们已经收到，如果您还有疑问，请加群577595432")
+                reply("您反馈的问题我们已经收到，如果您还有疑问，请联系管理员")
             }
             nextRoute("admin", "管理中心", ::admin)
             default {
                 reply(PlainText(AppConfig.getInstance().help))
-                reply(PlainText(generateHelp()))
+                reply(PlainText("TimeTableBot ${BuildConfig.VERSION} build ${timeToStr(BuildConfig.BUILD_UNIXTIME)}\n${generateHelp()}"))
             }
 
         }
@@ -100,9 +101,18 @@ class BotMsgListener : BaseListeners() {
             AppConfig.loadHelp()
             reply("帮助重载成功!")
         }
-
+        route.case("send", "广播消息到所有用户") {
+            val msg: String by cmdArg(0, "要广播的消息", it)
+            val users = dbCtx { it.select(USER.ACCOUNT, USER.BOT).from(USER).where(USER.ENABLE.eq(1)).fetch() }
+            for (user in users) {
+                BotsManager.sendMsg(
+                    user.component2(),
+                    user.component1(),
+                    PlainText("$msg\n(此消息由管理员发送，请勿回复，如有问题请联系管理员)")
+                )
+            }
+        }
         route.default {
-
             reply(PlainText(route.generateHelp()))
         }
     }
@@ -116,50 +126,49 @@ class BotMsgListener : BaseListeners() {
             nextClass = 1
             reply("您今日已无课！正在为您查询明天的第一节课o((>ω< ))o")
         }
-        var msg="您最近已经没有课了哦(o゜▽゜)o☆";
-        while (nextClass<Dependencies.classTimeTable.size) {
+        var msg = "您最近已经没有课了哦(o゜▽゜)o☆";
+        while (nextClass < Dependencies.classTimeTable.size) {
             val course = dbCtx {
                 return@dbCtx it.select(
-                        Course.COURSE.NAME,
-                        Course.COURSE.TEACHER,
-                        Classroom.CLASSROOM.LOCATION,
-                        Course.COURSE.SCORE,
-                        Course.COURSE.WEEK_PERIOD,
-                        Course.COURSE.PERIOD
+                    Course.COURSE.NAME,
+                    Course.COURSE.TEACHER,
+                    Classroom.CLASSROOM.LOCATION,
+                    Course.COURSE.SCORE,
+                    Course.COURSE.WEEK_PERIOD,
+                    Course.COURSE.PERIOD
                 )
-                        .from(
-                                UserCourse.USER_COURSE.innerJoin(USER).on(
-                                        UserCourse.USER_COURSE.USER.eq(
-                                                USER.ID
-                                        )
-                                )
-                                        .innerJoin(Course.COURSE).on(UserCourse.USER_COURSE.COURSE.eq(Course.COURSE.ID))
-                                        .innerJoin(CourseTime.COURSE_TIME)
-                                        .on(CourseTime.COURSE_TIME.COURSE.eq(Course.COURSE.ID))
-                                        .innerJoin(Classroom.CLASSROOM)
-                                        .on(CourseTime.COURSE_TIME.CLASS_ROOM.eq(Classroom.CLASSROOM.ID))
+                    .from(
+                        UserCourse.USER_COURSE.innerJoin(USER).on(
+                            UserCourse.USER_COURSE.USER.eq(
+                                USER.ID
+                            )
                         )
-                        .where(
-                                CourseTime.COURSE_TIME.WEEK.eq(week.toByte())
-                                        .and(CourseTime.COURSE_TIME.DAY_OF_WEEK.eq(dayOfWeek.toByte()))
-                                        .and(USER.ENABLE.eq(1))
-                                        .and(USER.ID.eq(userId))
-                                        .and(CourseTime.COURSE_TIME.START_TIME.eq(nextClass.toByte()))
-                        )
-                        .groupBy(USER.ID).fetchOne()
+                            .innerJoin(Course.COURSE).on(UserCourse.USER_COURSE.COURSE.eq(Course.COURSE.ID))
+                            .innerJoin(CourseTime.COURSE_TIME)
+                            .on(CourseTime.COURSE_TIME.COURSE.eq(Course.COURSE.ID))
+                            .innerJoin(Classroom.CLASSROOM)
+                            .on(CourseTime.COURSE_TIME.CLASS_ROOM.eq(Classroom.CLASSROOM.ID))
+                    )
+                    .where(
+                        CourseTime.COURSE_TIME.WEEK.eq(week.toByte())
+                            .and(CourseTime.COURSE_TIME.DAY_OF_WEEK.eq(dayOfWeek.toByte()))
+                            .and(USER.ENABLE.eq(1))
+                            .and(USER.ID.eq(userId))
+                            .and(CourseTime.COURSE_TIME.START_TIME.eq(nextClass.toByte()))
+                    )
+                    .groupBy(USER.ID).fetchOne()
             }
-            if (course!=null){
+            if (course != null) {
                 msg = buildString {
                     append("您好!接下来是第${nextClass}节课\n")
                     append(
-                            "${course.component1()}，在${course.getValue(Classroom.CLASSROOM.LOCATION)}，${
+                        "${course.component1()}，在${course.getValue(Classroom.CLASSROOM.LOCATION)}，${
                             course.getValue(Course.COURSE.SCORE)
-                            }个学分"
+                        }个学分"
                     )
                 }
                 break
-            }
-            else {
+            } else {
                 ++nextClass
             }
         }

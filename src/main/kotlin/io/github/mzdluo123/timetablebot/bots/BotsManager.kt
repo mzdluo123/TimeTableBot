@@ -71,7 +71,7 @@ object BotsManager : CoroutineScope {
         Bot.getInstance(userPO.bot).getFriend(userPO.account).sendMessage(msg)
     }
 
-    suspend fun sendMsg(user: Int, bot: Long, account: Long, msg: Message) {
+    suspend fun sendMsg(bot: Long, account: Long, msg: Message) {
         Bot.getInstance(bot).getFriend(account).sendMessage(msg)
     }
 }

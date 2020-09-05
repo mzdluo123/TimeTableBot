@@ -13,9 +13,10 @@ class CommandArg<T : MessageEvent>(val index: Int = 0, val desc: String, val arg
     val waitValue = CompletableDeferred<String>()
 
     inline operator fun <reified T> getValue(n: Nothing?, property: KProperty<*>): T {
-        if (args != null && index < args.size) {
+        if (args != null && data == null && index < args.size) {
             data = args[index]
-        } else {
+        }
+        if (data == null) {
             unCompleteValue[event.sender.id] = waitValue
             runBlocking {
                 event.reply(
