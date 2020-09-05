@@ -152,9 +152,9 @@ fun searchTodayClass(week: Int,user: User): Result<Record7<String, String, Strin
 
                 )
                 .where(
-                        CourseTime.COURSE_TIME.WEEK.eq(1)
-                                .and(io.github.mzdluo123.timetablebot.gen.timetable.tables.User.USER.ID.eq(5))
-                                .and(CourseTime.COURSE_TIME.DAY_OF_WEEK.eq(1))
+                        CourseTime.COURSE_TIME.WEEK.eq(week.toByte())
+                                .and(io.github.mzdluo123.timetablebot.gen.timetable.tables.User.USER.ID.eq(user.id))
+                                .and(CourseTime.COURSE_TIME.DAY_OF_WEEK.eq(week.toByte()))
                 )
                 .orderBy(
                         CourseTime.COURSE_TIME.START_TIME
