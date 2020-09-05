@@ -1,7 +1,6 @@
 package io.github.mzdluo123.timetablebot.controller
 
 
-import io.github.mzdluo123.timetablebot.BuildConfig
 import io.github.mzdluo123.timetablebot.bots.BotsManager
 import io.github.mzdluo123.timetablebot.config.AppConfig
 import io.github.mzdluo123.timetablebot.gen.timetable.tables.User.USER
@@ -67,8 +66,8 @@ class BotMsgListener : BaseListeners() {
                 reply("我们将在后台刷新你的课程表，完成后会向你发送信息，请稍后\n同步较慢，请勿重复提交")
 
             }
-            case("next", "查询下节课") {
-                queryNextClass(it, user.id)
+            case("select", "查询下节课") {
+                queryNextClass(it, user)
             }
             case("3", "异常测试") {
                 throw IllegalAccessError("2333")
@@ -113,66 +112,70 @@ class BotMsgListener : BaseListeners() {
             }
         }
         route.default {
+
             reply(PlainText(route.generateHelp()))
         }
     }
 
-    private suspend fun FriendMessageEvent.queryNextClass(msg: List<String>?, userId: Int) {
-        var nextClass = nextClassIndex()
-        val week = week()
-        var dayOfWeek = dayOfWeek()
-        if (nextClass == Int.MAX_VALUE) {
-            ++dayOfWeek
-            nextClass = 1
-            reply("您今日已无课！正在为您查询明天的第一节课o((>ω< ))o")
-        }
-        var msg = "您最近已经没有课了哦(o゜▽゜)o☆";
-        while (nextClass < Dependencies.classTimeTable.size) {
-            val course = dbCtx {
-                return@dbCtx it.select(
-                    Course.COURSE.NAME,
-                    Course.COURSE.TEACHER,
-                    Classroom.CLASSROOM.LOCATION,
-                    Course.COURSE.SCORE,
-                    Course.COURSE.WEEK_PERIOD,
-                    Course.COURSE.PERIOD
-                )
-                    .from(
-                        UserCourse.USER_COURSE.innerJoin(USER).on(
-                            UserCourse.USER_COURSE.USER.eq(
-                                USER.ID
-                            )
-                        )
-                            .innerJoin(Course.COURSE).on(UserCourse.USER_COURSE.COURSE.eq(Course.COURSE.ID))
-                            .innerJoin(CourseTime.COURSE_TIME)
-                            .on(CourseTime.COURSE_TIME.COURSE.eq(Course.COURSE.ID))
-                            .innerJoin(Classroom.CLASSROOM)
-                            .on(CourseTime.COURSE_TIME.CLASS_ROOM.eq(Classroom.CLASSROOM.ID))
-                    )
-                    .where(
-                        CourseTime.COURSE_TIME.WEEK.eq(week.toByte())
-                            .and(CourseTime.COURSE_TIME.DAY_OF_WEEK.eq(dayOfWeek.toByte()))
-                            .and(USER.ENABLE.eq(1))
-                            .and(USER.ID.eq(userId))
-                            .and(CourseTime.COURSE_TIME.START_TIME.eq(nextClass.toByte()))
-                    )
-                    .groupBy(USER.ID).fetchOne()
-            }
-            if (course != null) {
-                msg = buildString {
-                    append("您好!接下来是第${nextClass}节课\n")
-                    append(
-                        "${course.component1()}，在${course.getValue(Classroom.CLASSROOM.LOCATION)}，${
-                            course.getValue(Course.COURSE.SCORE)
-                        }个学分"
-                    )
-                }
-                break
-            } else {
-                ++nextClass
-            }
-        }
-        reply(PlainText(msg))
+    private suspend fun FriendMessageEvent.queryNextClass(msg: List<String>?, user:User) {
+
+        var nextClass = nextClass(user)
+        reply(nextClass)
+//        val week = week()
+//        var dayOfWeek = dayOfWeek()
+//        if (nextClass == Int.MAX_VALUE) {
+//            ++dayOfWeek
+//            nextClass = 1
+//            reply("您今日已无课！正在为您查询明天的第一节课o((>ω< ))o")
+//        }
+//        var msg="您最近已经没有课了哦(o゜▽゜)o☆";
+//        while (nextClass<Dependencies.classTimeTable.size) {
+//            val course = dbCtx {
+//                return@dbCtx it.select(
+//                        Course.COURSE.NAME,
+//                        Course.COURSE.TEACHER,
+//                        Classroom.CLASSROOM.LOCATION,
+//                        Course.COURSE.SCORE,
+//                        Course.COURSE.WEEK_PERIOD,
+//                        Course.COURSE.PERIOD
+//                )
+//                        .from(
+//                                UserCourse.USER_COURSE.innerJoin(USER).on(
+//                                        UserCourse.USER_COURSE.USER.eq(
+//                                                USER.ID
+//                                        )
+//                                )
+//                                        .innerJoin(Course.COURSE).on(UserCourse.USER_COURSE.COURSE.eq(Course.COURSE.ID))
+//                                        .innerJoin(CourseTime.COURSE_TIME)
+//                                        .on(CourseTime.COURSE_TIME.COURSE.eq(Course.COURSE.ID))
+//                                        .innerJoin(Classroom.CLASSROOM)
+//                                        .on(CourseTime.COURSE_TIME.CLASS_ROOM.eq(Classroom.CLASSROOM.ID))
+//                        )
+//                        .where(
+//                                CourseTime.COURSE_TIME.WEEK.eq(week.toByte())
+//                                        .and(CourseTime.COURSE_TIME.DAY_OF_WEEK.eq(dayOfWeek.toByte()))
+//                                        .and(USER.ENABLE.eq(1))
+//                                        .and(USER.ID.eq(userId))
+//                                        .and(CourseTime.COURSE_TIME.START_TIME.eq(nextClass.toByte()))
+//                        )
+//                        .groupBy(USER.ID).fetchOne()
+//            }
+//            if (course!=null){
+//                msg = buildString {
+//                    append("您好!接下来是第${nextClass}节课\n")
+//                    append(
+//                            "${course.component1()}，在${course.getValue(Classroom.CLASSROOM.LOCATION)}，${
+//                            course.getValue(Course.COURSE.SCORE)
+//                            }个学分"
+//                    )
+//                }
+//                break
+//            }
+//            else {
+//                ++nextClass
+//            }
+//        }
+//        reply(PlainText(msg))
 
     }
 
