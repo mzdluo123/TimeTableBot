@@ -20,10 +20,7 @@ import io.github.mzdluo123.timetablebot.route.requireAdminPermission
 import io.github.mzdluo123.timetablebot.route.route
 import io.github.mzdluo123.timetablebot.task.SyncRequest
 import io.github.mzdluo123.timetablebot.task.SyncTask
-import io.github.mzdluo123.timetablebot.utils.createDao
-import io.github.mzdluo123.timetablebot.utils.dbCtx
-import io.github.mzdluo123.timetablebot.utils.nextClass
-import io.github.mzdluo123.timetablebot.utils.timeToStr
+import io.github.mzdluo123.timetablebot.utils.*
 import net.mamoe.mirai.event.EventHandler
 import net.mamoe.mirai.message.FriendMessageEvent
 import net.mamoe.mirai.message.data.PlainText
@@ -88,7 +85,7 @@ class BotMsgListener : BaseListeners() {
                 reply("您反馈的问题我们已经收到，如果您还有疑问，请联系管理员")
             }
             case("今日课表","获取今天的所有课程"){
-                val course= searchTodayClass(1,user)
+                val course= searchTodayClass(week(),user)
                 var msg:String="您今日没有课哦~"
                 if (course!=null) {
                     msg = "您好！您今日的课表为：\n"
