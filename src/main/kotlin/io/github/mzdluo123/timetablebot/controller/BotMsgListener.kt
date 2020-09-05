@@ -90,8 +90,8 @@ class BotMsgListener : BaseListeners() {
             case("今日课表","获取今天的所有课程"){
                 val course= searchTodayClass(dayOfWeek(),user)
                 var msg:String="您今日没有课哦~"
-                if (course!=null && course?.size>=1) {
-                    msg = "您好！您今日的课表为：\n"
+                if (course!=null && course.size >=1) {
+                    msg=""
                     for (i in course) {
                         msg += ("课程：${i.component1()}\n" +
                                 "地点：${i.component3()}\n" +
