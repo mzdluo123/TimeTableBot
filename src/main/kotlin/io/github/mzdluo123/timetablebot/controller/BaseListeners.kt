@@ -1,5 +1,6 @@
 package io.github.mzdluo123.timetablebot.controller
 
+import io.github.mzdluo123.timetablebot.controller.BotMsgListener
 import net.mamoe.mirai.event.SimpleListenerHost
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
