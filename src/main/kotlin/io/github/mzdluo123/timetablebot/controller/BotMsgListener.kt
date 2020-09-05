@@ -85,7 +85,7 @@ class BotMsgListener : BaseListeners() {
                 reply("您反馈的问题我们已经收到，如果您还有疑问，请联系管理员")
             }
             case("今日课表","获取今天的所有课程"){
-                val course= searchTodayClass(week()+1,user)
+                val course= searchTodayClass(dayOfWeek(),user)
                 var msg:String="您今日没有课哦~"
                 if (course!=null) {
                     msg = "您好！您今日的课表为：\n"
