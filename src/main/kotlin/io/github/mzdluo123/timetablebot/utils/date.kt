@@ -1,8 +1,8 @@
 package io.github.mzdluo123.timetablebot.utils
 
 import io.github.mzdluo123.timetablebot.config.AppConfig
+import io.github.mzdluo123.timetablebot.controller.searchNextClass
 import io.github.mzdluo123.timetablebot.gen.timetable.tables.*
-import org.jooq.Record8
 import java.io.File
 import java.time.*
 import java.time.format.DateTimeFormatter
@@ -27,35 +27,6 @@ fun parseClassTime(timeStr: String): LocalTime {
     return LocalTime.parse(timeStr, timeParser)
 }
 
-fun searchNextClass(week:Int, user: io.github.mzdluo123.timetablebot.gen.timetable.tables.pojos.User, now:LocalTime): Record8<String, Int, Long, Byte, Byte, Byte, String, Int>? {
-    val cource= dbCtx {
-        return@dbCtx it.select(
-                Course.COURSE.NAME,
-                User.USER.ID,
-                User.USER.ACCOUNT,
-                CourseTime.COURSE_TIME.DAY_OF_WEEK,
-                CourseTime.COURSE_TIME.WEEK,
-                CourseTime.COURSE_TIME.START_TIME,
-                User.USER.NAME,
-                CourseTime.COURSE_TIME.CLASS_ROOM
-        )
-                .from(
-                        Course.COURSE
-                                .innerJoin(UserCourse.USER_COURSE).on(Course.COURSE.ID.eq(UserCourse.USER_COURSE.COURSE))
-                                .innerJoin(User.USER).on(User.USER.ID.eq(UserCourse.USER_COURSE.USER))
-                                .innerJoin(CourseTime.COURSE_TIME).on(Course.COURSE.ID.eq(CourseTime.COURSE_TIME.COURSE))
-                )
-                .where(
-                        CourseTime.COURSE_TIME.WEEK.eq(week.toByte())
-                                .and(User.USER.ID.eq(user.id))
-                                .and(CourseTime.COURSE_TIME.DAY_OF_WEEK.eq(week.toByte()))
-                                .and(CourseTime.COURSE_TIME.START_TIME.ge(now.hour.toByte()))
-                )
-                .groupBy(User.USER.ID).fetchOne()
-    }
-    return cource
-}
-
 fun nextClass(user: io.github.mzdluo123.timetablebot.gen.timetable.tables.pojos.User):String {
     var week = week()
     val now:LocalTime= LocalTime.now()
@@ -75,7 +46,7 @@ fun nextClass(user: io.github.mzdluo123.timetablebot.gen.timetable.tables.pojos.
         //查询第二天的课表
         buildString {
             ++week
-            val course=searchNextClass(week,user,now)
+            val course= searchNextClass(week,user,now)
             if (course != null) {
                 append("您今日已无课，接下来是明天的第${course.getValue(AppConfig.getInstance().classTime.indexOf(CourseTime.COURSE_TIME.START_TIME.toString())+1)}节课\n")
                 append(
