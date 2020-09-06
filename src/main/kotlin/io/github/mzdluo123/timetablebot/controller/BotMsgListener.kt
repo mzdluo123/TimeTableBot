@@ -76,9 +76,6 @@ class BotMsgListener : BaseListeners() {
                 val nextClass = nextClass(user)
                 reply(nextClass)
             }
-            case("3", "异常测试") {
-                throw IllegalAccessError("2333")
-            }
             case("bug反馈", "将bug反馈给开发者，帮助我们进行完善") {
                 val arg: String by cmdArg(0, "bug", it)
                 val list = AppConfig.getInstance().admin

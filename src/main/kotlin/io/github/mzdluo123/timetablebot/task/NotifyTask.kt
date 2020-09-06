@@ -2,6 +2,7 @@ package io.github.mzdluo123.timetablebot.task
 
 import io.github.mzdluo123.timetablebot.appJob
 import io.github.mzdluo123.timetablebot.bots.BotsManager
+import io.github.mzdluo123.timetablebot.config.AppConfig
 import io.github.mzdluo123.timetablebot.gen.timetable.tables.Classroom.CLASSROOM
 import io.github.mzdluo123.timetablebot.gen.timetable.tables.Course.COURSE
 import io.github.mzdluo123.timetablebot.gen.timetable.tables.CourseTime.COURSE_TIME
@@ -83,7 +84,8 @@ class NotifyTask : Job, CoroutineScope {
                         .groupBy(USER.ID).fetchOne()
                 }
                 val msg = buildString {
-                    append("您好!接下来是第${nextClass}节课\n")
+                    append("您好!接下来是第${nextClass}节课," +
+                            "上课时间${AppConfig.getInstance().classTime[nextClass]}\n")
                     append(
                         "${course.getValue(COURSE.NAME)}，在${course.getValue(CLASSROOM.LOCATION)}，${
                             course.getValue(

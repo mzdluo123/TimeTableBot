@@ -34,7 +34,7 @@ fun nextClass(user: io.github.mzdluo123.timetablebot.gen.timetable.tables.pojos.
     val course= searchNextClass(week,user,now)
     return if (course!=null){
          buildString {
-            append("您好!接下来是第${nextClassIndex().toByte()}节课\n")
+            append("您好!接下来是第${nextClassIndex().toByte()}节课，上课时间${AppConfig.getInstance().classTime[nextClassIndex()]}\n")
             append(
                     "${course.getValue(Course.COURSE.NAME)}，在${course.getValue(Classroom.CLASSROOM.LOCATION)}，${
                     course.getValue(
@@ -49,7 +49,8 @@ fun nextClass(user: io.github.mzdluo123.timetablebot.gen.timetable.tables.pojos.
             week = if (week<7) week+1 else 1;
             val course=                searchTomorrowNextClass(week,user,now)
             if (course != null) {
-                append("您今日已无课，接下来是明天的第${course.component6()}节课\n")
+                append("您今日已无课，接下来是明天的第${course.component6()}节课," +
+                        "上课时间${AppConfig.getInstance().classTime[course.component6().toInt()]}\n")
                 append(
                         "${course.getValue(Course.COURSE.NAME)}，在${course.getValue(Classroom.CLASSROOM.LOCATION)}，${
                         course.getValue(
