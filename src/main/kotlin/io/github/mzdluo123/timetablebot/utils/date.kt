@@ -34,7 +34,7 @@ fun nextClass(user: io.github.mzdluo123.timetablebot.gen.timetable.tables.pojos.
     val course= searchNextClass(week,user,now)
     return if (course!=null){
          buildString {
-            append("您好!接下来是第${course.getValue(AppConfig.getInstance().classTime.indexOf(CourseTime.COURSE_TIME.START_TIME.toString())+1)}节课\n")
+            append("您好!接下来是第${nextClassIndex().toByte()}节课\n")
             append(
                     "${course.getValue(Course.COURSE.NAME)}，在${course.getValue(Classroom.CLASSROOM.LOCATION)}，${
                     course.getValue(
@@ -77,7 +77,12 @@ fun nextClassIndex(): Int {
     }
     return Int.MAX_VALUE
 }
+fun getNextIndex(){
+    val now = LocalTime.now()
+    AppConfig.getInstance().classTime.forEachIndexed{ index: Int, time: String? ->
 
+    }
+}
 fun parseWeek(weekStr: String): List<Int> {
     val res = mutableListOf<Int>()
     val parts = weekStr.split(",")

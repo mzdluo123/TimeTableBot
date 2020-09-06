@@ -166,7 +166,7 @@ fun searchTodayClass(week: Int,user: User): Result<Record7<String, String, Strin
     }
     return course
 }
-fun searchNextClass(week: Int, user: User, now: LocalTime): Record8<String, Int, Long, Byte, Byte, Byte, String, Int>? {
+fun searchNextClass(week: Int, user: User, now: LocalTime): Record10<String, Int, Long, Byte, Byte, Byte, String, Int, Double, String>? {
     val cource = dbCtx {
         return@dbCtx it.select(
             COURSE.NAME,
@@ -176,19 +176,23 @@ fun searchNextClass(week: Int, user: User, now: LocalTime): Record8<String, Int,
             COURSE_TIME.WEEK,
             COURSE_TIME.START_TIME,
             USER.NAME,
-            COURSE_TIME.CLASS_ROOM
+            COURSE_TIME.CLASS_ROOM,
+                COURSE.SCORE,
+                CLASSROOM.LOCATION
         )
             .from(
                 COURSE
                     .innerJoin(USER_COURSE).on(COURSE.ID.eq(USER_COURSE.COURSE))
                     .innerJoin(USER).on(USER.ID.eq(USER_COURSE.USER))
                     .innerJoin(COURSE_TIME).on(COURSE.ID.eq(COURSE_TIME.COURSE))
+                        .innerJoin(CLASSROOM).on(COURSE_TIME.CLASS_ROOM.eq(CLASSROOM.ID))
             )
             .where(
                 COURSE_TIME.WEEK.eq(week.toByte())
                     .and(USER.ID.eq(user.id))
                     .and(COURSE_TIME.DAY_OF_WEEK.eq(week.toByte()))
-                    .and(COURSE_TIME.START_TIME.ge(now.hour.toByte()))
+                    .and(COURSE_TIME.START_TIME.ge(nextClassIndex().toByte())),
+
             )
             .groupBy(USER.ID).fetchOne()
     }
@@ -205,7 +209,6 @@ fun searchTomorrowNextClass(week: Int, user: User, now: LocalTime): Record9<Stri
                 COURSE_TIME.START_TIME,
                 COURSE.SCORE,
                 USER.NAME,
-
                 CLASSROOM.LOCATION
         )
                 .from(
