@@ -9,11 +9,11 @@ import kotlin.coroutines.CoroutineContext
 
 val unCompleteValue = hashMapOf<Long, CompletableDeferred<String>>()
 
-class CommandRouter<T : MessageEvent>(private val args: List<String>?,  val event: T) : CoroutineScope {
-    private var called = false
-    private var errHandler: (suspend (Throwable) -> Message?)? = null
+class CommandRouter<T : MessageEvent>( val args: List<String>?,  val event: T) : CoroutineScope {
+     var called = false
+     var errHandler: (suspend (Throwable) -> Message?)? = null
 
-    private var commandMap = hashMapOf<String, String>()
+     var commandMap = hashMapOf<String, String>()
 
     private val job = Job()
     private val logger = logger()
@@ -21,7 +21,7 @@ class CommandRouter<T : MessageEvent>(private val args: List<String>?,  val even
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Default + SupervisorJob(appJob) + job
 
-    suspend fun case(case: String, desc: String = "暂无描述", receiver: suspend T.(List<String>?) -> Unit) {
+    suspend inline fun case(case: String, desc: String = "暂无描述", receiver:  T.(List<String>?) -> Unit) {
         commandMap[case] = desc
         if (args?.size == 0){
             return
@@ -34,7 +34,7 @@ class CommandRouter<T : MessageEvent>(private val args: List<String>?,  val even
         }
     }
     // 必须放在最后一个
-    suspend fun default(receiver: suspend T.(List<String>?) -> Unit) {
+    suspend inline fun default(receiver: T.(List<String>?) -> Unit) {
         if (!called) {
             kotlin.runCatching { event.receiver(args) }.also {
                 handleException(it.exceptionOrNull())
@@ -42,7 +42,7 @@ class CommandRouter<T : MessageEvent>(private val args: List<String>?,  val even
         }
     }
 
-    suspend fun nextRoute(case: String, desc: String = "暂无描述", next: suspend (CommandRouter<T>) -> Unit) {
+    suspend inline fun nextRoute(case: String, desc: String = "暂无描述", next: suspend (CommandRouter<T>) -> Unit) {
         commandMap[case] = desc
         if (args?.size == 0){
             return
@@ -60,7 +60,7 @@ class CommandRouter<T : MessageEvent>(private val args: List<String>?,  val even
         errHandler = receiver
     }
 
-    private suspend fun handleException(throwable: Throwable?) {
+     suspend fun handleException(throwable: Throwable?) {
         logger.error(throwable?:return)
         val repMsg = errHandler?.let { it1 -> it1(throwable) }
         event.reply(repMsg ?: return)
@@ -76,7 +76,7 @@ class CommandRouter<T : MessageEvent>(private val args: List<String>?,  val even
 inline fun <reified T : MessageEvent> T.route(
     prefix: String = "",
     delimiter: String = " ",
-    receiver: CommandRouter<T>.() -> Unit
+    crossinline receiver: suspend CommandRouter<T>.() -> Unit
 ): Boolean {
     val msg = this.message.contentToString()
 
@@ -89,6 +89,7 @@ inline fun <reified T : MessageEvent> T.route(
         return false
     }
     val args = msg.split(delimiter)
-    receiver(CommandRouter(args, this))
+    val router = CommandRouter(args, this)
+     router.launch { receiver(router) }
     return true
 }
