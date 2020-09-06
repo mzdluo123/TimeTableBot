@@ -2,6 +2,7 @@ package io.github.mzdluo123.timetablebot.utils
 
 import io.github.mzdluo123.timetablebot.config.AppConfig
 import io.github.mzdluo123.timetablebot.controller.searchNextClass
+import io.github.mzdluo123.timetablebot.controller.searchTomorrowNextClass
 import io.github.mzdluo123.timetablebot.gen.timetable.tables.*
 import java.io.File
 import java.time.*
@@ -28,12 +29,12 @@ fun parseClassTime(timeStr: String): LocalTime {
 }
 
 fun nextClass(user: io.github.mzdluo123.timetablebot.gen.timetable.tables.pojos.User):String {
-    var week = week()
+    var week = dayOfWeek()
     val now:LocalTime= LocalTime.now()
     val course= searchNextClass(week,user,now)
     return if (course!=null){
          buildString {
-            append("您好!接下来是第${course.getValue(AppConfig.getInstance().classTime.indexOf(CourseTime.COURSE_TIME.START_TIME.toString())+1)}节课\n")
+            append("您好!接下来是第${nextClassIndex().toByte()}节课，上课时间${AppConfig.getInstance().classTime[nextClassIndex()-1]}\n")
             append(
                     "${course.getValue(Course.COURSE.NAME)}，在${course.getValue(Classroom.CLASSROOM.LOCATION)}，${
                     course.getValue(
@@ -45,10 +46,11 @@ fun nextClass(user: io.github.mzdluo123.timetablebot.gen.timetable.tables.pojos.
     }else{
         //查询第二天的课表
         buildString {
-            ++week
-            val course= searchNextClass(week,user,now)
+            week = if (week<7) week+1 else 1;
+            val course=                searchTomorrowNextClass(week,user,now)
             if (course != null) {
-                append("您今日已无课，接下来是明天的第${course.getValue(AppConfig.getInstance().classTime.indexOf(CourseTime.COURSE_TIME.START_TIME.toString())+1)}节课\n")
+                append("您今日已无课，接下来是明天的第${course.component6()}节课," +
+                        "上课时间${AppConfig.getInstance().classTime[course.component6().toInt()-1]}\n")
                 append(
                         "${course.getValue(Course.COURSE.NAME)}，在${course.getValue(Classroom.CLASSROOM.LOCATION)}，${
                         course.getValue(
@@ -76,7 +78,12 @@ fun nextClassIndex(): Int {
     }
     return Int.MAX_VALUE
 }
+fun getNextIndex(){
+    val now = LocalTime.now()
+    AppConfig.getInstance().classTime.forEachIndexed{ index: Int, time: String? ->
 
+    }
+}
 fun parseWeek(weekStr: String): List<Int> {
     val res = mutableListOf<Int>()
     val parts = weekStr.split(",")
