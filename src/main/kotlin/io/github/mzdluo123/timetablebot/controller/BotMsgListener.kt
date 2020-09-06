@@ -92,7 +92,7 @@ class BotMsgListener : BaseListeners() {
                     for (i in course) {
                         msg += ("课程：${i.component1()}\n" +
                                 "地点：${i.component3()}\n" +
-                                "时间：${AppConfig.getInstance().classTime.get(i.component7().toInt())}\n--------------\n")
+                                "时间：${AppConfig.getInstance().classTime.get(i.component7().toInt()-1)}\n--------------\n")
                     }
                 }
                 reply(msg)
