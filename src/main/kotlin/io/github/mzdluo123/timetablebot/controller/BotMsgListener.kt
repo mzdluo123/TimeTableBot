@@ -7,7 +7,7 @@ import io.github.mzdluo123.timetablebot.controller.BaseListeners
 import io.github.mzdluo123.timetablebot.BuildConfig
 import io.github.mzdluo123.timetablebot.bots.BotsManager
 import io.github.mzdluo123.timetablebot.config.AppConfig
-import io.github.mzdluo123.timetablebot.gen.timetable.tables.Classroom
+import io.github.mzdluo123.timetablebot.gen.timetable.tables.Classroom.CLASSROOM
 import io.github.mzdluo123.timetablebot.gen.timetable.tables.Course
 import io.github.mzdluo123.timetablebot.gen.timetable.tables.Course.COURSE
 import io.github.mzdluo123.timetablebot.gen.timetable.tables.CourseTime
@@ -141,7 +141,7 @@ fun searchTodayClass(week: Int,user: User): Result<Record7<String, String, Strin
         return@dbCtx it.select(
                 Course.COURSE.NAME,
                 Course.COURSE.TEACHER,
-                Classroom.CLASSROOM.LOCATION,
+                CLASSROOM.LOCATION,
                 Course.COURSE.SCORE,
                 Course.COURSE.WEEK_PERIOD,
                 Course.COURSE.PERIOD,
@@ -151,7 +151,7 @@ fun searchTodayClass(week: Int,user: User): Result<Record7<String, String, Strin
                         UserCourse.USER_COURSE.innerJoin(io.github.mzdluo123.timetablebot.gen.timetable.tables.User.USER).on(UserCourse.USER_COURSE.USER.eq(io.github.mzdluo123.timetablebot.gen.timetable.tables.User.USER.ID))
                                 .innerJoin(Course.COURSE).on(UserCourse.USER_COURSE.COURSE.eq(Course.COURSE.ID))
                                 .innerJoin(CourseTime.COURSE_TIME).on(CourseTime.COURSE_TIME.COURSE.eq(Course.COURSE.ID))
-                                .innerJoin(Classroom.CLASSROOM).on(CourseTime.COURSE_TIME.CLASS_ROOM.eq(Classroom.CLASSROOM.ID))
+                                .innerJoin(CLASSROOM).on(CourseTime.COURSE_TIME.CLASS_ROOM.eq(CLASSROOM.ID))
 
                 )
                 .where(
@@ -190,7 +190,37 @@ fun searchNextClass(week: Int, user: User, now: LocalTime): Record8<String, Int,
                     .and(COURSE_TIME.DAY_OF_WEEK.eq(week.toByte()))
                     .and(COURSE_TIME.START_TIME.ge(now.hour.toByte()))
             )
-            .groupBy(USER.ID).limit(1).fetchOne()
+            .groupBy(USER.ID).fetchOne()
+    }
+    return cource
+}
+fun searchTomorrowNextClass(week: Int, user: User, now: LocalTime): Record9<String, Int, Long, Byte, Byte, Byte, Double, String, String>? {
+    val cource = dbCtx {
+        return@dbCtx it.select(
+                COURSE.NAME,
+                USER.ID,
+                USER.ACCOUNT,
+                COURSE_TIME.DAY_OF_WEEK,
+                COURSE_TIME.WEEK,
+                COURSE_TIME.START_TIME,
+                COURSE.SCORE,
+                USER.NAME,
+
+                CLASSROOM.LOCATION
+        )
+                .from(
+                        COURSE
+                                .innerJoin(USER_COURSE).on(COURSE.ID.eq(USER_COURSE.COURSE))
+                                .innerJoin(USER).on(USER.ID.eq(USER_COURSE.USER))
+                                .innerJoin(COURSE_TIME).on(COURSE.ID.eq(COURSE_TIME.COURSE))
+                                .innerJoin(CLASSROOM).on(COURSE_TIME.CLASS_ROOM.eq(CLASSROOM.ID))
+                )
+                .where(
+                        COURSE_TIME.WEEK.eq(week.toByte())
+                                .and(USER.ID.eq(user.id))
+                                .and(COURSE_TIME.DAY_OF_WEEK.eq(week.toByte()))
+                )
+                .groupBy(USER.ID).fetchOne()
     }
     return cource
 }
