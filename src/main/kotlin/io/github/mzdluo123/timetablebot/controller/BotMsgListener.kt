@@ -91,7 +91,6 @@ class BotMsgListener : BaseListeners() {
                     reply("你没有创建账号，请使用init创建账户")
                     return@case
                 }
-                val t=user.enable
                 if(user.enable == 0.toByte()) {
                     userDao.update(user.apply {
                         enable=1.toByte()
