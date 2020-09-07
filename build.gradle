@@ -48,7 +48,7 @@ compileTestKotlin {
 }
 
 group 'io.io.github.mzdluo123.timetablebot'
-version '1.0-beta'
+version '1.0.1-beta'
 
 def versionCode  = 1
 
