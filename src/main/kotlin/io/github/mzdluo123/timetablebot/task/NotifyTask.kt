@@ -85,7 +85,7 @@ class NotifyTask : Job, CoroutineScope {
                 }
                 val msg = buildString {
                     append("您好!接下来是第${nextClass}节课," +
-                            "上课时间${AppConfig.getInstance().classTime[nextClass-1]}\n")
+                            "上课时间${AppConfig.getInstance().classTime[nextClass]}\n")
                     append(
                         "${course.getValue(COURSE.NAME)}，在${course.getValue(CLASSROOM.LOCATION)}，${
                             course.getValue(

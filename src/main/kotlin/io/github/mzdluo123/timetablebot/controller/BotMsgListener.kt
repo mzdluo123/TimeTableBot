@@ -1,13 +1,19 @@
 package io.github.mzdluo123.timetablebot.controller
 
+import io.github.mzdluo123.timetablebot.controller.BaseListeners
+
+
 
 import io.github.mzdluo123.timetablebot.BuildConfig
 import io.github.mzdluo123.timetablebot.bots.BotsManager
 import io.github.mzdluo123.timetablebot.config.AppConfig
 import io.github.mzdluo123.timetablebot.gen.timetable.tables.Classroom.CLASSROOM
+import io.github.mzdluo123.timetablebot.gen.timetable.tables.Course
 import io.github.mzdluo123.timetablebot.gen.timetable.tables.Course.COURSE
+import io.github.mzdluo123.timetablebot.gen.timetable.tables.CourseTime
 import io.github.mzdluo123.timetablebot.gen.timetable.tables.CourseTime.COURSE_TIME
 import io.github.mzdluo123.timetablebot.gen.timetable.tables.User.USER
+import io.github.mzdluo123.timetablebot.gen.timetable.tables.UserCourse
 import io.github.mzdluo123.timetablebot.gen.timetable.tables.UserCourse.USER_COURSE
 import io.github.mzdluo123.timetablebot.gen.timetable.tables.daos.UserDao
 import io.github.mzdluo123.timetablebot.gen.timetable.tables.pojos.User
@@ -21,10 +27,8 @@ import io.github.mzdluo123.timetablebot.utils.*
 import net.mamoe.mirai.event.EventHandler
 import net.mamoe.mirai.message.FriendMessageEvent
 import net.mamoe.mirai.message.data.PlainText
-import org.jooq.Record10
-import org.jooq.Record7
-import org.jooq.Record9
-import org.jooq.Result
+import org.jooq.*
+import java.lang.Byte.parseByte
 import java.time.LocalDateTime
 import java.time.LocalTime
 
@@ -74,26 +78,22 @@ class BotMsgListener : BaseListeners() {
             }
             case("bug反馈", "将bug反馈给开发者，帮助我们进行完善") {
                 val arg: String by cmdArg(0, "bug", it)
-
+                val list = AppConfig.getInstance().admin
                 for (u in AppConfig.getInstance().admin) {
                     bot.getFriend(u).sendMessage("来自用户${user.account}的反馈:" + arg)
                 }
                 reply("您反馈的问题我们已经收到，如果您还有疑问，请联系管理员")
             }
-            case("今日课表", "获取今天的所有课程") {
-                val course = searchTodayClass(dayOfWeek(), user)
-                val msg = if (course != null && course.size >= 1) {
-                    course.joinToString(separator = "\n") {
-                        """
-${it.component1()}
-${it.component3()} 
-时间：${AppConfig.getInstance().classTime[it.component7().toInt() - 1]} (第${it.component7()}节)                             
---------------
-""".trimIndent()
+            case("今日课表","获取今天的所有课程"){
+                val course= searchTodayClass(dayOfWeek(),user)
+                var msg:String="您今日没有课哦~"
+                if (course!=null && course.size >=1) {
+                    msg=""
+                    for (i in course) {
+                        msg += ("课程：${i.component1()}\n" +
+                                "地点：${i.component3()}\n" +
+                                "时间：${AppConfig.getInstance().classTime.get(i.component7().toInt()-1)}\n--------------\n")
                     }
-
-                } else {
-                    "您今日没有课哦~"
                 }
                 reply(msg)
             }
@@ -133,43 +133,38 @@ ${it.component3()}
         }
     }
 }
-
-fun searchTodayClass(week: Int, user: User): Result<Record7<String, String, String, Double, Byte, Byte, Byte>>? {
-    return dbCtx {
+fun searchTodayClass(week: Int,user: User): Result<Record7<String, String, String, Double, Byte, Byte, Byte>>? {
+    val course= dbCtx {
         return@dbCtx it.select(
-            COURSE.NAME,
-            COURSE.TEACHER,
-            CLASSROOM.LOCATION,
-            COURSE.SCORE,
-            COURSE.WEEK_PERIOD,
-            COURSE.PERIOD,
-            COURSE_TIME.START_TIME
+                Course.COURSE.NAME,
+                Course.COURSE.TEACHER,
+                CLASSROOM.LOCATION,
+                Course.COURSE.SCORE,
+                Course.COURSE.WEEK_PERIOD,
+                Course.COURSE.PERIOD,
+                CourseTime.COURSE_TIME.START_TIME
         )
-            .from(
-                USER_COURSE.innerJoin(USER).on(USER_COURSE.USER.eq(USER.ID))
-                    .innerJoin(COURSE).on(USER_COURSE.COURSE.eq(COURSE.ID))
-                    .innerJoin(COURSE_TIME).on(COURSE_TIME.COURSE.eq(COURSE.ID))
-                    .innerJoin(CLASSROOM).on(COURSE_TIME.CLASS_ROOM.eq(CLASSROOM.ID))
+                .from(
+                        UserCourse.USER_COURSE.innerJoin(io.github.mzdluo123.timetablebot.gen.timetable.tables.User.USER).on(UserCourse.USER_COURSE.USER.eq(io.github.mzdluo123.timetablebot.gen.timetable.tables.User.USER.ID))
+                                .innerJoin(Course.COURSE).on(UserCourse.USER_COURSE.COURSE.eq(Course.COURSE.ID))
+                                .innerJoin(CourseTime.COURSE_TIME).on(CourseTime.COURSE_TIME.COURSE.eq(Course.COURSE.ID))
+                                .innerJoin(CLASSROOM).on(CourseTime.COURSE_TIME.CLASS_ROOM.eq(CLASSROOM.ID))
 
-            )
-            .where(
-                COURSE_TIME.WEEK.eq(week.toByte())
-                    .and(USER.ID.eq(user.id))
-                    .and(COURSE_TIME.DAY_OF_WEEK.eq(week.toByte()))
-            )
-            .orderBy(
-                COURSE_TIME.START_TIME
-            )
-            .fetch()
+                )
+                .where(
+                        CourseTime.COURSE_TIME.WEEK.eq(week.toByte())
+                                .and(io.github.mzdluo123.timetablebot.gen.timetable.tables.User.USER.ID.eq(user.id))
+                                .and(CourseTime.COURSE_TIME.DAY_OF_WEEK.eq(week.toByte()))
+                )
+                .orderBy(
+                        CourseTime.COURSE_TIME.START_TIME
+                )
+                .fetch()
     }
+    return course
 }
-
-fun searchNextClass(
-    week: Int,
-    user: User,
-    now: LocalTime
-): Record10<String, Int, Long, Byte, Byte, Byte, String, Int, Double, String>? {
-    return dbCtx {
+fun searchNextClass(week: Int, user: User, now: LocalTime): Record10<String, Int, Long, Byte, Byte, Byte, String, Int, Double, String>? {
+    val cource = dbCtx {
         return@dbCtx it.select(
             COURSE.NAME,
             USER.ID,
@@ -179,15 +174,15 @@ fun searchNextClass(
             COURSE_TIME.START_TIME,
             USER.NAME,
             COURSE_TIME.CLASS_ROOM,
-            COURSE.SCORE,
-            CLASSROOM.LOCATION
+                COURSE.SCORE,
+                CLASSROOM.LOCATION
         )
             .from(
                 COURSE
                     .innerJoin(USER_COURSE).on(COURSE.ID.eq(USER_COURSE.COURSE))
                     .innerJoin(USER).on(USER.ID.eq(USER_COURSE.USER))
                     .innerJoin(COURSE_TIME).on(COURSE.ID.eq(COURSE_TIME.COURSE))
-                    .innerJoin(CLASSROOM).on(COURSE_TIME.CLASS_ROOM.eq(CLASSROOM.ID))
+                        .innerJoin(CLASSROOM).on(COURSE_TIME.CLASS_ROOM.eq(CLASSROOM.ID))
             )
             .where(
                 COURSE_TIME.WEEK.eq(week.toByte())
@@ -195,44 +190,40 @@ fun searchNextClass(
                     .and(COURSE_TIME.DAY_OF_WEEK.eq(week.toByte()))
                     .and(COURSE_TIME.START_TIME.ge(nextClassIndex().toByte())),
 
-                )
+            )
             .groupBy(USER.ID).fetchOne()
     }
+    return cource
 }
-
-fun searchTomorrowNextClass(
-    week: Int,
-    user: User,
-    now: LocalTime
-): Record9<String, Int, Long, Byte, Byte, Byte, Double, String, String>? {
-    return dbCtx {
+fun searchTomorrowNextClass(week: Int, user: User, now: LocalTime): Record9<String, Int, Long, Byte, Byte, Byte, Double, String, String>? {
+    val cource = dbCtx {
         return@dbCtx it.select(
-            COURSE.NAME,
-            USER.ID,
-            USER.ACCOUNT,
-            COURSE_TIME.DAY_OF_WEEK,
-            COURSE_TIME.WEEK,
-            COURSE_TIME.START_TIME,
-            COURSE.SCORE,
-            USER.NAME,
-            CLASSROOM.LOCATION
+                COURSE.NAME,
+                USER.ID,
+                USER.ACCOUNT,
+                COURSE_TIME.DAY_OF_WEEK,
+                COURSE_TIME.WEEK,
+                COURSE_TIME.START_TIME,
+                COURSE.SCORE,
+                USER.NAME,
+                CLASSROOM.LOCATION
         )
-            .from(
-                COURSE
-                    .innerJoin(USER_COURSE).on(COURSE.ID.eq(USER_COURSE.COURSE))
-                    .innerJoin(USER).on(USER.ID.eq(USER_COURSE.USER))
-                    .innerJoin(COURSE_TIME).on(COURSE.ID.eq(COURSE_TIME.COURSE))
-                    .innerJoin(CLASSROOM).on(COURSE_TIME.CLASS_ROOM.eq(CLASSROOM.ID))
-            )
-            .where(
-                COURSE_TIME.WEEK.eq(week.toByte())
-                    .and(USER.ID.eq(user.id))
-                    .and(COURSE_TIME.DAY_OF_WEEK.eq(week.toByte()))
-            )
-            .groupBy(USER.ID).fetchOne()
+                .from(
+                        COURSE
+                                .innerJoin(USER_COURSE).on(COURSE.ID.eq(USER_COURSE.COURSE))
+                                .innerJoin(USER).on(USER.ID.eq(USER_COURSE.USER))
+                                .innerJoin(COURSE_TIME).on(COURSE.ID.eq(COURSE_TIME.COURSE))
+                                .innerJoin(CLASSROOM).on(COURSE_TIME.CLASS_ROOM.eq(CLASSROOM.ID))
+                )
+                .where(
+                        COURSE_TIME.WEEK.eq(week.toByte())
+                                .and(USER.ID.eq(user.id))
+                                .and(COURSE_TIME.DAY_OF_WEEK.eq(week.toByte()))
+                )
+                .groupBy(USER.ID).fetchOne()
     }
+    return cource
 }
-
 fun nextClass(user: User): String {
     var week = dayOfWeek()
     val now: LocalTime = LocalTime.now()
@@ -242,9 +233,9 @@ fun nextClass(user: User): String {
             append("您好!接下来是第${nextClassIndex().toByte()}节课，上课时间${AppConfig.getInstance().classTime[course.component6() - 1]}\n")
             append(
                 "${course.getValue(COURSE.NAME)}，在${course.getValue(CLASSROOM.LOCATION)}，${
-                    course.getValue(
-                        COURSE.SCORE
-                    )
+                course.getValue(
+                    COURSE.SCORE
+                )
                 }个学分"
             )
         }
@@ -260,9 +251,9 @@ fun nextClass(user: User): String {
                 )
                 append(
                     "${course.getValue(COURSE.NAME)}，在${course.getValue(CLASSROOM.LOCATION)}，${
-                        course.getValue(
-                            COURSE.SCORE
-                        )
+                    course.getValue(
+                        COURSE.SCORE
+                    )
                     }个学分"
                 )
             } else {
