@@ -72,6 +72,35 @@ class BotMsgListener : BaseListeners() {
                 reply("我们将在后台刷新你的课程表，完成后会向你发送信息，请稍后\n同步较慢，请勿重复提交")
 
             }
+            case("td","退订自动推送服务"){
+                if (user == null) {
+                    reply("你没有创建账号，请使用init创建账户")
+                    return@case
+                }
+                if(user.enable==1.toByte()) {
+                    userDao.update(user.apply {
+                        enable=0.toByte()
+                    })
+                    reply("退订成功")
+                }else{
+                    reply("您已退订自动推送服务")
+                }
+            }
+            case("dy","订阅自动推送服务"){
+                if (user == null) {
+                    reply("你没有创建账号，请使用init创建账户")
+                    return@case
+                }
+                val t=user.enable
+                if(user.enable == 0.toByte()) {
+                    userDao.update(user.apply {
+                        enable=1.toByte()
+                    })
+                    reply("订阅启用成功！")
+                }else{
+                    reply("您已订阅自动推送服务")
+                }
+            }
             case("next", "查询下节课") {
                 val nextClass = nextClass(user)
                 reply(nextClass)
