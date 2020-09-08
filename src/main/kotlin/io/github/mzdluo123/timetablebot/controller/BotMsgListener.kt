@@ -258,7 +258,7 @@ fun nextClass(user: User): String {
     val course = searchNextClass(week, user, now)
     return if (course != null) {
         buildString {
-            append("您好!接下来是第${nextClassIndex().toByte()}节课，上课时间${AppConfig.getInstance().classTime[course.component6() - 1]}\n")
+            append("您好!接下来是第${course.getValue(COURSE_TIME.START_TIME)}节课，上课时间${AppConfig.getInstance().classTime[course.component6() - 1]}\n")
             append(
                 "${course.getValue(COURSE.NAME)}，在${course.getValue(CLASSROOM.LOCATION)}，${
                 course.getValue(
