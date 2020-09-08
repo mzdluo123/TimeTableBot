@@ -1,8 +1,5 @@
 package io.github.mzdluo123.timetablebot.controller
 
-import io.github.mzdluo123.timetablebot.controller.BaseListeners
-
-
 
 import io.github.mzdluo123.timetablebot.BuildConfig
 import io.github.mzdluo123.timetablebot.bots.BotsManager
@@ -27,8 +24,10 @@ import io.github.mzdluo123.timetablebot.utils.*
 import net.mamoe.mirai.event.EventHandler
 import net.mamoe.mirai.message.FriendMessageEvent
 import net.mamoe.mirai.message.data.PlainText
-import org.jooq.*
-import java.lang.Byte.parseByte
+import org.jooq.Record10
+import org.jooq.Record7
+import org.jooq.Record9
+import org.jooq.Result
 import java.time.LocalDateTime
 import java.time.LocalTime
 
@@ -112,16 +111,20 @@ class BotMsgListener : BaseListeners() {
                 }
                 reply("您反馈的问题我们已经收到，如果您还有疑问，请联系管理员")
             }
-            case("今日课表","获取今天的所有课程"){
-                val course= searchTodayClass(dayOfWeek(),user)
-                var msg:String="您今日没有课哦~"
-                if (course!=null && course.size >=1) {
-                    msg=""
-                    for (i in course) {
-                        msg += ("课程：${i.component1()}\n" +
-                                "地点：${i.component3()}\n" +
-                                "时间：${AppConfig.getInstance().classTime.get(i.component7().toInt()-1)}\n--------------\n")
+            case("今日课表", "获取今天的所有课程") {
+                val course = searchTodayClass(dayOfWeek(), user)
+                val msg = if (course != null && course.size >= 1) {
+                    course.joinToString(separator = "\n") {
+                        """
+${it.component1()}
+${it.component3()} 
+时间：${AppConfig.getInstance().classTime[it.component7().toInt() - 1]} (第${it.component7()}节)                             
+--------------
+""".trimIndent()
                     }
+
+                } else {
+                    "您今日没有课哦~"
                 }
                 reply(msg)
             }

@@ -85,7 +85,7 @@ class NotifyTask : Job, CoroutineScope {
                 }
                 val msg = buildString {
                     append("您好!接下来是第${nextClass}节课," +
-                            "上课时间${AppConfig.getInstance().classTime[nextClass]}\n")
+                            "上课时间${AppConfig.getInstance().classTime[nextClass -1]}\n")
                     append(
                         "${course.getValue(COURSE.NAME)}，在${course.getValue(CLASSROOM.LOCATION)}，${
                             course.getValue(
@@ -96,6 +96,7 @@ class NotifyTask : Job, CoroutineScope {
                 }
 
                 BotsManager.sendMsg(bot, account, PlainText(msg))
+                logger.info("向用户${userId}发送上课提醒成功")
             } catch (e: Exception) {
                 logger.error(e)
             }
