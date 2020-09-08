@@ -15,6 +15,7 @@ import io.github.mzdluo123.timetablebot.utils.createDao
 import io.github.mzdluo123.timetablebot.utils.globalExceptionHandler
 import io.github.mzdluo123.timetablebot.utils.logger
 import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.Channel
 import net.mamoe.mirai.Bot
 import net.mamoe.mirai.message.data.Message
 import net.mamoe.mirai.utils.internal.logging.Log4jLogger
@@ -27,9 +28,10 @@ object BotsManager : CoroutineScope {
     private val userDao = createDao(UserDao::class)
 
     override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Default + SupervisorJob(appJob) + jobs
+        get() = Dispatchers.IO+ SupervisorJob(appJob) + jobs
 
     private val logger = logger()
+    private val sendMsgChannel = Channel<SendMsgJob>()
 
     fun closeAllBot() {
         jobs.cancel()
@@ -62,16 +64,26 @@ object BotsManager : CoroutineScope {
                 bot.login()
             }
             logger.info("login finish")
+        }
+        launch { sendMsgJob() }
+    }
 
+    private suspend fun sendMsgJob(){
+        for (msg in sendMsgChannel){
+            Bot.getInstance(msg.bot).getFriend(msg.target).sendMessage(msg.msg)
+            delay((10..2000).random().toLong())
         }
     }
 
     suspend fun sendMsg(user: Int, msg: Message) {
         val userPO = userDao.fetchOneById(user)
-        Bot.getInstance(userPO.bot).getFriend(userPO.account).sendMessage(msg)
+        sendMsgChannel.send(SendMsgJob(userPO.bot,userPO.account,msg))
+
     }
 
     suspend fun sendMsg(bot: Long, account: Long, msg: Message) {
-        Bot.getInstance(bot).getFriend(account).sendMessage(msg)
+        sendMsgChannel.send(SendMsgJob(bot,account,msg))
     }
 }
+
+data class SendMsgJob(val bot:Long,val target: Long,val msg: Message)
