@@ -164,28 +164,28 @@ class BotMsgListener : BaseListeners() {
 fun searchTodayClass(week: Int,user: User): Result<Record7<String, String, String, Double, Byte, Byte, Byte>>? {
     val course= dbCtx {
         return@dbCtx it.select(
-                Course.COURSE.NAME,
-                Course.COURSE.TEACHER,
+                COURSE.NAME,
+                COURSE.TEACHER,
                 CLASSROOM.LOCATION,
-                Course.COURSE.SCORE,
-                Course.COURSE.WEEK_PERIOD,
-                Course.COURSE.PERIOD,
-                CourseTime.COURSE_TIME.START_TIME
+                COURSE.SCORE,
+                COURSE.WEEK_PERIOD,
+                COURSE.PERIOD,
+                COURSE_TIME.START_TIME
         )
                 .from(
-                        UserCourse.USER_COURSE.innerJoin(io.github.mzdluo123.timetablebot.gen.timetable.tables.User.USER).on(UserCourse.USER_COURSE.USER.eq(io.github.mzdluo123.timetablebot.gen.timetable.tables.User.USER.ID))
-                                .innerJoin(Course.COURSE).on(UserCourse.USER_COURSE.COURSE.eq(Course.COURSE.ID))
-                                .innerJoin(CourseTime.COURSE_TIME).on(CourseTime.COURSE_TIME.COURSE.eq(Course.COURSE.ID))
-                                .innerJoin(CLASSROOM).on(CourseTime.COURSE_TIME.CLASS_ROOM.eq(CLASSROOM.ID))
+                        USER_COURSE.innerJoin(USER).on(USER_COURSE.USER.eq(USER.ID))
+                                .innerJoin(COURSE).on(USER_COURSE.COURSE.eq(COURSE.ID))
+                                .innerJoin(COURSE_TIME).on(COURSE_TIME.COURSE.eq(COURSE.ID))
+                                .innerJoin(CLASSROOM).on(COURSE_TIME.CLASS_ROOM.eq(CLASSROOM.ID))
 
                 )
                 .where(
-                        CourseTime.COURSE_TIME.WEEK.eq(week.toByte())
-                                .and(io.github.mzdluo123.timetablebot.gen.timetable.tables.User.USER.ID.eq(user.id))
-                                .and(CourseTime.COURSE_TIME.DAY_OF_WEEK.eq(week.toByte()))
+                        COURSE_TIME.WEEK.eq(week.toByte())
+                                .and(USER.ID.eq(user.id))
+                                .and(COURSE_TIME.DAY_OF_WEEK.eq(week.toByte()))
                 )
                 .orderBy(
-                        CourseTime.COURSE_TIME.START_TIME
+                        COURSE_TIME.START_TIME
                 )
                 .fetch()
     }
