@@ -195,6 +195,7 @@ fun searchTodayClass(week: Int,user: User): Result<Record7<String, String, Strin
     return course
 }
 fun searchNextClass(week: Int, user: User, now: LocalTime): Record10<String, Int, Long, Byte, Byte, Byte, String, Int, Double, String>? {
+    if (nextClassIndex()== Int.MAX_VALUE)return null
     val cource = dbCtx {
         return@dbCtx it.select(
             COURSE.NAME,
@@ -220,12 +221,12 @@ fun searchNextClass(week: Int, user: User, now: LocalTime): Record10<String, Int
                     .and(USER.ID.eq(user.id))
                     .and(COURSE_TIME.DAY_OF_WEEK.eq(week.toByte()))
                     .and(COURSE_TIME.START_TIME.ge(nextClassIndex().toByte())),
-
             )
             .groupBy(USER.ID).fetchOne()
     }
     return cource
 }
+
 fun searchTomorrowNextClass(week: Int, user: User, now: LocalTime): Record9<String, Int, Long, Byte, Byte, Byte, Double, String, String>? {
     val cource = dbCtx {
         return@dbCtx it.select(
