@@ -39,12 +39,6 @@ fun nextClassIndex(): Int {
     }
     return Int.MAX_VALUE
 }
-//fun getNextIndex(){
-//    val now = LocalTime.now()
-//    AppConfig.getInstance().classTime.forEachIndexed{ index: Int, time: String? ->
-//
-//    }
-//}
 fun parseWeek(weekStr: String): List<Int> {
     val res = mutableListOf<Int>()
     val parts = weekStr.split(",")
