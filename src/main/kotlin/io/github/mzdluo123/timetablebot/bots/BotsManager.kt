@@ -70,7 +70,12 @@ object BotsManager : CoroutineScope {
 
     private suspend fun sendMsgJob(){
         for (msg in sendMsgChannel){
-            Bot.getInstance(msg.bot).getFriend(msg.target).sendMessage(msg.msg)
+
+           kotlin.runCatching {  Bot.getInstance(msg.bot).getFriend(msg.target).sendMessage(msg.msg) }.also {
+               if (it.isFailure){
+                   logger.error("发送消息${msg}失败,原因:${it.exceptionOrNull()}")
+               }
+           }
             delay((10..2000).random().toLong())
         }
     }
