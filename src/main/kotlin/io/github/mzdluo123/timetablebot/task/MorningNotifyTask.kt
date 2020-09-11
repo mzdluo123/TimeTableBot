@@ -1,19 +1,22 @@
 package io.github.mzdluo123.timetablebot.task
 
 import io.github.mzdluo123.timetablebot.appJob
+import io.github.mzdluo123.timetablebot.bots.BotsManager
+import io.github.mzdluo123.timetablebot.config.AppConfig
+import io.github.mzdluo123.timetablebot.controller.searchTodayClass
 import io.github.mzdluo123.timetablebot.data.getHitokoto
 import io.github.mzdluo123.timetablebot.gen.timetable.tables.daos.UserDao
-import io.github.mzdluo123.timetablebot.utils.createDao
-import io.github.mzdluo123.timetablebot.utils.logger
+import io.github.mzdluo123.timetablebot.utils.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import net.mamoe.mirai.message.data.PlainText
 import org.quartz.Job
 import org.quartz.JobExecutionContext
 import kotlin.coroutines.CoroutineContext
 
-class MorningNotifyTask() :Job,CoroutineScope{
+class MorningNotifyTask() : Job, CoroutineScope {
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.IO + SupervisorJob(appJob)
@@ -23,13 +26,31 @@ class MorningNotifyTask() :Job,CoroutineScope{
         launch { run() }
     }
 
-    private suspend fun run(){
+    private suspend fun run() {
         val users = userDao.fetchByEnable(1)
         val hitokoto = getHitokoto()
-        users.forEach {
-            // todo  发送早安
+        val week = week()
+        val dayOfWeek = dayOfWeek()
+        for (user in users){
+            val courses = searchTodayClass(week, dayOfWeek, user) ?: continue
+            val morning = """早上好！，今天是第${week}周的星期${dayOfWeek}，您今天共有${courses.size}节课
+                |以下是您今日的课程表
+                |
+                |${hitokoto?.hitokoto}
+            """.trimMargin()
+            val classTable =
+                courses.joinToString(separator = "\n") {
+                    """
+${it.component1()}
+${it.component3()} 
+时间：${AppConfig.getInstance().classTime[it.component7().toInt() - 1]} (第${it.component7()}节)                             
+--------------
+""".trimIndent()
+                }
 
-
+            BotsManager.sendMsg(user.id, PlainText(morning))
+            BotsManager.sendMsg(user.id, PlainText(classTable))
+            logger.info("发送早晨提醒信息到${user.id}成功")
         }
 
     }

@@ -15,6 +15,7 @@ object TaskScheduler {
 
     fun init() {
         scheduleNotifyTask()
+        scheduleMorningTask()
     }
 
     private fun scheduleNotifyTask() {
@@ -38,4 +39,12 @@ object TaskScheduler {
         logger.info("报课任务安排成功，共安排了${triggers.size}个任务")
     }
 
+    private fun scheduleMorningTask(){
+        val scheduler = scheduler.scheduler
+        scheduler.start()
+        val job = JobBuilder.newJob(MorningNotifyTask::class.java).withDescription("早安任务").build()
+        val trigger = newTrigger().withSchedule(dailyAtHourAndMinute(7,0)).build()
+        scheduler.scheduleJob(job,trigger)
+        logger.info("早晨提醒任务安排成功")
+    }
 }

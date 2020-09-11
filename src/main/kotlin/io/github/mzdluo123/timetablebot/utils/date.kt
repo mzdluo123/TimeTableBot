@@ -25,7 +25,10 @@ fun parseClassTime(timeStr: String): LocalTime {
     return LocalTime.parse(timeStr, timeParser)
 }
 
-// 获取下一节课的时间下标
+/**
+ * 获取下一节课是第几节
+ * 如果需要查询上课时间需要-1
+ * */
 fun nextClassIndex(): Int {
     val now = LocalTime.now()
     Dependencies.classTimeTable.forEachIndexed { index, time ->
