@@ -28,7 +28,6 @@ import org.jooq.Result
 import java.time.LocalDateTime
 
 
-
 class BotMsgListener : BaseListeners() {
     private val userDao = createDao(UserDao::class)
 
@@ -51,7 +50,7 @@ class BotMsgListener : BaseListeners() {
                         account = sender.id
                         bot = sender.bot.id
                         joinTime = LocalDateTime.now()
-                        enable = 1.toByte()
+                        enable = 0.toByte()
                         studentId = arg2
                     })
                     reply(PlainText("创建账号成功"))
@@ -81,7 +80,9 @@ class BotMsgListener : BaseListeners() {
                 } else {
                     reply("您已退订自动推送服务")
                 }
+
             }
+
             case("dy", "订阅自动推送服务") {
                 if (user == null) {
                     reply("你没有创建账号，请使用init创建账户")

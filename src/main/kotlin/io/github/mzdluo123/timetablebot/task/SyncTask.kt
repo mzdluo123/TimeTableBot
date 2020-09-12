@@ -174,6 +174,8 @@ object SyncTask : CoroutineScope {
                     }
 
                 }
+                user.enable = 1
+                userDao.update(user)
                 BotsManager.sendMsg(task.uid, PlainText("课程表刷新完成，共记录了${timetable?.kbList?.size ?: 0}节课程"))
             } catch (e: AuthorizationException) {
                 BotsManager.sendMsg(task.uid, PlainText("登录失败: ${e.message}"))
