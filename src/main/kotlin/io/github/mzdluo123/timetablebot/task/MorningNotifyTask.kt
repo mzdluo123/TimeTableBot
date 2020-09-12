@@ -33,21 +33,26 @@ class MorningNotifyTask() : Job, CoroutineScope {
         val dayOfWeek = dayOfWeek()
         for (user in users){
             val courses = searchTodayClass(week, dayOfWeek, user) ?: continue
-            val morning = """早上好！，今天是第${week}周的星期${dayOfWeek}，您今天共有${courses.size}节课
+            val morning=if(courses.size == 0){
+                 """早上好！，今天是第${week}周的星期${dayOfWeek},您今天没有课哦，祝您有一个充实快乐的一天
+                    |${hitokoto}
+                """.trimMargin()
+            }else {
+                """早上好！，今天是第${week}周的星期${dayOfWeek}，您今天共有${courses.size}节课
                 |以下是您今日的课程表
                 |
-                |${hitokoto?.hitokoto}
+                |${hitokoto}
             """.trimMargin()
+            }
             val classTable =
-                courses.joinToString(separator = "\n") {
-                    """
+                    courses.joinToString(separator = "\n") {
+                        """
 ${it.component1()}
 ${it.component3()} 
 时间：${AppConfig.getInstance().classTime[it.component7().toInt() - 1]} (第${it.component7()}节)                             
 --------------
 """.trimIndent()
-                }
-
+                    }
             BotsManager.sendMsg(user.id, PlainText(morning))
             BotsManager.sendMsg(user.id, PlainText(classTable))
             logger.info("发送早晨提醒信息到${user.id}成功")

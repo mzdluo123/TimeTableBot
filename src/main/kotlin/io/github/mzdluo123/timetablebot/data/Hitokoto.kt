@@ -7,6 +7,7 @@ import io.github.mzdluo123.timetablebot.utils.Dependencies
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.Request
+import org.jsoup.Jsoup
 import java.io.File
 
 data class Hitokoto(
@@ -28,11 +29,17 @@ data class Hitokoto(
     val uuid: String = ""
 )
 
-suspend fun getHitokoto(): Hitokoto? {
+//suspend fun getHitokoto(): Hitokoto? {
+//    val rsp = withContext(Dispatchers.IO) {
+//        Dependencies.okhttp.newCall(Request.Builder().url("https://v1.alapi.cn/api/hitokoto?format=text").build()).execute()
+//    }
+//    return Dependencies.gson.fromJson(rsp.body?.string(), Hitokoto::class.java)
+//}
+suspend fun getHitokoto(): String? {
     val rsp = withContext(Dispatchers.IO) {
-        Dependencies.okhttp.newCall(Request.Builder().url("https://v1.hitokoto.cn/?c=d").build()).execute()
+        Dependencies.okhttp.newCall(Request.Builder().url("https://v1.alapi.cn/api/hitokoto?format=text").build()).execute()
     }
-    return Dependencies.gson.fromJson(rsp.body?.string(), Hitokoto::class.java)
+    return rsp.body?.string()
 }
 
 suspend fun main() {
