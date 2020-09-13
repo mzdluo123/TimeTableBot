@@ -34,11 +34,11 @@ class MorningNotifyTask() : Job, CoroutineScope {
         for (user in users){
             val courses = searchTodayClass(week, dayOfWeek, user) ?: continue
             val morning=if(courses.size == 0){
-                 """早上好！，今天是第${week}周的星期${dayOfWeek},您今天没有课哦，祝您有一个充实快乐的一天
+                 """早上好！今天是第${week}周的星期${dayOfWeek},您今天没有课哦，祝您有一个充实快乐的一天
                     |${hitokoto}
                 """.trimMargin()
             }else {
-                """早上好！，今天是第${week}周的星期${dayOfWeek}，您今天共有${courses.size}节课
+                """早上好！今天是第${week}周的星期${dayOfWeek}，您今天共有${courses.size}节课
                 |以下是您今日的课程表
                 |
                 |${hitokoto}
