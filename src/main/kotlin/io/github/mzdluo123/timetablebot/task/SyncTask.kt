@@ -48,7 +48,7 @@ object SyncTask : CoroutineScope {
                 try {
                     loginV1(studentId.toString(), task.pwd)
                 }catch (e:Exception){
-                    BotsManager.sendMsg(user.id,PlainText("登录失败，正在使用统一认证系统登录"))
+                    BotsManager.sendMsg(user.id,PlainText("登录失败，我们将再次使用统一认证系统登录，请耐心等待:$e"))
                     Dependencies.resetCookie()
                     loginToCAS(studentId.toString(), task.pwd)
                 }

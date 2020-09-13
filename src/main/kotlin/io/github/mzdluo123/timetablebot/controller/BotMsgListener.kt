@@ -126,6 +126,18 @@ ${it.component3()}
                 }
                 reply(msg)
             }
+            case("clean","清除你的课程表"){
+                val confirm : Boolean by cmdArg(0,"你确定要清除你的课程表?",it)
+                if (confirm){
+                    val courses = dbCtx {
+                        it.delete(USER_COURSE).where(USER_COURSE.USER.eq(user.id)).execute()
+                    }
+                    reply("删除了${courses}条记录")
+                }else{
+                    reply("已取消")
+                }
+
+            }
             nextRoute("admin", "管理中心", ::admin)
             default {
                 reply(PlainText(AppConfig.getInstance().help))
