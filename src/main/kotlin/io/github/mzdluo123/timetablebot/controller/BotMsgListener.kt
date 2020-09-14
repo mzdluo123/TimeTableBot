@@ -134,14 +134,14 @@ ${it.component3()}
                 }
                 reply(msg)
             }
-            case("clean","清除你的课程表"){
-                val confirm : Boolean by cmdArg(0,"你确定要清除你的课程表?",it)
-                if (confirm){
+            case("clean", "清除你的课程表") {
+                val confirm: Boolean by cmdArg(0, "你确定要清除你的课程表?", it)
+                if (confirm) {
                     val courses = dbCtx {
                         it.delete(USER_COURSE).where(USER_COURSE.USER.eq(user.id)).execute()
                     }
                     reply("删除了${courses}条记录")
-                }else{
+                } else {
                     reply("已取消")
                 }
 
@@ -175,6 +175,25 @@ ${it.component3()}
                     PlainText("$msg\n(此消息由管理员发送，请勿回复，如有问题请联系管理员)")
                 )
             }
+        }
+        route.case("state", "获取运行状态") {
+            val msg = buildString {
+                append("TimeTableBot ${BuildConfig.VERSION} build ${timeToStr(BuildConfig.BUILD_UNIXTIME)}\n")
+                val totalUser = dbCtx {
+                    it.fetchCount(USER)
+                }
+                append("用户数:${totalUser}\n")
+                val validUser = dbCtx {
+                    it.fetchCount(USER, USER.NAME.isNotNull)
+                }
+                append("有效用户:${validUser}\n")
+                append("下节课:${nextClassIndex()}\n")
+                val courses = dbCtx {
+                    it.fetchCount(COURSE)
+                }
+                append("记录的课程数量:${courses}")
+            }
+            reply(msg)
         }
         route.default {
 
