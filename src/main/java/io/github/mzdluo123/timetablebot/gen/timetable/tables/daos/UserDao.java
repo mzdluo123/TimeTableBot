@@ -110,13 +110,6 @@ public class UserDao extends DAOImpl<UserRecord, io.github.mzdluo123.timetablebo
     }
 
     /**
-     * Fetch a unique record that has <code>student_id = value</code>
-     */
-    public io.github.mzdluo123.timetablebot.gen.timetable.tables.pojos.User fetchOneByStudentId(Integer value) {
-        return fetchOne(User.USER.STUDENT_ID, value);
-    }
-
-    /**
      * Fetch records that have <code>last_active BETWEEN lowerInclusive AND upperInclusive</code>
      */
     public List<io.github.mzdluo123.timetablebot.gen.timetable.tables.pojos.User> fetchRangeOfLastActive(LocalDateTime lowerInclusive, LocalDateTime upperInclusive) {

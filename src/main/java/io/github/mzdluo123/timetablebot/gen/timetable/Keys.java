@@ -62,7 +62,6 @@ public class Keys {
     public static final UniqueKey<ProfileRecord> KEY_PROFILE_PRIMARY = UniqueKeys0.KEY_PROFILE_PRIMARY;
     public static final UniqueKey<UserRecord> KEY_USER_PRIMARY = UniqueKeys0.KEY_USER_PRIMARY;
     public static final UniqueKey<UserRecord> KEY_USER_USER_ACCOUNT_UNIQUE = UniqueKeys0.KEY_USER_USER_ACCOUNT_UNIQUE;
-    public static final UniqueKey<UserRecord> KEY_USER_USER_STUDENT_ID_UNIQUE = UniqueKeys0.KEY_USER_USER_STUDENT_ID_UNIQUE;
     public static final UniqueKey<UserCourseRecord> KEY_USER_COURSE_PRIMARY = UniqueKeys0.KEY_USER_COURSE_PRIMARY;
     public static final UniqueKey<UserOtherCourseRecord> KEY_USER_OTHER_COURSE_PRIMARY = UniqueKeys0.KEY_USER_OTHER_COURSE_PRIMARY;
 
@@ -104,7 +103,6 @@ public class Keys {
         public static final UniqueKey<ProfileRecord> KEY_PROFILE_PRIMARY = Internal.createUniqueKey(Profile.PROFILE, "KEY_profile_PRIMARY", new TableField[] { Profile.PROFILE.ID }, true);
         public static final UniqueKey<UserRecord> KEY_USER_PRIMARY = Internal.createUniqueKey(User.USER, "KEY_user_PRIMARY", new TableField[] { User.USER.ID }, true);
         public static final UniqueKey<UserRecord> KEY_USER_USER_ACCOUNT_UNIQUE = Internal.createUniqueKey(User.USER, "KEY_user_user_account_unique", new TableField[] { User.USER.ACCOUNT }, true);
-        public static final UniqueKey<UserRecord> KEY_USER_USER_STUDENT_ID_UNIQUE = Internal.createUniqueKey(User.USER, "KEY_user_user_student_id_unique", new TableField[] { User.USER.STUDENT_ID }, true);
         public static final UniqueKey<UserCourseRecord> KEY_USER_COURSE_PRIMARY = Internal.createUniqueKey(UserCourse.USER_COURSE, "KEY_user_course_PRIMARY", new TableField[] { UserCourse.USER_COURSE.ID }, true);
         public static final UniqueKey<UserOtherCourseRecord> KEY_USER_OTHER_COURSE_PRIMARY = Internal.createUniqueKey(UserOtherCourse.USER_OTHER_COURSE, "KEY_user_other_course_PRIMARY", new TableField[] { UserOtherCourse.USER_OTHER_COURSE.ID }, true);
     }

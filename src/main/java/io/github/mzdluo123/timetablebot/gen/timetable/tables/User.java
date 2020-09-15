@@ -35,7 +35,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class User extends TableImpl<UserRecord> {
 
-    private static final long serialVersionUID = -1817650236;
+    private static final long serialVersionUID = -1433589259;
 
     /**
      * The reference instance of <code>timetable.user</code>
@@ -130,7 +130,7 @@ public class User extends TableImpl<UserRecord> {
 
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.USER_ENABLE);
+        return Arrays.<Index>asList(Indexes.USER_USER_STUDENT_ID_UNIQUE);
     }
 
     @Override
@@ -145,7 +145,7 @@ public class User extends TableImpl<UserRecord> {
 
     @Override
     public List<UniqueKey<UserRecord>> getKeys() {
-        return Arrays.<UniqueKey<UserRecord>>asList(Keys.KEY_USER_PRIMARY, Keys.KEY_USER_USER_ACCOUNT_UNIQUE, Keys.KEY_USER_USER_STUDENT_ID_UNIQUE);
+        return Arrays.<UniqueKey<UserRecord>>asList(Keys.KEY_USER_PRIMARY, Keys.KEY_USER_USER_ACCOUNT_UNIQUE);
     }
 
     @Override

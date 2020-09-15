@@ -28,7 +28,7 @@ public class Indexes {
     public static final Index COURSE_TIME_COURSETIME_START_TIME = Indexes0.COURSE_TIME_COURSETIME_START_TIME;
     public static final Index COURSE_TIME_COURSETIME_WEEK = Indexes0.COURSE_TIME_COURSETIME_WEEK;
     public static final Index OTHER_COURSE_WEEK = Indexes0.OTHER_COURSE_WEEK;
-    public static final Index USER_ENABLE = Indexes0.USER_ENABLE;
+    public static final Index USER_USER_STUDENT_ID_UNIQUE = Indexes0.USER_USER_STUDENT_ID_UNIQUE;
 
     // -------------------------------------------------------------------------
     // [#1459] distribute members to avoid static initialisers > 64kb
@@ -40,6 +40,6 @@ public class Indexes {
         public static Index COURSE_TIME_COURSETIME_START_TIME = Internal.createIndex("coursetime_start_time", CourseTime.COURSE_TIME, new OrderField[] { CourseTime.COURSE_TIME.START_TIME }, false);
         public static Index COURSE_TIME_COURSETIME_WEEK = Internal.createIndex("coursetime_week", CourseTime.COURSE_TIME, new OrderField[] { CourseTime.COURSE_TIME.WEEK }, false);
         public static Index OTHER_COURSE_WEEK = Internal.createIndex("week", OtherCourse.OTHER_COURSE, new OrderField[] { OtherCourse.OTHER_COURSE.WEEK }, false);
-        public static Index USER_ENABLE = Internal.createIndex("enable", User.USER, new OrderField[] { User.USER.ENABLE }, false);
+        public static Index USER_USER_STUDENT_ID_UNIQUE = Internal.createIndex("user_student_id_unique", User.USER, new OrderField[] { User.USER.STUDENT_ID }, false);
     }
 }
