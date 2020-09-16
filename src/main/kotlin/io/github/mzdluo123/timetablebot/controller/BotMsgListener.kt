@@ -66,6 +66,7 @@ class BotMsgListener : BaseListeners() {
                 SyncTask.requestSync(SyncRequest(user.id, arg))
                 reply("我们将在后台刷新您的课程表，完成后会向你发送信息，请稍后\n同步较慢，请勿重复提交")
 
+
             }
             case("td", "退订自动推送服务") {
                 if (user == null) {
