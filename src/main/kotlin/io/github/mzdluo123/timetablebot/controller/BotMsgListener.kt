@@ -59,12 +59,13 @@ class BotMsgListener : BaseListeners() {
             case("sync", "从教务系统同步课程表") {
 
                 if (user == null) {
-                    reply("您还没有创建账号，请使用init创建账户")
+                    reply("您没有创建账号，请使用init创建账户")
                     return@case
                 }
                 val arg: String by cmdArg(0, "密码", it)
                 SyncTask.requestSync(SyncRequest(user.id, arg))
-                reply("我们将在后台刷新您的课程表，完成后会向您发送信息，请稍后\n同步较慢，请勿重复提交")
+                reply("我们将在后台刷新您的课程表，完成后会向你发送信息，请稍后\n同步较慢，请勿重复提交")
+
 
             }
             case("td", "退订自动推送服务") {
@@ -99,7 +100,7 @@ class BotMsgListener : BaseListeners() {
             }
             case("next", "查询下节课") {
                 if (user == null) {
-                    reply("您还没有创建账号，请使用init创建账户")
+                    reply("您没有创建账号，请使用init创建账户")
                     return@case
                 }
                 val nextClass = nextClass(user)
@@ -135,7 +136,7 @@ ${it.component3()}
                 reply(msg)
             }
             case("clean", "清除您的课程表") {
-                val confirm: Boolean by cmdArg(0, "你确定要清除你的课程表?", it)
+                val confirm: Boolean by cmdArg(0, "您确定要清除您的课程表?", it)
                 if (confirm) {
                     val courses = dbCtx {
                         it.delete(USER_COURSE).where(USER_COURSE.USER.eq(user.id)).execute()

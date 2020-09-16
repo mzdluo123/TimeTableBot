@@ -7,6 +7,6 @@ import net.mamoe.mirai.message.MessageEvent
 fun MessageEvent.requireAdminPermission(){
     val senderId = this.sender.id
     if (!AppConfig.getInstance().isAdmin(senderId)){
-        throw PermissionDeniedException("你不是机器人管理员，无法使用此命令")
+        throw PermissionDeniedException("您不是机器人管理员，无法使用此命令")
     }
 }
