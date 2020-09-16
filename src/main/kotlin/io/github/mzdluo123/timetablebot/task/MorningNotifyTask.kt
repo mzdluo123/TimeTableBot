@@ -41,7 +41,7 @@ class MorningNotifyTask() : Job, CoroutineScope {
                 """早上好！今天是第${week}周的星期${dayOfWeek}，您今天共有${courses.size}节课
                 |以下是您今日的课程表
                 |
-                |${hitokoto}
+                |「${hitokoto}」
             """.trimMargin()
             }
             val classTable =
