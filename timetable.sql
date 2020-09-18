@@ -11,7 +11,7 @@
  Target Server Version : 100411
  File Encoding         : 65001
 
- Date: 03/09/2020 20:58:57
+ Date: 18/09/2020 15:16:39
 */
 
 SET NAMES utf8mb4;
@@ -26,7 +26,7 @@ CREATE TABLE `classroom`  (
   `location` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '教室位置',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `classroom_location_unique`(`location`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 26 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 15 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for course
@@ -39,10 +39,10 @@ CREATE TABLE `course`  (
   `course_id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '课程id',
   `week_period` tinyint(4) NOT NULL COMMENT '周学时',
   `period` tinyint(4) NOT NULL COMMENT '学时',
-  `score` float(3, 0) NOT NULL COMMENT '学分',
+  `score` float(3, 1) NOT NULL COMMENT '学分',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `course_id`(`course_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 23 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for course_time
@@ -64,7 +64,7 @@ CREATE TABLE `course_time`  (
   INDEX `fk_coursetime_class_room_id`(`class_room`) USING BTREE,
   CONSTRAINT `fk_coursetime_class_room_id` FOREIGN KEY (`class_room`) REFERENCES `classroom` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `fk_coursetime_course_id` FOREIGN KEY (`course`) REFERENCES `course` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 373 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 189 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for other_course
@@ -79,7 +79,7 @@ CREATE TABLE `other_course`  (
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `name`(`name`) USING BTREE,
   INDEX `week`(`week`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for profile
@@ -109,9 +109,8 @@ CREATE TABLE `user`  (
   `bot` bigint(20) NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `user_account_unique`(`account`) USING BTREE,
-  UNIQUE INDEX `user_student_id_unique`(`student_id`) USING BTREE,
-  INDEX `enable`(`enable`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+  INDEX `user_student_id_unique`(`student_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for user_course
@@ -126,7 +125,7 @@ CREATE TABLE `user_course`  (
   INDEX `fk_usercourse_course_id`(`course`) USING BTREE,
   CONSTRAINT `fk_usercourse_course_id` FOREIGN KEY (`course`) REFERENCES `course` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `fk_usercourse_user_id` FOREIGN KEY (`user`) REFERENCES `user` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 23 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 25 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for user_other_course
@@ -141,6 +140,6 @@ CREATE TABLE `user_other_course`  (
   INDEX `fk_other_course`(`other_course`) USING BTREE,
   CONSTRAINT `fk_other_course` FOREIGN KEY (`other_course`) REFERENCES `other_course` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `fk_user_course` FOREIGN KEY (`user`) REFERENCES `user` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 SET FOREIGN_KEY_CHECKS = 1;
