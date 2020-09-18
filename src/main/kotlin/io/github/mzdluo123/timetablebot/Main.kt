@@ -29,7 +29,7 @@ $$$$$$$$/ $$/  _____  ____    ______$$$$$$$$/______  $$ |____  $$ |  ______  $$$
    $$ |   $$ |$$ | $$ | $$ |$$       | $$ |$$    $$ |$$    $$/ $$ |$$       |$$    $$/ $$    $$/   $$  $$/ 
    $$/    $$/ $$/  $$/  $$/  $$$$$$$/  $$/  $$$$$$$/ $$$$$$$/  $$/  $$$$$$$/ $$$$$$$/   $$$$$$/     $$$$/
    https://github.com/mzdluo123/TimeTableBot
-   built by HelloWorld and her wife Umb
+   built by HelloWorld and Umb
     """.trimIndent()
     )
     Runtime.getRuntime().addShutdownHook(Thread {
