@@ -30,7 +30,6 @@ inline fun <reified  T >dbCtx(receiver: (DSLContext) -> T):T {
 }
 
 val DAOs = hashMapOf<String, DAOImpl<*, *, *>>()
-
 fun <T : DAOImpl<*, *, *>> createDao(dao: KClass<T>): T {
     val name = dao.qualifiedName ?: throw IllegalStateException()
     if (DAOs.containsKey(name)) {

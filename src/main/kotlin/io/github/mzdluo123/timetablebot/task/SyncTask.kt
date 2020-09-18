@@ -77,7 +77,8 @@ object SyncTask : CoroutineScope {
                             score = c.xf.toDouble()
                         }
                         courseDao.insert(course)
-
+                    }else{
+                        courseDao.update(course)
                     }
                     // 插入课程和用户绑定
                     dbCtx {
