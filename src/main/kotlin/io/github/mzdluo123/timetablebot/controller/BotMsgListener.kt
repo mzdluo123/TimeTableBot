@@ -15,6 +15,7 @@ import io.github.mzdluo123.timetablebot.route.CommandRouter
 import io.github.mzdluo123.timetablebot.route.cmdArg
 import io.github.mzdluo123.timetablebot.route.requireAdminPermission
 import io.github.mzdluo123.timetablebot.route.route
+import io.github.mzdluo123.timetablebot.schoolservice.getRestaurant
 import io.github.mzdluo123.timetablebot.task.SyncRequest
 import io.github.mzdluo123.timetablebot.task.SyncTask
 import io.github.mzdluo123.timetablebot.utils.*
@@ -106,9 +107,20 @@ class BotMsgListener : BaseListeners() {
                 val nextClass = nextClass(user)
                 reply(nextClass)
             }
+            case("食堂","查看食堂实时就餐情况"){
+                val restaurant =  getRestaurant()
+                val msg = buildString {
+                    for ( i in restaurant.xAxis.indices){
+                        append(restaurant.xAxis[i])
+                        append(" ")
+                        append(restaurant.data[0][i])
+                        append("\n")
+                    }
+                }
+                reply(msg)
+            }
             case("bug反馈", "将bug反馈给开发者，帮助我们进行完善") {
                 val arg: String by cmdArg(0, "bug", it)
-                val list = AppConfig.getInstance().admin
                 for (u in AppConfig.getInstance().admin) {
                     bot.getFriend(u).sendMessage("来自用户${user.account}的反馈:" + arg)
                 }

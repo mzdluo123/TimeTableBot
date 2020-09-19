@@ -22,6 +22,7 @@ public class AppConfig {
     public int term;
     public String termBegin;
     public String help;
+    public RestaurantConf restaurant;
 
     private static File configFile;
 

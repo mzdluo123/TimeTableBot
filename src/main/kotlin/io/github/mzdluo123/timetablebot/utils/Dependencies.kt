@@ -6,7 +6,6 @@ import okhttp3.Cookie
 import okhttp3.CookieJar
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.constructor.Constructor
 import java.time.LocalTime
@@ -15,7 +14,6 @@ import java.util.concurrent.TimeUnit
 object Dependencies {
     @JvmStatic
     val yaml = Yaml(Constructor(AppConfig::class.java))
-
 
     @JvmStatic
     val gson = Gson()
