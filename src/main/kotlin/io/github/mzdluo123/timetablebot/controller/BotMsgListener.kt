@@ -22,7 +22,10 @@ import io.github.mzdluo123.timetablebot.utils.*
 import net.mamoe.mirai.event.EventHandler
 import net.mamoe.mirai.message.FriendMessageEvent
 import net.mamoe.mirai.message.MessageEvent
+import net.mamoe.mirai.message.data.LightApp
 import net.mamoe.mirai.message.data.PlainText
+import net.mamoe.mirai.message.data.RichMessage
+import net.mamoe.mirai.message.data.ServiceMessage
 import org.jooq.Record10
 import org.jooq.Record7
 import org.jooq.Record9
@@ -41,80 +44,27 @@ class BotMsgListener : BaseListeners() {
                 PlainText(throwable.toString())
             }
             case("开始", "快速开始使用") {
-                val arg1: Int by cmdArg(0, "学号", it)
-                val arg2: String by cmdArg(1, "登录密码", it)
-                reply("现在请输入你的学号")
-                updateUser(user, this, arg1)
-                reply("现在请输入你的密码（统一认证系统的密码或是教务处的密码）")
-                SyncTask.requestSync(SyncRequest(user.id, arg2))
-                reply("我们将在后台刷新您的课程表，完成后会向你发送信息，请稍后\n同步较慢，请勿重复提交")
+                getStart(it, user)
 
             }
             case("init", "设置学号") {
-                val arg2: Int by cmdArg(0, "学号", it)
-                updateUser(user, this, arg2)
-                reply("设置学号成功")
+                setUserId(it, user)
             }
             case("sync", "从教务系统同步课程表") {
-
-                if (user == null) {
-                    reply("您没有创建账号，请使用init创建账户")
-                    return@case
-                }
-                val arg: String by cmdArg(0, "密码", it)
-                SyncTask.requestSync(SyncRequest(user.id, arg))
-                reply("我们将在后台刷新您的课程表，完成后会向你发送信息，请稍后\n同步较慢，请勿重复提交")
-
+                syncTimeTable(user, it)
             }
             case("td", "退订自动推送服务") {
-                if (user == null) {
-                    reply("您没有创建账号，请使用init创建账户")
-                    return@case
-                }
-                if (user.enable == 1.toByte()) {
-                    userDao.update(user.apply {
-                        enable = 0.toByte()
-                    })
-                    reply("退订成功")
-                } else {
-                    reply("您已退订自动推送服务")
-                }
-
+                td(user)
             }
 
             case("dy", "订阅自动推送服务") {
-                if (user == null) {
-                    reply("您没有创建账号，请使用init创建账户")
-                    return@case
-                }
-                if (user.enable == 0.toByte()) {
-                    userDao.update(user.apply {
-                        enable = 1.toByte()
-                    })
-                    reply("订阅启用成功！")
-                } else {
-                    reply("您已订阅自动推送服务")
-                }
+                dy(user)
             }
             case("next", "查询下节课") {
-                if (user == null) {
-                    reply("您没有创建账号，请使用init创建账户")
-                    return@case
-                }
-                val nextClass = nextClass(user)
-                reply(nextClass)
+                nextClass(user)
             }
             case("食堂", "查看食堂实时就餐情况") {
-                val restaurant = getRestaurant()
-                val msg = buildString {
-                    for (i in restaurant.xAxis.indices) {
-                        append(restaurant.xAxis[i])
-                        append(" ")
-                        append(restaurant.data[0][i])
-                        append("\n")
-                    }
-                }
-                reply(msg)
+                restaurant()
             }
             case("bug反馈", "将bug反馈给开发者，帮助我们进行完善") {
                 val arg: String by cmdArg(0, "bug", it)
@@ -124,35 +74,10 @@ class BotMsgListener : BaseListeners() {
                 reply("您反馈的问题我们已经收到，如果您还有疑问，请联系管理员")
             }
             case("今日课表", "获取今天的所有课程") {
-                if (user == null) {
-                    reply("您没有创建账号，请使用init创建账户")
-                    return@case
-                }
-                val course = searchTodayClass(week(), dayOfWeek(), user)
-                val msg = if (course != null && course.size >= 1) {
-                    course.joinToString(separator = "\n") {
-                        """
-${it.component1()}
-${it.component3()} 
-时间：${AppConfig.getInstance().classTime[it.component7().toInt() - 1]} (第${it.component7()}节)                             
---------------
-""".trimIndent()
-                    }
-                } else {
-                    "您今日没有课哦~"
-                }
-                reply(msg)
+                todayTimeTable(user)
             }
             case("clean", "清除您的课程表") {
-                val confirm: Boolean by cmdArg(0, "您确定要清除您的课程表?", it)
-                if (confirm) {
-                    val courses = dbCtx {
-                        it.delete(USER_COURSE).where(USER_COURSE.USER.eq(user.id)).execute()
-                    }
-                    reply("删除了${courses}条记录")
-                } else {
-                    reply("已取消")
-                }
+                cleanTimeTable(it, user)
 
             }
             nextRoute("admin", "管理中心", ::admin)
@@ -163,6 +88,128 @@ ${it.component3()}
 
         }
 
+    }
+
+    private suspend fun FriendMessageEvent.cleanTimeTable(
+        it: List<String>?,
+        user: User
+    ) {
+        val confirm: Boolean by cmdArg(0, "您确定要清除您的课程表?", it)
+        if (confirm) {
+            val courses = dbCtx {
+                it.delete(USER_COURSE).where(USER_COURSE.USER.eq(user.id)).execute()
+            }
+            reply("删除了${courses}条记录")
+        } else {
+            reply("已取消")
+        }
+    }
+
+    private suspend fun FriendMessageEvent.todayTimeTable(user: User?) {
+        if (user == null) {
+            reply("您没有创建账号，请使用init创建账户")
+            return
+        }
+        val course = searchTodayClass(week(), dayOfWeek(), user)
+        val msg = if (course != null && course.size >= 1) {
+            course.joinToString(separator = "\n") {
+                """
+    ${it.component1()}
+    ${it.component3()} 
+    时间：${AppConfig.getInstance().classTime[it.component7().toInt() - 1]} (第${it.component7()}节)                             
+    --------------
+    """.trimIndent()
+            }
+        } else {
+            "您今日没有课哦~"
+        }
+        reply(msg)
+    }
+
+    private suspend fun FriendMessageEvent.restaurant() {
+        val restaurant = getRestaurant()
+        val msg = buildString {
+            for (i in restaurant.xAxis.indices) {
+                append(restaurant.xAxis[i])
+                append(" ")
+                append(restaurant.data[0][i])
+                append("\n")
+            }
+        }
+        reply(msg)
+    }
+
+    private suspend fun FriendMessageEvent.nextClass(user: User?) {
+        if (user == null) {
+            reply("您没有创建账号，请使用init创建账户")
+            return
+        }
+        reply( nextClassMsg(user))
+    }
+
+    private suspend fun FriendMessageEvent.dy(user: User?) {
+        if (user == null) {
+            reply("您没有创建账号，请使用init创建账户")
+            return
+        }
+        if (user.enable == 0.toByte()) {
+            userDao.update(user.apply {
+                enable = 1.toByte()
+            })
+            reply("订阅启用成功！")
+        } else {
+            reply("您已订阅自动推送服务")
+        }
+    }
+
+    private suspend fun FriendMessageEvent.td(user: User?) {
+        if (user == null) {
+            reply("您没有创建账号，请使用init创建账户")
+            return
+        }
+        if (user.enable == 1.toByte()) {
+            userDao.update(user.apply {
+                enable = 0.toByte()
+            })
+            reply("退订成功")
+        } else {
+            reply("您已退订自动推送服务")
+        }
+    }
+
+    private suspend fun FriendMessageEvent.syncTimeTable(
+        user: User?,
+        it: List<String>?
+    ) {
+        if (user == null) {
+            reply("您没有创建账号，请使用init创建账户")
+            return
+        }
+        val arg: String by cmdArg(0, "密码", it)
+        SyncTask.requestSync(SyncRequest(user.id, arg))
+        reply("我们将在后台刷新您的课程表，完成后会向你发送信息，请稍后\n同步较慢，请勿重复提交")
+    }
+
+    private suspend fun FriendMessageEvent.setUserId(
+        it: List<String>?,
+        user: User?
+    ) {
+        val arg2: Int by cmdArg(0, "学号", it)
+        updateUser(user, this, arg2)
+        reply("设置学号成功")
+    }
+
+    private suspend fun FriendMessageEvent.getStart(
+        it: List<String>?,
+        user: User?
+    ) {
+        val arg1: Int by cmdArg(0, "学号", it)
+        val arg2: String by cmdArg(1, "登录密码", it)
+        reply("现在请输入你的学号")
+        updateUser(user, this, arg1)
+        reply("现在请输入你的密码（统一认证系统的密码或是教务处的密码）")
+        SyncTask.requestSync(SyncRequest(user!!.id, arg2))
+        reply("我们将在后台刷新您的课程表，完成后会向你发送信息，请稍后\n同步较慢，请勿重复提交")
     }
 
     private fun updateUser(
@@ -337,7 +384,7 @@ fun searchTomorrowNextClass(
     return cource
 }
 
-fun nextClass(user: User): String {
+fun nextClassMsg(user: User): String {
     var dayOfWeek = dayOfWeek()
     var week = week()
     val course = searchNextClass(week, dayOfWeek, user)
