@@ -22,10 +22,7 @@ import io.github.mzdluo123.timetablebot.utils.*
 import net.mamoe.mirai.event.EventHandler
 import net.mamoe.mirai.message.FriendMessageEvent
 import net.mamoe.mirai.message.MessageEvent
-import net.mamoe.mirai.message.data.LightApp
 import net.mamoe.mirai.message.data.PlainText
-import net.mamoe.mirai.message.data.RichMessage
-import net.mamoe.mirai.message.data.ServiceMessage
 import org.jooq.Record10
 import org.jooq.Record7
 import org.jooq.Record9
@@ -92,6 +89,7 @@ class BotMsgListener : BaseListeners() {
 
     private suspend fun FriendMessageEvent.cleanTimeTable(
         it: List<String>?,
+
         user: User
     ) {
         val confirm: Boolean by cmdArg(0, "您确定要清除您的课程表?", it)
