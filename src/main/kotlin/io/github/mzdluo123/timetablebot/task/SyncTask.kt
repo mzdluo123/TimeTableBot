@@ -34,7 +34,6 @@ object SyncTask : CoroutineScope {
         get() = Dispatchers.IO + SupervisorJob(appJob)
 
     init {
-
         launch { executeLoop() }
     }
 

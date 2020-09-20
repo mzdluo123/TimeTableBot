@@ -21,6 +21,7 @@ import io.github.mzdluo123.timetablebot.task.SyncTask
 import io.github.mzdluo123.timetablebot.utils.*
 import net.mamoe.mirai.event.EventHandler
 import net.mamoe.mirai.message.FriendMessageEvent
+import net.mamoe.mirai.message.MessageEvent
 import net.mamoe.mirai.message.data.PlainText
 import org.jooq.Record10
 import org.jooq.Record7
@@ -39,23 +40,20 @@ class BotMsgListener : BaseListeners() {
             exception { throwable ->
                 PlainText(throwable.toString())
             }
+            case("开始", "快速开始使用") {
+                val arg1: Int by cmdArg(0, "学号", it)
+                val arg2: String by cmdArg(1, "登录密码", it)
+                reply("现在请输入你的学号")
+                updateUser(user, this, arg1)
+                reply("现在请输入你的密码（统一认证系统的密码或是教务处的密码）")
+                SyncTask.requestSync(SyncRequest(user.id, arg2))
+                reply("我们将在后台刷新您的课程表，完成后会向你发送信息，请稍后\n同步较慢，请勿重复提交")
+
+            }
             case("init", "设置学号") {
                 val arg2: Int by cmdArg(0, "学号", it)
-                if (user != null) {
-                    userDao.update(user.apply {
-                        studentId = arg2
-                    })
-                    reply(PlainText("设置学号成功"))
-                } else {
-                    userDao.insert(User().apply {
-                        account = sender.id
-                        bot = sender.bot.id
-                        joinTime = LocalDateTime.now()
-                        enable = 0.toByte()
-                        studentId = arg2
-                    })
-                    reply(PlainText("创建账号成功"))
-                }
+                updateUser(user, this, arg2)
+                reply("设置学号成功")
             }
             case("sync", "从教务系统同步课程表") {
 
@@ -66,7 +64,6 @@ class BotMsgListener : BaseListeners() {
                 val arg: String by cmdArg(0, "密码", it)
                 SyncTask.requestSync(SyncRequest(user.id, arg))
                 reply("我们将在后台刷新您的课程表，完成后会向你发送信息，请稍后\n同步较慢，请勿重复提交")
-
 
             }
             case("td", "退订自动推送服务") {
@@ -107,10 +104,10 @@ class BotMsgListener : BaseListeners() {
                 val nextClass = nextClass(user)
                 reply(nextClass)
             }
-            case("食堂","查看食堂实时就餐情况"){
-                val restaurant =  getRestaurant()
+            case("食堂", "查看食堂实时就餐情况") {
+                val restaurant = getRestaurant()
                 val msg = buildString {
-                    for ( i in restaurant.xAxis.indices){
+                    for (i in restaurant.xAxis.indices) {
                         append(restaurant.xAxis[i])
                         append(" ")
                         append(restaurant.data[0][i])
@@ -141,7 +138,6 @@ ${it.component3()}
 --------------
 """.trimIndent()
                     }
-
                 } else {
                     "您今日没有课哦~"
                 }
@@ -167,6 +163,26 @@ ${it.component3()}
 
         }
 
+    }
+
+    private fun updateUser(
+        user: User?,
+        event: MessageEvent,
+        studentId: Int
+    ) {
+        if (user != null) {
+            userDao.update(user.apply {
+                this.studentId = studentId
+            })
+        } else {
+            userDao.insert(User().apply {
+                account = event.sender.id
+                bot = event.bot.id
+                joinTime = LocalDateTime.now()
+                enable = 0.toByte()
+                this.studentId = studentId
+            })
+        }
     }
 
     private suspend fun admin(route: CommandRouter<FriendMessageEvent>) {
