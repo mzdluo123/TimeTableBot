@@ -204,9 +204,9 @@ class BotMsgListener : BaseListeners() {
         val arg1: Int by cmdArg(0, "学号", it)
         val arg2: String by cmdArg(1, "登录密码", it)
         reply("现在请输入你的学号")
-        updateUser(user, this, arg1)
+        val  newUser = updateUser(user, this, arg1)
         reply("现在请输入你的密码（统一认证系统的密码或是教务处的密码）")
-        SyncTask.requestSync(SyncRequest(user!!.id, arg2))
+        SyncTask.requestSync(SyncRequest(newUser.id, arg2))
         reply("我们将在后台刷新您的课程表，完成后会向你发送信息，请稍后\n同步较慢，请勿重复提交")
     }
 
@@ -214,19 +214,22 @@ class BotMsgListener : BaseListeners() {
         user: User?,
         event: MessageEvent,
         studentId: Int
-    ) {
-        if (user != null) {
+    ):User {
+        return if (user != null) {
             userDao.update(user.apply {
                 this.studentId = studentId
             })
+            user
         } else {
-            userDao.insert(User().apply {
+            val user = User().apply {
                 account = event.sender.id
                 bot = event.bot.id
                 joinTime = LocalDateTime.now()
                 enable = 0.toByte()
                 this.studentId = studentId
-            })
+            }
+            userDao.insert(user)
+            user
         }
     }
 

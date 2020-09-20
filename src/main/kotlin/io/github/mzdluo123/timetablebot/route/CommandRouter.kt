@@ -19,7 +19,7 @@ class CommandRouter<T : MessageEvent>( val args: List<String>?,  val event: T) :
     private val logger = logger()
 
     override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Default + SupervisorJob(appJob) + job
+        get() = Dispatchers.IO + SupervisorJob(appJob) + job
 
     suspend inline fun case(case: String, desc: String = "暂无描述", receiver:  T.(List<String>?) -> Unit) {
         commandMap[case] = desc
