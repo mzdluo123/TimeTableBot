@@ -77,10 +77,12 @@ class BotMsgListener : BaseListeners() {
                 cleanTimeTable(it, user)
 
             }
+            case("help","指令菜单"){
+                reply(PlainText("TimeTableBot ${BuildConfig.VERSION} build ${timeToStr(BuildConfig.BUILD_UNIXTIME)}\n${generateHelp()}"))
+            }
             nextRoute("admin", "管理中心", ::admin)
             default {
                 reply(PlainText(AppConfig.getInstance().help))
-                reply(PlainText("TimeTableBot ${BuildConfig.VERSION} build ${timeToStr(BuildConfig.BUILD_UNIXTIME)}\n${generateHelp()}"))
             }
 
         }
