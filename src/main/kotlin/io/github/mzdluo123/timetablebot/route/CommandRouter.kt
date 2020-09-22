@@ -79,7 +79,6 @@ inline fun <reified T : MessageEvent> T.route(
     crossinline receiver: suspend CommandRouter<T>.() -> Unit
 ): Boolean {
     val msg = this.message.contentToString()
-
     if (unCompleteValue.containsKey(this.sender.id)) {
         unCompleteValue[this.sender.id]?.complete(msg)
         return true

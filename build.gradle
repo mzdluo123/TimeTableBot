@@ -23,6 +23,7 @@ plugins {
     id 'application'
     id 'org.jetbrains.kotlin.jvm' version '1.4.10'
     id "de.fuerstenau.buildconfig" version "1.1.8"
+    id 'nu.studer.jooq' version '5.1.0'
 }
 
 //sourceSets{
@@ -143,7 +144,7 @@ task generateJooq {
                        // - https://github.com/jOOQ/jOOQ/issues/4797
                        // - http://stackoverflow.com/a/11389034/521799
                        // - https://groups.google.com/forum/#!topic/jooq-user/wi4S9rRxk4A
-                       generate([:]) {
+                       generate() {
                            pojos true
                            daos true
                        }
