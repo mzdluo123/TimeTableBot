@@ -42,7 +42,6 @@ class BotMsgListener : BaseListeners() {
             }
             case("开始", "快速开始使用") {
                 getStart(it, user)
-
             }
             case("init", "设置学号") {
                 setUserId(it, user)
