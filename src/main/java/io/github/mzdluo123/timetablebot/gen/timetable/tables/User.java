@@ -35,7 +35,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class User extends TableImpl<UserRecord> {
 
-    private static final long serialVersionUID = -1433589259;
+    private static final long serialVersionUID = -1884864742;
 
     /**
      * The reference instance of <code>timetable.user</code>
@@ -68,7 +68,7 @@ public class User extends TableImpl<UserRecord> {
     /**
      * The column <code>timetable.user.student_id</code>.
      */
-    public final TableField<UserRecord, Integer> STUDENT_ID = createField(DSL.name("student_id"), org.jooq.impl.SQLDataType.INTEGER.nullable(false), this, "");
+    public final TableField<UserRecord, Long> STUDENT_ID = createField(DSL.name("student_id"), org.jooq.impl.SQLDataType.BIGINT.nullable(false), this, "");
 
     /**
      * The column <code>timetable.user.last_active</code>.
@@ -179,7 +179,7 @@ public class User extends TableImpl<UserRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Row8<Integer, Long, String, Integer, LocalDateTime, LocalDateTime, Byte, Long> fieldsRow() {
+    public Row8<Integer, Long, String, Long, LocalDateTime, LocalDateTime, Byte, Long> fieldsRow() {
         return (Row8) super.fieldsRow();
     }
 }

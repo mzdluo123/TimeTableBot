@@ -193,7 +193,7 @@ class BotMsgListener : BaseListeners() {
         it: List<String>?,
         user: User?
     ) {
-        val arg2: Int by cmdArg(0, "学号", it)
+        val arg2: Long by cmdArg(0, "学号", it)
         updateUser(user, this, arg2)
         reply("设置学号成功")
     }
@@ -202,7 +202,7 @@ class BotMsgListener : BaseListeners() {
         it: List<String>?,
         user: User?
     ) {
-        val arg1: Int by cmdArg(0, "学号", it)
+        val arg1: Long by cmdArg(0, "学号", it)
         val arg2: String by cmdArg(1, "登录密码", it)
         reply("现在请输入你的学号")
         val  newUser = updateUser(user, this, arg1)
@@ -214,7 +214,7 @@ class BotMsgListener : BaseListeners() {
     private fun updateUser(
         user: User?,
         event: MessageEvent,
-        studentId: Int
+        studentId: Long
     ):User {
         return if (user != null) {
             userDao.update(user.apply {

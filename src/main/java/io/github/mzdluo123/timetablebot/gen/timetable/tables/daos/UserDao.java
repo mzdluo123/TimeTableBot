@@ -98,14 +98,14 @@ public class UserDao extends DAOImpl<UserRecord, io.github.mzdluo123.timetablebo
     /**
      * Fetch records that have <code>student_id BETWEEN lowerInclusive AND upperInclusive</code>
      */
-    public List<io.github.mzdluo123.timetablebot.gen.timetable.tables.pojos.User> fetchRangeOfStudentId(Integer lowerInclusive, Integer upperInclusive) {
+    public List<io.github.mzdluo123.timetablebot.gen.timetable.tables.pojos.User> fetchRangeOfStudentId(Long lowerInclusive, Long upperInclusive) {
         return fetchRange(User.USER.STUDENT_ID, lowerInclusive, upperInclusive);
     }
 
     /**
      * Fetch records that have <code>student_id IN (values)</code>
      */
-    public List<io.github.mzdluo123.timetablebot.gen.timetable.tables.pojos.User> fetchByStudentId(Integer... values) {
+    public List<io.github.mzdluo123.timetablebot.gen.timetable.tables.pojos.User> fetchByStudentId(Long... values) {
         return fetch(User.USER.STUDENT_ID, values);
     }
 

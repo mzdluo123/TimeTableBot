@@ -14,12 +14,12 @@ import java.time.LocalDateTime;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class User implements Serializable {
 
-    private static final long serialVersionUID = -999150824;
+    private static final long serialVersionUID = 497338298;
 
     private Integer       id;
     private Long          account;
     private String        name;
-    private Integer       studentId;
+    private Long          studentId;
     private LocalDateTime lastActive;
     private LocalDateTime joinTime;
     private Byte          enable;
@@ -42,7 +42,7 @@ public class User implements Serializable {
         Integer       id,
         Long          account,
         String        name,
-        Integer       studentId,
+        Long          studentId,
         LocalDateTime lastActive,
         LocalDateTime joinTime,
         Byte          enable,
@@ -82,11 +82,11 @@ public class User implements Serializable {
         this.name = name;
     }
 
-    public Integer getStudentId() {
+    public Long getStudentId() {
         return this.studentId;
     }
 
-    public void setStudentId(Integer studentId) {
+    public void setStudentId(Long studentId) {
         this.studentId = studentId;
     }
 
