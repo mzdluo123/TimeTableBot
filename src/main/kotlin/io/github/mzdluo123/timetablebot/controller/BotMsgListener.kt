@@ -273,6 +273,9 @@ class BotMsgListener : BaseListeners() {
             }
             reply(msg)
         }
+        route.case("info","系统负载"){
+            reply(getSystemInfo())
+        }
         route.default {
 
             reply(PlainText(route.generateHelp()))
