@@ -72,6 +72,10 @@ class BotMsgListener : BaseListeners() {
             case("今日课表", "获取今天的所有课程") {
                 todayTimeTable(user)
             }
+            case("本周课表","查询本周某一天的课程表"){
+                val day:Int by cmdArg(0,"星期几",it)
+                reply(getTimeTableMsg(week(),day,user))
+            }
             case("clean", "清除您的课程表") {
                 cleanTimeTable(it, user)
 
@@ -109,8 +113,12 @@ class BotMsgListener : BaseListeners() {
             reply("您没有创建账号，请使用init创建账户")
             return
         }
-        val course = searchTodayClass(week(), dayOfWeek(), user)
-        val msg = if (course != null && course.size >= 1) {
+        reply(getTimeTableMsg(week(), dayOfWeek(), user))
+    }
+
+    private fun getTimeTableMsg(week:Int,dayOfWeek: Int,user: User): String {
+        val course = searchTodayClass(week, dayOfWeek, user)
+        return  if (course != null && course.size >= 1) {
             course.joinToString(separator = "\n") {
                 """
     ${it.component1()}
@@ -122,7 +130,6 @@ class BotMsgListener : BaseListeners() {
         } else {
             "您今日没有课哦~"
         }
-        reply(msg)
     }
 
     private suspend fun FriendMessageEvent.restaurant() {
