@@ -4,7 +4,8 @@ import io.github.mzdluo123.timetablebot.appJob
 import io.github.mzdluo123.timetablebot.bots.BotsManager
 import io.github.mzdluo123.timetablebot.config.AppConfig
 import io.github.mzdluo123.timetablebot.controller.searchTodayClass
-import io.github.mzdluo123.timetablebot.data.getHitokoto
+import io.github.mzdluo123.timetablebot.data.getPoem
+
 import io.github.mzdluo123.timetablebot.gen.timetable.tables.daos.UserDao
 import io.github.mzdluo123.timetablebot.utils.*
 import kotlinx.coroutines.CoroutineScope
@@ -28,20 +29,20 @@ class MorningNotifyTask() : Job, CoroutineScope {
 
     private suspend fun run() {
         val users = userDao.fetchByEnable(1)
-        val hitokoto = getHitokoto()
+        val poem = getPoem()
         val week = week()
         val dayOfWeek = dayOfWeek()
         for (user in users){
             val courses = searchTodayClass(week, dayOfWeek, user) ?: continue
             val morning=if(courses.size == 0){
                  """早上好！今天是第${week}周的星期${dayOfWeek},您今天没有课哦，祝您有一个充实快乐的一天
-                    |「${hitokoto}」
+                    |「${poem.data.content}」
                 """.trimMargin()
             }else {
                 """早上好！今天是第${week}周的星期${dayOfWeek}，您今天共有${courses.size}节课
                 |以下是您今日的课程表
                 |
-                |「${hitokoto}」
+                |「${poem.data.content}」
             """.trimMargin()
             }
             val classTable =
