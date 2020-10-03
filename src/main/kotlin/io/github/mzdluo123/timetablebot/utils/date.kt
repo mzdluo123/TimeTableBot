@@ -42,12 +42,13 @@ fun nextClassIndex(): Int {
     }
     return Int.MAX_VALUE
 }
+
 fun parseWeek(weekStr: String): List<Int> {
     val res = mutableListOf<Int>()
     val parts = weekStr.split(",")
     for (part in parts) {
         val numbers = "[0-9]+".toRegex().findAll(part).toList()
-        if (numbers.size == 2){
+        if (numbers.size == 2) {
             if ("单" in part) {
                 for (i in numbers[0].value.toInt()..numbers[1].value.toInt() step 2) {
                     res.add(i)
@@ -59,7 +60,7 @@ fun parseWeek(weekStr: String): List<Int> {
             }
 
         }
-        if (numbers.size == 1){
+        if (numbers.size == 1) {
             res.add(numbers[0].value.toInt())
         }
     }
@@ -72,10 +73,9 @@ fun parseWeek(weekStr: String): List<Int> {
  * */
 fun week(): Int {
     val begin = LocalDate.parse(AppConfig.getInstance().termBegin)
-    //val today = LocalDate.of(2020,9,13)
     val today = LocalDate.now()
-    val p = Period.between(begin,today)
-    return p.days /7 +1
+    val ans =  (today.toEpochDay() - begin.toEpochDay()) / 7 + 1
+    return ans.toInt()
 
 }
 

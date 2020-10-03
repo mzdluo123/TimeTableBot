@@ -252,7 +252,7 @@ class BotMsgListener : BaseListeners() {
         }
         route.case("send", "广播消息到所有用户") {
             val msg: String by cmdArg(0, "要广播的消息", it)
-            val users = dbCtx { it.select(USER.ACCOUNT, USER.BOT).from(USER).where(USER.ENABLE.eq(1)).fetch() }
+            val users = dbCtx { it.select(USER.ACCOUNT, USER.BOT).from(USER).fetch() }
             for (user in users) {
                 BotsManager.sendMsg(
                     user.component2(),
