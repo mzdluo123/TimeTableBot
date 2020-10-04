@@ -103,7 +103,7 @@
         </root>
 
         <Logger name="NETWORK" level="trace" additivity="false">
-            <AppenderRef ref="Console"/>
+<!--            <AppenderRef ref="Console"/>-->
         </Logger>
 
         <Logger name="org.jooq.tools.LoggerListener" level="debug" additivity="false">
@@ -122,8 +122,10 @@
 
         </Logger>
         <Logger name="com.zaxxer.hikari.pool.HikariPool" level="trace" additivity="false">
+        </Logger>
 
-    </Logger>
+        <Logger name="org.quartz.core.QuartzSchedulerThread" level="debug" additivity="false">
+        </Logger>
     </loggers>
 
 </configuration>
