@@ -24,4 +24,4 @@ jobs:
 
     # Runs a set of commands using the runners shell
     - name: Run a multi-line script
-      run: rpm -e --nodeps java-1.8.0-openjdk-8 && sudo add-apt-repository ppa:openjdk-r/ppa && sudo apt-get update && sudo apt-get install openjdk-11-jdk && sudo chmod +x gradlew && ./gradlew build
+      run: 　　rpm -e --nodeps java-1.8.0-openjdk-1.8.0.131-11.b12.el7.x86_64 && rpm -e --nodeps java-1.8.0-openjdk-headless-1.8.0.131-11.b12.el7.x86_64 && sudo add-apt-repository ppa:openjdk-r/ppa && sudo apt-get update && sudo apt-get install openjdk-11-jdk && sudo chmod +x gradlew && ./gradlew build
