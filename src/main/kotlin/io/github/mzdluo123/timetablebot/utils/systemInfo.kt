@@ -13,6 +13,7 @@ fun getSystemInfo(): String {
     return """
     INT HEAP:${usage.init / 1024 / 1024}Mb
     MAX HEAP:${usage.max / 1024 / 1024}Mb
+    COMMITTED HEAP:${usage.committed / 1024 / 1024}Mb
     USED HEAP:${usage.used / 1024 / 1024}Mb
     可用内存:${osmxb.freePhysicalMemorySize / 1024 / 1024}MB
     已用内存:${(osmxb.totalPhysicalMemorySize - osmxb.freePhysicalMemorySize) / 1024 / 1024}MB
