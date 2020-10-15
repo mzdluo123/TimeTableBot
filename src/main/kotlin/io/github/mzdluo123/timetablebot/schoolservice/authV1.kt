@@ -20,7 +20,7 @@ private val logger = logger()
 suspend fun getCsrfTokenV1(): String {
     val rsp = withContext(Dispatchers.IO) {
         Dependencies.okhttp.newCall(
-            Request.Builder().url("http://222.31.49.139/jwglxt/xtgl/login_slogin.html?language=zh_CN")
+            Request.Builder().url("${AppConfig.getInstance().baseUrl}/jwglxt/xtgl/login_slogin.html?language=zh_CN")
                 .build()
         ).execute()
     }

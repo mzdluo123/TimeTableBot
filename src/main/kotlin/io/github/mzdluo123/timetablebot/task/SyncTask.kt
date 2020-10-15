@@ -44,13 +44,14 @@ object SyncTask : CoroutineScope {
                 Dependencies.resetCookie()
                 val user = userDao.fetchOneById(task.uid)
                 val studentId = user.studentId
-                try {
-                    loginV1(studentId.toString(), task.pwd)
-                }catch (e:Exception){
-                    BotsManager.sendMsg(user.id,PlainText("登录失败，我们将再次使用统一认证系统登录，请耐心等待:${e.message}"))
-                    Dependencies.resetCookie()
-                    loginToCAS(studentId.toString(), task.pwd)
-                }
+                loginToCAS(studentId.toString(), task.pwd)
+//                try {
+//                    loginV1(studentId.toString(), task.pwd)
+//                }catch (e:Exception){
+//                    BotsManager.sendMsg(user.id,PlainText("登录失败，我们将再次使用统一认证系统登录，请耐心等待:${e.message}"))
+//                    Dependencies.resetCookie()
+//                    loginToCAS(studentId.toString(), task.pwd)
+//                }
 
                 val timetable = getTimeTable(AppConfig.getInstance().year, AppConfig.getInstance().term)
 
