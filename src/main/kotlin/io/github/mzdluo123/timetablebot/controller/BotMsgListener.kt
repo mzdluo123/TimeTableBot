@@ -32,7 +32,6 @@ import java.time.LocalDateTime
 
 class BotMsgListener : BaseListeners() {
     private val userDao = createDao(UserDao::class)
-
     @EventHandler
     suspend fun FriendMessageEvent.onEvent() {
         val user = userDao.fetchOneByAccount(sender.id)
@@ -357,7 +356,9 @@ fun searchNextClass(
                     .and(COURSE_TIME.DAY_OF_WEEK.eq(dayOfWeek.toByte()))
                     .and(COURSE_TIME.START_TIME.ge(nextClassIndex().toByte())),
             )
-            .groupBy(USER.ID).fetchOne()
+            .orderBy(COURSE_TIME.START_TIME)
+            .limit(1)
+            .fetchOne()
     }
     return cource
 }
@@ -391,8 +392,11 @@ fun searchTomorrowNextClass(
                     .and(USER.ID.eq(user.id))
                     .and(COURSE_TIME.DAY_OF_WEEK.eq(dayOfWeek.toByte()))
             )
-            .groupBy(USER.ID).fetchOne()
+            .orderBy(COURSE_TIME.START_TIME)
+            .limit(1)
+            .fetchOne()
     }
+
     return cource
 }
 
