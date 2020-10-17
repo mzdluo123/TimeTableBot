@@ -61,7 +61,9 @@ ${it.component3()}
 """.trimIndent()
                     }
             BotsManager.sendMsg(user.id, PlainText(morning))
-            BotsManager.sendMsg(user.id, PlainText(classTable))
+            if(classTable.isNotBlank()){
+                BotsManager.sendMsg(user.id, PlainText(classTable))
+            }
             logger.info("发送早晨提醒信息到${user.id}成功")
         }
 
