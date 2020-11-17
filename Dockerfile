@@ -1,10 +1,10 @@
 FROM openjdk:11
 
-COPY . /tmp
+COPY . code
 
-RUN cd /tmp && chmod +x gradlew && ./gradlew installDist
+RUN cd code && chmod +x gradlew && ./gradlew installDist
 
-COPY /tmp/build/install/TimeTableBot /TimeTableBot
+COPY code/build/install/TimeTableBot /TimeTableBot
 
 RUN rm -rf /tmp/*
 
