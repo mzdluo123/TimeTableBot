@@ -27,6 +27,8 @@ jobs:
         java-package: jdk # (jre, jdk, or jdk+fx) - defaults to jdk
         architecture: x64 # (x64 or x86) - defaults to x64
 
-    # Runs a set of commands using the runners shell
-    - name: Run a multi-line script
-      run: sudo chmod +x gradlew && ./gradlew build
+#    # Runs a set of commands using the runners shell
+#    - name: Run a multi-line script
+#      run: sudo chmod +x gradlew && ./gradlew build
+    - name: Build Docker Image
+      run: docker build . --tag TimeTableBot:$(date +%s) --network host
