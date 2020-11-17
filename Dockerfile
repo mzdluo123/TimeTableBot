@@ -1,13 +1,7 @@
-FROM openjdk:11
+FROM adoptopenjdk:11-jre-openj9
 
-COPY . code
+ADD build/install/TimeTableBot /TimeTableBot
 
-RUN cd code && chmod +x gradlew && ./gradlew installDist
+VOLUME /data
 
-COPY code/build/install/TimeTableBot /TimeTableBot
-
-RUN rm -rf /tmp/*
-
-VOLUME data
-
-CMD chmod +x /TimeTableBot/bin/TimeTableBot && /TimeTableBot/bin/TimeTableBot
+CMD cd /data && chmod +x /TimeTableBot/bin/TimeTableBot && /TimeTableBot/bin/TimeTableBot
