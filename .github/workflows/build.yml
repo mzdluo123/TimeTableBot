@@ -31,4 +31,4 @@ jobs:
 #    - name: Run a multi-line script
 #      run: sudo chmod +x gradlew && ./gradlew build
     - name: Build Docker Image
-      run: docker build . --tag TimeTableBot:$(date +%s) --network host
+      run: docker build . --tag timetablebot:$(date +%s) --network host
