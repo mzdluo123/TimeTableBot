@@ -1,3 +1,4 @@
+WORKDIR .
 FROM adoptopenjdk:11-jre-openj9
 
 ADD build/install/TimeTableBot /TimeTableBot
