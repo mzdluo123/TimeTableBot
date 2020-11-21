@@ -23,6 +23,7 @@ public class AppConfig {
     public String termBegin;
     public String help;
     public RestaurantConf restaurant;
+    public SchoolNetworkConf schoolNet;
 
     private static File configFile;
 
