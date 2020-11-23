@@ -78,7 +78,7 @@ inline fun <reified T : MessageEvent> T.route(
     delimiter: String = " ",
     crossinline receiver: suspend CommandRouter<T>.() -> Unit
 ): Boolean {
-    val msg = this.message.contentToString()
+    var msg = this.message.contentToString()
     if (unCompleteValue.containsKey(this.sender.id)) {
         unCompleteValue[this.sender.id]?.complete(msg)
         return true
@@ -87,6 +87,7 @@ inline fun <reified T : MessageEvent> T.route(
     if (!msg.startsWith(prefix)) {
         return false
     }
+    msg = msg.removePrefix(prefix)
     val args = msg.split(delimiter)
     val router = CommandRouter(args, this)
      router.launch { receiver(router) }
