@@ -16,6 +16,7 @@ import io.github.mzdluo123.timetablebot.route.cmdArg
 import io.github.mzdluo123.timetablebot.route.requireAdminPermission
 import io.github.mzdluo123.timetablebot.route.route
 import io.github.mzdluo123.timetablebot.schoolservice.getRestaurant
+import io.github.mzdluo123.timetablebot.schoolservice.getSchoolNetInterfaceInfo
 import io.github.mzdluo123.timetablebot.task.SyncRequest
 import io.github.mzdluo123.timetablebot.task.SyncTask
 import io.github.mzdluo123.timetablebot.utils.*
@@ -23,6 +24,7 @@ import net.mamoe.mirai.event.EventHandler
 import net.mamoe.mirai.message.FriendMessageEvent
 import net.mamoe.mirai.message.MessageEvent
 import net.mamoe.mirai.message.data.PlainText
+import okhttp3.internal.format
 import org.jooq.Record10
 import org.jooq.Record7
 import org.jooq.Record9
@@ -77,6 +79,17 @@ class BotMsgListener : BaseListeners() {
             }
             case("clean", "清除您的课程表") {
                 cleanTimeTable(it, user)
+            }
+            case("校园网","查看校园网状态信息"){
+                val state = getSchoolNetInterfaceInfo()
+                val msg = state?.joinToString(separator = "\n") {
+                        """
+                            ${it.name}
+                            使用量:${format("%.2f",((it.upStream+it.downStream)/it.maxBandWidth)*100)}%
+                            ***********
+                        """.trimIndent()
+                }?: "暂无信息"
+                reply(msg)
 
             }
             case("help","指令菜单"){
