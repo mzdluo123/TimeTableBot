@@ -24,6 +24,7 @@ public class AppConfig {
     public String help;
     public RestaurantConf restaurant;
     public SchoolNetworkConf schoolNet;
+    public ProxyConfig proxy;
 
     private static File configFile;
 

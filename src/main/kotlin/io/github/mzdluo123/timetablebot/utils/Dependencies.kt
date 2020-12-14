@@ -8,6 +8,9 @@ import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.constructor.Constructor
+import java.net.InetSocketAddress
+import java.net.Proxy
+import java.net.SocketAddress
 import java.time.LocalTime
 import java.util.concurrent.TimeUnit
 
@@ -22,20 +25,43 @@ object Dependencies {
     private var cookies = hashMapOf<String, Cookie>()
 
     @JvmStatic
-    val okhttp = OkHttpClient.Builder()
-        .readTimeout(20, TimeUnit.SECONDS)
-        .cookieJar(object : CookieJar {
+    val okhttp = getOkhttpClient()
 
-            override fun saveFromResponse(httpUrl: HttpUrl, list: List<Cookie>) {
-                for (cookie in list) {
-                    cookies[cookie.name] = cookie
+
+    val classTimeTable by lazy {
+        val list = mutableListOf<LocalTime>()
+        AppConfig.getInstance().classTime.forEach {
+            list.add(parseClassTime(it))
+        }
+        list
+    }
+
+    fun resetCookie() {
+        cookies.clear()
+    }
+
+    fun getOkhttpClient(): OkHttpClient {
+
+        var builder =  OkHttpClient.Builder()
+            .readTimeout(20, TimeUnit.SECONDS)
+            .cookieJar(object : CookieJar {
+
+                override fun saveFromResponse(httpUrl: HttpUrl, list: List<Cookie>) {
+                    for (cookie in list) {
+                        cookies[cookie.name] = cookie
+                    }
                 }
-            }
 
-            override fun loadForRequest(httpUrl: HttpUrl): List<Cookie> {
-                return cookies.values.toList()
+                override fun loadForRequest(httpUrl: HttpUrl): List<Cookie> {
+                    return cookies.values.toList()
+                }
+            })
+            if (AppConfig.getInstance().proxy.enable){
+
+                val address= InetSocketAddress(AppConfig.getInstance().proxy.address,AppConfig.getInstance().proxy.port)
+                val proxy = Proxy(Proxy.Type.SOCKS,address)
+                builder.proxy(proxy)
             }
-        })
 //        .addInterceptor {
 //            it.proceed(
 //                it.request().newBuilder().addHeader(
@@ -50,18 +76,7 @@ object Dependencies {
 //        .addInterceptor { chain ->
 //            chain.proceed(chain.request())
 //        }
-        .build()
+            return builder.build()
 
-
-    val classTimeTable by lazy {
-        val list = mutableListOf<LocalTime>()
-        AppConfig.getInstance().classTime.forEach {
-            list.add(parseClassTime(it))
-        }
-        list
-    }
-
-    fun resetCookie() {
-        cookies.clear()
     }
 }
