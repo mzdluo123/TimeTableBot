@@ -39,12 +39,14 @@ object SyncTask : CoroutineScope {
 
     private suspend fun executeLoop() {
         for (task in taskQueue) {
+            val client = TTBHttpClient()
             try {
+
                 logger.info("开始处理课程表同步任务 ${task.uid}")
-                Dependencies.resetCookie()
+
                 val user = userDao.fetchOneById(task.uid)
                 val studentId = user.studentId
-                loginToCAS(studentId.toString(), task.pwd)
+                loginToCAS(client,studentId.toString(), task.pwd)
 //                try {
 //                    loginV1(studentId.toString(), task.pwd)
 //                }catch (e:Exception){
@@ -53,7 +55,7 @@ object SyncTask : CoroutineScope {
 //                    loginToCAS(studentId.toString(), task.pwd)
 //                }
 
-                val timetable = getTimeTable(AppConfig.getInstance().year, AppConfig.getInstance().term)
+                val timetable = getTimeTable(client,AppConfig.getInstance().year, AppConfig.getInstance().term)
 
                 // 更新名字
 
@@ -192,6 +194,8 @@ object SyncTask : CoroutineScope {
             } catch (e: Exception) {
                 BotsManager.sendMsg(task.uid, PlainText("出现未知错误，请联系管理员: $e"))
                 e.printStackTrace()
+            }finally {
+                client.close()
             }
         }
     }

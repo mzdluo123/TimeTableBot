@@ -3,6 +3,7 @@ package io.github.mzdluo123.timetablebot.schoolservice
 import com.google.gson.JsonParser
 import io.github.mzdluo123.timetablebot.config.AppConfig
 import io.github.mzdluo123.timetablebot.utils.Dependencies
+import io.github.mzdluo123.timetablebot.utils.TTBHttpClient
 import io.github.mzdluo123.timetablebot.utils.logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -21,19 +22,19 @@ class AuthorizationException(override val message: String) : Exception(message)
 class EncryptionFailed(override val message: String) : Exception(message)
 data class PK(val modulus: String, val exponent: String)
 
-private suspend fun getPublicKey(): PK {
+private suspend fun getPublicKey(client: TTBHttpClient): PK {
     //获取public_key
     val reqKey = Request.Builder().get()
         .url("${AppConfig.getInstance().authUrl}/cas/v2/getPubKey")
         .build()
-    val resKey = withContext(Dispatchers.IO) { Dependencies.okhttp.newCall(reqKey).execute() }
+    val resKey = withContext(Dispatchers.IO) { client.newCall(reqKey).execute() }
     return Dependencies.gson.fromJson(resKey.body?.string(), PK::class.java)
 }
 
 
-private suspend fun execution(): String {
+private suspend fun execution(client: TTBHttpClient): String {
     val mainPage = withContext(Dispatchers.IO) {
-        Dependencies.okhttp.newCall(
+        client.newCall(
             Request.Builder().url("${AppConfig.getInstance().authUrl}/cas/login").build()
         ).execute().body?.string()
     }
@@ -42,9 +43,9 @@ private suspend fun execution(): String {
 }
 
 
-private suspend fun encryptPwd(publicKey: PK, pwd: String): String? {
+private suspend fun encryptPwd(client: TTBHttpClient,publicKey: PK, pwd: String): String? {
     val rep = withContext(Dispatchers.IO) {
-        Dependencies.okhttp.newCall(
+        client.newCall(
             Request.Builder().url("https://whispering-furry-charger.glitch.me/encode").post(  // 部署的在线服务，源码在/rsa
                 FormBody.Builder()
                     .add("e", publicKey.exponent)
@@ -61,13 +62,13 @@ private suspend fun encryptPwd(publicKey: PK, pwd: String): String? {
     }
 }
 
-suspend fun loginToCAS(user: String, pwd: String) {
-    val execution = execution()
-    val pk = getPublicKey()
+suspend fun loginToCAS(client: TTBHttpClient,user: String, pwd: String) {
+    val execution = execution(client)
+    val pk = getPublicKey(client)
     var encodedPwd: String? = ""
     for (tryNum in 1..4) {
         try {
-            encodedPwd = encryptPwd(pk, pwd.reversed())
+            encodedPwd = encryptPwd(client,pk, pwd.reversed())
             break
         } catch (e: Exception) {
             if (tryNum > 3) {
@@ -78,7 +79,7 @@ suspend fun loginToCAS(user: String, pwd: String) {
     }
 
     val result = withContext(Dispatchers.IO) {
-        Dependencies.okhttp.newCall(
+        client.newCall(
             Request.Builder().url("${AppConfig.getInstance().authUrl}/cas/login")
                 .post(
                     FormBody.Builder()

@@ -3,6 +3,7 @@ package io.github.mzdluo123.timetablebot.schoolservice
 import com.google.gson.JsonParser
 import io.github.mzdluo123.timetablebot.config.AppConfig
 import io.github.mzdluo123.timetablebot.utils.Dependencies
+import io.github.mzdluo123.timetablebot.utils.TTBHttpClient
 import io.github.mzdluo123.timetablebot.utils.logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -17,9 +18,9 @@ import java.util.Base64
 import javax.crypto.Cipher
 
 private val logger = logger()
-suspend fun getCsrfTokenV1(): String {
+suspend fun getCsrfTokenV1(client: TTBHttpClient): String {
     val rsp = withContext(Dispatchers.IO) {
-        Dependencies.okhttp.newCall(
+        client.newCall(
             Request.Builder().url("${AppConfig.getInstance().baseUrl}/jwglxt/xtgl/login_slogin.html?language=zh_CN")
                 .build()
         ).execute()
@@ -29,9 +30,9 @@ suspend fun getCsrfTokenV1(): String {
     return document.select("#csrftoken").`val`()
 }
 
-suspend fun getPublicKeyV1(): PublicKey {
+suspend fun getPublicKeyV1(client: TTBHttpClient): PublicKey {
     val rsp = withContext(Dispatchers.IO) {
-        Dependencies.okhttp.newCall(
+        client.newCall(
             Request.Builder().url("${AppConfig.getInstance().baseUrl}/jwglxt/xtgl/login_getPublicKey.html")
                 .build()
         ).execute()
@@ -43,12 +44,12 @@ suspend fun getPublicKeyV1(): PublicKey {
     return KeyFactory.getInstance("RSA").generatePublic(RSAPublicKeySpec(m, e))
 }
 
-suspend fun loginV1(user: String, pwd: String) {
-    val csrf = getCsrfTokenV1()
-    val key = getPublicKeyV1()
+suspend fun loginV1(client: TTBHttpClient,user: String, pwd: String) {
+    val csrf = getCsrfTokenV1(client)
+    val key = getPublicKeyV1(client)
     val encPwd = encrypt(key, pwd)
     val rsp = withContext(Dispatchers.IO) {
-        Dependencies.okhttp.newCall(
+        client.newCall(
             Request.Builder().url("${AppConfig.getInstance().baseUrl}/jwglxt/xtgl/login_slogin.html?time=1599304442693").post(
                 FormBody.Builder().add("csrftoken", csrf)
                     .add("yhm", user)

@@ -4,6 +4,7 @@ import io.github.mzdluo123.timetablebot.config.AppConfig
 import io.github.mzdluo123.timetablebot.data.SchoolNetInterfaceInfo
 import io.github.mzdluo123.timetablebot.data.SchoolNetTotalInfoDTO
 import io.github.mzdluo123.timetablebot.utils.Dependencies
+import io.github.mzdluo123.timetablebot.utils.TTBHttpClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.FormBody
@@ -19,9 +20,9 @@ import okhttp3.Request
 //
 //}
 
-suspend fun getSchoolNetInterfaceInfo(): SchoolNetInterfaceInfo? {
+suspend fun getSchoolNetInterfaceInfo(client: TTBHttpClient): SchoolNetInterfaceInfo? {
     val rep = withContext(Dispatchers.IO) {
-        Dependencies.okhttp.newCall(
+        client.newCall(
             Request.Builder().url(AppConfig.getInstance().schoolNet.url + "/getExportFlowData").post(FormBody.Builder().build()).build()
         ).execute()
     }

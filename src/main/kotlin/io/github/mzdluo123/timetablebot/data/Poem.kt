@@ -4,14 +4,10 @@ package io.github.mzdluo123.timetablebot.data
 import com.google.gson.annotations.SerializedName
 import io.github.mzdluo123.timetablebot.config.AppConfig
 import io.github.mzdluo123.timetablebot.utils.Dependencies
+import io.github.mzdluo123.timetablebot.utils.TTBHttpClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.json.Json
-import okhttp3.FormBody
 import okhttp3.Request
-import okhttp3.RequestBody
-import org.jooq.JSON
-import org.jsoup.Jsoup
 import java.io.File
 
 data class Poem(
@@ -43,9 +39,9 @@ data class Poem(
     )
 }
 
-suspend fun getPoem(): Poem {
+suspend fun getPoem(client:TTBHttpClient): Poem {
     val rsp = withContext(Dispatchers.IO) {
-        Dependencies.okhttp.newCall(Request.Builder().url("https://v1.alapi.cn/api/shici?type=shuqing").build()).execute()
+        client.newCall(Request.Builder().url("https://v1.alapi.cn/api/shici?type=shuqing").build()).execute()
     }
     return Dependencies.gson.fromJson<Poem>(rsp.body?.string(), Poem::class.java)
 }
@@ -62,5 +58,5 @@ suspend fun getPoem(): Poem {
 
 suspend fun main() {
     AppConfig.loadConfig(File("config.yml"))
-    println(getPoem())
+    println(getPoem(TTBHttpClient()))
 }

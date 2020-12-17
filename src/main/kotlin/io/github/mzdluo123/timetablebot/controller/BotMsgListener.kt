@@ -34,6 +34,7 @@ import java.time.LocalDateTime
 
 class BotMsgListener : BaseListeners() {
     private val userDao = createDao(UserDao::class)
+
     @EventHandler
     suspend fun FriendMessageEvent.onEvent() {
         val user = userDao.fetchOneByAccount(sender.id)
@@ -73,26 +74,28 @@ class BotMsgListener : BaseListeners() {
             case("今日课表", "获取今天的所有课程") {
                 todayTimeTable(user)
             }
-            case("本周课表","查询本周某一天的课程表"){
-                val day:Int by cmdArg(0,"星期几",it)
-                reply(getTimeTableMsg(week(),day,user))
+            case("本周课表", "查询本周某一天的课程表") {
+                val day: Int by cmdArg(0, "星期几", it)
+                reply(getTimeTableMsg(week(), day, user))
             }
             case("clean", "清除您的课程表") {
                 cleanTimeTable(it, user)
             }
-            case("校园网","查看校园网状态信息"){
-                val state = getSchoolNetInterfaceInfo()
-                val msg = state?.joinToString(separator = "\n") {
+            case("校园网", "查看校园网状态信息") {
+                TTBHttpClient().use { client ->
+                    val state = getSchoolNetInterfaceInfo(client)
+                    val msg = state?.joinToString(separator = "\n") {
                         """
                             ${it.name}
-                            使用量:${format("%.2f",((it.upStream+it.downStream)/it.maxBandWidth)*100)}%
+                            使用量:${format("%.2f", ((it.upStream + it.downStream) / it.maxBandWidth) * 100)}%
                             ***********
                         """.trimIndent()
-                }?: "暂无信息"
-                reply(msg)
+                    } ?: "暂无信息"
+                    reply(msg)
+                }
 
             }
-            case("help","指令菜单"){
+            case("help", "指令菜单") {
                 reply(PlainText("TimeTableBot ${BuildConfig.VERSION} build ${timeToStr(BuildConfig.BUILD_UNIXTIME)}\n${generateHelp()}"))
             }
             nextRoute("admin", "管理中心", ::admin)
@@ -128,14 +131,16 @@ class BotMsgListener : BaseListeners() {
         reply(getTimeTableMsg(week(), dayOfWeek(), user))
     }
 
-    private fun getTimeTableMsg(week:Int,dayOfWeek: Int,user: User): String {
+    private fun getTimeTableMsg(week: Int, dayOfWeek: Int, user: User): String {
         val course = searchTodayClass(week, dayOfWeek, user)
-        return  if (course != null && course.size >= 1) {
+        return if (course != null && course.size >= 1) {
             course.joinToString(separator = "\n") {
                 """
     ${it.component1()}
     ${it.component3()} 
-    时间：${AppConfig.getInstance().classTime[it.component7().toInt() - 1]} (第${it.component7()}节)                             
+    时间：${
+                    AppConfig.getInstance().classTime[it.component7().toInt() - 1]
+                } (第${it.component7()}节)                             
     --------------
     """.trimIndent()
             }
@@ -145,16 +150,19 @@ class BotMsgListener : BaseListeners() {
     }
 
     private suspend fun FriendMessageEvent.restaurant() {
-        val restaurant = getRestaurant()
-        val msg = buildString {
-            for (i in restaurant.xAxis.indices) {
-                append(restaurant.xAxis[i])
-                append(" ")
-                append(restaurant.data[0][i])
-                append("\n")
+        TTBHttpClient().use { client ->
+            val restaurant = getRestaurant(client)
+            val msg = buildString {
+                for (i in restaurant.xAxis.indices) {
+                    append(restaurant.xAxis[i])
+                    append(" ")
+                    append(restaurant.data[0][i])
+                    append("\n")
+                }
             }
+            reply(msg)
         }
-        reply(msg)
+
     }
 
     private suspend fun FriendMessageEvent.nextClass(user: User?) {
@@ -162,7 +170,7 @@ class BotMsgListener : BaseListeners() {
             reply("您没有创建账号，请使用init创建账户")
             return
         }
-        reply( nextClassMsg(user))
+        reply(nextClassMsg(user))
     }
 
     private suspend fun FriendMessageEvent.dy(user: User?) {
@@ -224,7 +232,7 @@ class BotMsgListener : BaseListeners() {
         val arg1: Long by cmdArg(0, "学号", it)
         val arg2: String by cmdArg(1, "登录密码", it)
         reply("现在请输入你的学号")
-        val  newUser = updateUser(user, this, arg1)
+        val newUser = updateUser(user, this, arg1)
         reply("现在请输入你的密码（统一认证系统的密码或是教务处的密码）")
         SyncTask.requestSync(SyncRequest(newUser.id, arg2))
         reply("我们将在后台刷新您的课程表，完成后会向你发送信息，请稍后\n同步较慢，请勿重复提交")
@@ -234,7 +242,7 @@ class BotMsgListener : BaseListeners() {
         user: User?,
         event: MessageEvent,
         studentId: Long
-    ):User {
+    ): User {
         return if (user != null) {
             userDao.update(user.apply {
                 this.studentId = studentId
@@ -292,7 +300,7 @@ class BotMsgListener : BaseListeners() {
             }
             reply(msg)
         }
-        route.case("info","系统负载"){
+        route.case("info", "系统负载") {
             reply(getSystemInfo())
         }
         route.default {

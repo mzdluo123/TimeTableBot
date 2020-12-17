@@ -30,7 +30,10 @@ class MorningNotifyTask() : Job, CoroutineScope {
     private suspend fun run() {
         val users = userDao.fetchByEnable(1)
         val poem = try {
-            getPoem().data.content
+            TTBHttpClient().use {
+                getPoem(it).data.content
+            }
+
         }catch (e: Exception){
             logger.error(e)
             e.printStackTrace()
