@@ -76,7 +76,7 @@ object BotsManager : CoroutineScope {
                    logger.error("发送消息${msg}失败,原因:${it.exceptionOrNull()}")
                }
            }
-            delay((1..1000).random().toLong())
+            delay((1..10000).random().toLong())
         }
     }
 
