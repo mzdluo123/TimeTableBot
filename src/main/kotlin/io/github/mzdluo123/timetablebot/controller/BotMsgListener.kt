@@ -82,7 +82,7 @@ class BotMsgListener : BaseListeners() {
                 cleanTimeTable(it, user)
             }
             case("校园网", "查看校园网状态信息") {
-                TTBHttpClient().use { client ->
+                TTBHttpClient(true).use { client ->
                     val state = getSchoolNetInterfaceInfo(client)
                     val msg = state?.joinToString(separator = "\n") {
                         """
@@ -150,7 +150,7 @@ class BotMsgListener : BaseListeners() {
     }
 
     private suspend fun FriendMessageEvent.restaurant() {
-        TTBHttpClient().use { client ->
+        TTBHttpClient(true).use { client ->
             val restaurant = getRestaurant(client)
             val msg = buildString {
                 for (i in restaurant.xAxis.indices) {

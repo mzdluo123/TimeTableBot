@@ -55,6 +55,9 @@ $$$$$$$$/ $$/  _____  ____    ______$$$$$$$$/______  $$ |____  $$ |  ______  $$$
     AppConfig.loadConfig(configFile)
     AppConfig.loadHelp()
     mainLogger.info("config loaded")
+    if (AppConfig.getInstance().proxy.enable){
+        mainLogger.info("Use Proxy to sync timetable")
+    }
 
     mainLogger.info("connecting database")
 

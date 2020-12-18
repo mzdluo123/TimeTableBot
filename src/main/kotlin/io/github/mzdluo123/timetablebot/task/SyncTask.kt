@@ -39,7 +39,7 @@ object SyncTask : CoroutineScope {
 
     private suspend fun executeLoop() {
         for (task in taskQueue) {
-            val client = TTBHttpClient()
+            val client = TTBHttpClient(true)
             try {
 
                 logger.info("开始处理课程表同步任务 ${task.uid}")

@@ -7,7 +7,7 @@ import java.net.InetSocketAddress
 import java.net.Proxy
 import java.util.concurrent.TimeUnit
 
-class TTBHttpClient : Closeable {
+class TTBHttpClient(val useProxy:Boolean = false) : Closeable {
     val okhttp: OkHttpClient
     private val cookies = hashMapOf<String, Cookie>()
 
@@ -26,7 +26,7 @@ class TTBHttpClient : Closeable {
                     return cookies.values.toList()
                 }
             })
-        if (AppConfig.getInstance().proxy.enable) {
+        if (useProxy && AppConfig.getInstance().proxy.enable) {
 
             val address = InetSocketAddress(AppConfig.getInstance().proxy.address, AppConfig.getInstance().proxy.port)
             val proxy = Proxy(Proxy.Type.SOCKS, address)
