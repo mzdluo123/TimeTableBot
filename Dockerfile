@@ -1,6 +1,6 @@
 FROM adoptopenjdk:11-jre-openj9
-WORKDIR .
-COPY build/install/TimeTableBot /TimeTableBot
+WORKDIR /app
+COPY TimeTableBot .
 VOLUME /data
-RUN chmod +x /TimeTableBot/bin/TimeTableBot
-CMD cd /data && /TimeTableBot/bin/TimeTableBot
+RUN chmod +x /app/bin/TimeTableBot
+CMD cd /data && /app/bin/TimeTableBot
